@@ -1,0 +1,14 @@
+<FilesMatch "(.(php|html|bak|config|sql|fla|ini|log|sh|inc|swp|dist)|~)$">
+Order allow,deny
+Deny from all
+Satisfy All
+</FilesMatch>
+
+<Files index.php>
+allow from all
+</Files>
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule (.*) index.php?URI=$1 [L,QSA]

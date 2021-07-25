@@ -1,0 +1,11 @@
+{
+    "name": "home/cms-mini",
+    "autoload": {
+        "psr-4": {
+            "Home\\CmsMini\\": "src",
+            "App\\Controller\\": "app/controllers",
+            "App\\Model\\": "app/models"
+        }
+    },
+    "require": {}
+}

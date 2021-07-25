@@ -1,0 +1,13 @@
+{
+    "app": "CMS Mini",
+    "db": {
+        "host": "localhost",
+        "name": "cms_mini",
+        "user": "cms_mini",
+        "pass": "123456"
+    },
+    "default": {
+        "controller": "HomeController",
+        "action": "actionIndex"
+    }
+}
