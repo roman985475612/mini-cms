@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Model\Category;
+use App\Model\Article;
 use Home\CmsMini\Controller;
 
 class HomeController extends Controller
@@ -16,11 +16,11 @@ class HomeController extends Controller
 
     public function actionIndex()
     {
-        $categores = Category::findAll();
-        $title = 'Categories';
+        $articles = Article::findAll();
         
-        $this->title = 'This is NEW title!';
+        $this->title = 'read our blog';
+        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
         
-        return $this->render('home/index', compact('title', 'categores'));
+        return $this->render('home/index', compact('articles'));
     }
 }

@@ -6,14 +6,17 @@ abstract class Model
 {
     protected int $id;
 
-    protected string $created_at;
+    protected string $created_at = '';
 
-    protected string $updated_at;
+    protected string $updated_at = '';
 
     public static function findAll()
     {
         $db = Db::instance();
-        $db->query = 'SELECT * FROM ' . static::TABLE;
+        $db->query = QueryBuilder::select()
+                        ->from(static::TABLE)
+                        ->order('updated_at')
+                        ->getQuery();
         $db->execute();
         return $db->select(static::class);
     }
@@ -21,19 +24,25 @@ abstract class Model
     public static function findOne(int $id)
     {
         $db = Db::instance();
-        $db->query = 'SELECT * FROM ' . static::TABLE . ' WHERE id=:id';
-        $db->setParams(':id', $id);
+        $db->query = QueryBuilder::select()
+                        ->from(static::TABLE)
+                        ->where('id')
+                        ->getQuery();
+        $db->setParameter(':id', $id);
         $db->execute();
         return $db->selectOne(static::class);
     }
 
-    public static function findBy(string $name, string $value)
+    public static function find(string $field, string $value)
     {
         $db = Db::instance();
-        $sql = 'select * from ' . static::TABLE . ' WHERE ' . $name . '=:' . $name ;
-        $data = [":$name" => $value];
-        $db->execute($sql, $data);
-        return $db->fetch(static::class);
+        $db->query = QueryBuilder::select()
+                        ->from(static::TABLE)
+                        ->where($field)
+                        ->getQuery();
+        $db->setParameter(":{$field}", $value);
+        $db->execute();
+        return $db->select(static::class);
     }
 
     public static function create(array $data)
