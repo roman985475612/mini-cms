@@ -18,6 +18,13 @@ class QueryBuilder
         return $queryBuilder;
     }
 
+    public static function delete(): QueryBuilder
+    {
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->query->base = 'DELETE ';
+        return $queryBuilder;
+    }
+
     public function from(string $tableName): QueryBuilder
     {
         $this->query->base .= "FROM " . $tableName . "\n";

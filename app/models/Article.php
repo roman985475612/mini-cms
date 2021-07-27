@@ -12,6 +12,8 @@ class Article extends Model
 
     protected string $excerpt = '';
 
+    protected string $post = '';
+
     protected string $img = '';
     
     protected int $category_id;
@@ -22,8 +24,9 @@ class Article extends Model
             case 'id': return $this->id;
             case 'title': return $this->title;
             case 'excerpt': return $this->excerpt;
+            case 'post': return $this->post;
             case 'category': return Category::findOne($this->category_id);
-            case 'img': return '/assets/img/' . $this->img;
+            case 'img': return '/assets/front/img/' . $this->img;
             case 'created_at': return $this->date($this->created_at);
             case 'updated_at': return $this->date($this->updated_at);
         }
@@ -46,5 +49,10 @@ class Article extends Model
         }
 
         return date('F j, Y', strtotime($value));
+    }
+
+    public function getPermalink()
+    {
+        return '/home/show/' . $this->id;
     }
 }

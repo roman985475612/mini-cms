@@ -95,9 +95,12 @@ abstract class Model
 
     public function delete(): bool
     {
-        $data = [':id' => $this->id];
-        $sql = 'DELETE FROM ' . static::TABLE . ' WHERE id=:id';
         $db = Db::instance();
-        return $db->execute($sql, $data);
+        $db->query = QueryBuilder::delete()
+                        ->from(static::TABLE)
+                        ->where('id')
+                        ->getQuery();
+        $db->setParameter(':id', $this->id);
+        return $db->execute();
     }
 }

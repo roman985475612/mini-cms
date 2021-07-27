@@ -24,28 +24,12 @@ CREATE TABLE IF NOT EXISTS articles (
         ON UPDATE RESTRICT
 ) ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS menu (
-    id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    href VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE = InnoDB;
-
 INSERT INTO categories (title) 
 VALUES 
     ('Web Development'), 
     ('Tech Gadgets'), 
     ('Business'), 
     ('Health & Wellness');
-
-INSERT INTO menu (title, href) 
-VALUES 
-    ('home', 'home.html'),
-    ('posts', 'posts.html'),
-    ('categories', 'categories.html'),
-    ('about us', 'about.html'),
-    ('contacts', 'contacts.html');
 
 INSERT INTO articles (title, img, category_id, excerpt, post)
 VALUE

@@ -10,6 +10,7 @@ abstract class Controller
 
     public function __construct()
     {
+        $this->brand = Config::instance()->config['app'];
         $this->title = Config::instance()->config['app'];
         $this->keywords = '';
         $this->description = '';
@@ -22,7 +23,11 @@ abstract class Controller
 
     public function __get($name)
     {
-        return $this->metadata[$name] ?? null;
+        switch ($name) {
+            case 'title': return ucwords($this->metadata[$name]);
+            default:
+                return $this->metadata[$name] ?? null;
+        }
     }
 
     public function __isset($name)
@@ -43,8 +48,23 @@ abstract class Controller
     protected function renderContent(string $template, array $data): string
     {
         extract($data);
+
+        $filename = dirname(__dir__) . '/app/views/' . $template . '.php';
+        if (!file_exists($filename)) {
+            return false;
+        }
         ob_start();
-        include dirname(__dir__) . '/app/views/' . $template . '.php';
+        include $filename;
         return ob_get_clean();
+    }
+    
+    public function redirect(string $url = '')
+    {
+        if (empty($url) && isset($_GET['back'])) {
+            $url = $_GET['back'];
+        }                
+
+        header('Location: /' . $url);
+        exit;
     }
 }

@@ -4,22 +4,23 @@ namespace Home\CmsMini;
 
 class Router
 {
-    protected array $route = [];
+    protected string $controller;
+
+    protected string $action;
+
+    protected array $params = [];
 
     public function __construct()
     {
-        $this->route['controller'] = Config::instance()->config['default']['controller'];
-        $this->route['action'] = Config::instance()->config['default']['action'];
-        $this->route['params'] = [];
-
+        $this->controller = Config::instance()->config['default']['controller'];
+        $this->action = Config::instance()->config['default']['action'];
         $this->matchRoute();
-        
         $this->dispatch();
     }
 
     protected function dispatch()
     {
-        $class = '\\App\\Controller\\' . $this->route['controller'];
+        $class = '\\App\\Controller\\' . $this->controller;
 
         try {
             if (!class_exists($class)) {
@@ -27,11 +28,10 @@ class Router
             }
 
             $controller = new $class;
-            if (!method_exists($class, $this->route['action'])) {
+            if (!method_exists($class, $this->action)) {
                 throw new \Exception();
             }
-
-            call_user_func_array([$controller, $this->route['action']], $this->route['params']);
+            call_user_func_array([$controller, $this->action], $this->params);
         } catch (\Throwable $e) {
             http_response_code(404);
             echo $e->getMessage();
@@ -49,15 +49,15 @@ class Router
         }
 
         if (isset($url[0]) && !empty($url[0])) {
-            $this->route['controller'] =  upperCamelCase($url[0]) . 'Controller';
+            $this->controller =  Helper::upperCamelCase($url[0]) . 'Controller';
         }
 
         if (isset($url[1]) && !empty($url[1])) {
-            $this->route['action'] =  'action' . upperCamelCase($url[1]);
+            $this->action =  'action' . Helper::upperCamelCase($url[1]);
         }
 
         if (isset($url[2]) && !empty($url[2])) {
-            $this->route['params']['id'] = $url[2];
+            $this->params['id'] = $url[2];
         }
     }
 }

@@ -1,6 +1,9 @@
 {
     "name": "home/cms-mini",
     "autoload": {
+        "files": [
+            "src/utilities.php"
+        ],
         "psr-4": {
             "Home\\CmsMini\\": "src",
             "App\\Controller\\": "app/controllers",

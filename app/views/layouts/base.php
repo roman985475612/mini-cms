@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="<?= $this->keywords ?>">
     <meta name="description" content="<?= $this->description ?>">
-    <link rel="stylesheet" href="/assets/css/all.min.css">
-    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <link rel="stylesheet" href="/assets/front/css/all.min.css">
+    <link rel="stylesheet" href="/assets/front/css/style.min.css">
     <title><?= $this->title ?></title>
 </head>
 <body>
     <nav id="sectionTop" class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="index.html">Glozzom</a>
+            <a class="navbar-brand" href="index.html"><?= $this->brand ?></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -57,14 +57,14 @@
         <div class="conteiner">
             <div class="row">
                 <div class="col">
-                    <p>Copyright &copy; 2021 Glozzom</p>
+                    <p>Copyright &copy; 2021 <?= $this->brand ?></p>
                 </div>
             </div>
         </div>
     </footer>
     <!-- /.main-footer -->
 
-    <script src="/assets/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/js/main.min.js"></script>
+    <script src="/assets/front/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/front/js/main.min.js"></script>
 </body>
 </html>
