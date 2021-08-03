@@ -6,6 +6,7 @@
         ],
         "psr-4": {
             "Home\\CmsMini\\": "src",
+            "Home\\CmsMini\\Validator\\": "src/validators",
             "App\\Controller\\": "app/controllers",
             "App\\Model\\": "app/models"
         }

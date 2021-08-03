@@ -1,0 +1,26 @@
+.main-menu {
+    
+    &__link {
+        padding-left: $spacer * .5;
+        padding-right: $spacer * .5;
+        text-transform: capitalize;
+        
+        &:hover .main-menu__icon {
+            fill: $white;
+        }
+    }
+
+    &__dropdown-item {
+        text-transform: capitalize;
+    }
+
+    &__icon {
+		width: $spacer;
+		height: $spacer;
+		fill: $gray-500;
+
+        &--dropdown {
+            fill: $gray-700;
+        }
+    }
+}

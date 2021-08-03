@@ -3,36 +3,19 @@
 namespace App\Controller;
 
 use App\Model\Article;
+use App\Model\Category;
 use Home\CmsMini\Controller;
 
 class ArticleController extends Controller
 {
-    protected string $layout = 'layouts/secondary';
-    
-    public function actionIndex()
+    public function actionCategory(int $id)
     {
-        echo __METHOD__;
-    }
-
-    public function actionCreate()
-    {
-        echo __METHOD__;
-    }
-
-    public function actionUpdate(int $id)
-    {
-        $article = Article::findOne($id);
+        $category = Category::findOneOr404($id);
+        $articles = $category->articles();
         
-        $this->header = $article->title;
-
-        return $this->render('admin/article/update', compact('article'));
-    }
-
-    public function actionDelete(int $id)
-    {
-        $article = Article::findOne($id);
-        $article->delete();
-
-        return $this->redirect('admin');
+        $this->title = $category->title;
+        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
+        
+        return $this->render('home/index', compact('articles'));
     }
 }

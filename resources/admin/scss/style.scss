@@ -1,0 +1,28 @@
+// External
+@import '../../../node_modules/bootstrap/scss/bootstrap.scss';
+
+// Common
+@import 'fonts';
+@import 'params';
+@import 'mixins';
+@import 'base';
+
+// Blocks
+@import 'blocks/main-menu';
+@import 'blocks/main-header';
+@import 'blocks/actions';
+@import 'blocks/posts';
+@import 'blocks/widgets';
+@import 'blocks/main-footer';
+
+// posts
+@import 'blocks/search';
+
+// detail
+@import 'blocks/detail';
+
+// settings
+@import 'blocks/settings';
+
+// profile
+@import 'blocks/avatar';

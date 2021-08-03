@@ -10,9 +10,7 @@ class Db
 
     protected $sth;
 
-    public string $query;
-
-    protected array $params = [];
+    protected $result;
 
     public static function instance()
     {
@@ -25,59 +23,64 @@ class Db
     protected function __construct()
     {
         $config = Config::instance()->config['db'];
-        $this->dbh = new \PDO(
-            'mysql:host=' . $config['host'] . ';dbname=' . $config['name'],
-            $config['user'],
-            $config['pass']
-        );
+
+        try {
+            $this->dbh = new \PDO(
+                'mysql:host=' . $config['host'] . ';dbname=' . $config['name'],
+                $config['user'],
+                $config['pass']
+            );    
+        } catch (PDOExecption $e) {
+            echo $e->getMessage();
+        }
     }
 
-    protected function __clone() {}
-
-    public function setParameter($name, $value)
+    protected function __clone() 
     {
-        $this->params[$name] = $value;
     }
 
-    public function execute(): bool
+    public static function query(string $query)
     {
-        $this->sth = $this->dbh->prepare($this->query);
-        return $this->sth->execute($this->params);
+        $db = static::instance();
+        $db->sth = $db->dbh->prepare($query);
+        return $db;
     }
 
-    public function insert(string $tableName, array $data, bool $printSql = false)
+    public function setParam($name, $value)
     {
-        $columns = [];
-        $binds = [];
-        $this->params = [];
-        foreach ($data as $fieldName => $value) {
-            $columns[] = $fieldName;
-            $binds[] = ':' . $fieldName;
-            $preparedData[':' . $fieldName] = $value;
+        switch ($value) {
+            case is_bool($value): $type = \PDO::PARAM_BOOL; break;
+            case is_int($value): $type = \PDO::PARAM_INT; break;
+            default: $type = \PDO::PARAM_STR;
         }
 
-        $this->queery = "INSERT INTO {$tableName}\n\t("
-            . implode(',', $columns) 
-            . ")\n\tVALUES ("
-            . implode(',', $binds)  
-            . ")\n";
-
-        if ($printSql) {
-            echo $sql;
-            exit;
-        }  
-
-        return $this->execute();
+        $this->sth->bindParam(':' . $name, $value, $type);
     }
 
-    public function select($className)
+    public function execute(): Db
+    {
+        $this->result = $this->sth->execute();
+        return $this;
+    }
+
+    public function rowCount()
+    {
+        return $this->sth->rowCount();
+    }
+
+    public function list($className): array
     {
         return $this->sth->fetchAll(\PDO::FETCH_CLASS, $className);
     }
 
-    public function selectOne($className)
+    public function single($className)
     {
         return $this->sth->fetchObject($className);
+    }
+
+    public function fetch()
+    {
+        return $this->sth->fetch();
     }
 
     public function lastId(): int

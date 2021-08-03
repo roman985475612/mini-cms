@@ -1,0 +1,17 @@
+.posts {
+    h4, th, td, a {
+        text-transform: capitalize;
+    }
+
+    &__btn {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 50%;
+        color: $white !important;
+
+        &:hover {
+            color: $white !important;
+        }
+    }
+}

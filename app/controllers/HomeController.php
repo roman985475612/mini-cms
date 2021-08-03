@@ -28,7 +28,7 @@ class HomeController extends Controller
 
     public function actionShow(int $id)
     {
-        $article = Article::findOne($id);
+        $article = Article::findOneOr404($id);
 
         $this->title = $article->title;
         $this->description = $article->excerpt;

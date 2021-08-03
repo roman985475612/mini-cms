@@ -1,0 +1,24 @@
+.actions {
+    margin-bottom: $spacer * 1.5;
+    padding: $spacer * 1.5 0;
+    background: $light;
+
+    &__btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-transform: capitalize;
+        color: $white !important;
+
+        &:hover {
+            color: $white !important;
+        }
+    }
+
+    &__icon {
+        margin-right: $spacer * .25;
+		width: $spacer;
+		height: $spacer;
+        fill: $white;
+    }
+}

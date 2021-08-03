@@ -6,17 +6,20 @@ use Home\CmsMini\Model;
 
 class Article extends Model
 {
-    protected const TABLE = 'articles';
+    protected string $title;
 
-    protected string $title = '';
+    protected string $excerpt;
 
-    protected string $excerpt = '';
+    protected string $post;
 
-    protected string $post = '';
-
-    protected string $img = '';
+    protected string $img;
     
     protected int $category_id;
+
+    protected static function getTableName()
+    {
+        return 'articles';
+    }
 
     public function __get($name)
     {
@@ -25,7 +28,8 @@ class Article extends Model
             case 'title': return $this->title;
             case 'excerpt': return $this->excerpt;
             case 'post': return $this->post;
-            case 'category': return Category::findOne($this->category_id);
+            case 'category_id': return $this->category_id;
+            case 'category': return Category::get($this->category_id);
             case 'img': return '/assets/front/img/' . $this->img;
             case 'created_at': return $this->date($this->created_at);
             case 'updated_at': return $this->date($this->updated_at);

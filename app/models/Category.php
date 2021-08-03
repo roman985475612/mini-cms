@@ -6,9 +6,12 @@ use Home\CmsMini\Model;
 
 class Category extends Model
 {
-    protected const TABLE = 'categories';
+    protected string $title;
 
-    protected string $title = '';
+    protected static function getTableName()
+    {
+        return 'categories';
+    }
 
     public function __get($name)
     {
@@ -44,8 +47,13 @@ class Category extends Model
         return $this->title;
     }
 
+    public function articles()
+    {
+        return Article::find('category_id', $this->id);
+    }
+
     public function getPermalink()
     {
-        return '/category/all/' . $this->id;
+        return '/article/category/' . $this->id;
     }
 }

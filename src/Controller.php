@@ -41,15 +41,16 @@ abstract class Controller
 
         extract($this->metadata);
         ob_start();
-        include dirname(__dir__) . '/app/views/' . $this->layout . '.php';
+        include dirname(__dir__) . '/resources/views/' . $this->layout . '.php';
         echo ob_get_clean();
+        exit;
     }
 
     protected function renderContent(string $template, array $data): string
     {
         extract($data);
 
-        $filename = dirname(__dir__) . '/app/views/' . $template . '.php';
+        $filename = dirname(__dir__) . '/resources/views/' . $template . '.php';
         if (!file_exists($filename)) {
             return false;
         }
@@ -66,5 +67,10 @@ abstract class Controller
 
         header('Location: /' . $url);
         exit;
+    }
+
+    public function isPost()
+    {
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
 }

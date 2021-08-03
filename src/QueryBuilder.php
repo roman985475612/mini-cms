@@ -18,6 +18,20 @@ class QueryBuilder
         return $queryBuilder;
     }
 
+    public static function insert(string $tableName): QueryBuilder
+    {
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->query->base = 'INSERT INTO ' . $tableName . " \n";
+        return $queryBuilder;
+    }
+
+    public static function update(string $tableName): QueryBuilder
+    {
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->query->base = 'UPDATE ' . $tableName . " \n";
+        return $queryBuilder;
+    }
+
     public static function delete(): QueryBuilder
     {
         $queryBuilder = new QueryBuilder();
@@ -29,6 +43,19 @@ class QueryBuilder
     {
         $this->query->base .= "FROM " . $tableName . "\n";
         return $this;
+    }
+
+    public function columns(array $columns): QueryBuilder
+    {
+        $this->query->columns = $columns;
+        $this->query->binds = array_map(fn($column) => ':' . $column, $columns);
+
+        return $this;
+    }
+
+    public function set(string $field): QueryBuilder
+    {
+        $this->query->set[] = $field . ' = ' . ':' . $field;
     }
 
     public function where(string $field, string $operator = ''): QueryBuilder
@@ -56,7 +83,7 @@ class QueryBuilder
         return $this;
     }
 
-    public function getQuery(): string
+    public function sql(): string
     {
         $sql = '';
         $sql .= $this->query->base;
@@ -71,6 +98,18 @@ class QueryBuilder
 
         if (!empty($this->query->order)) {
             $sql .= $this->query->order . "\n";
+        }
+
+        if (!empty($this->query->set)) {
+            $sql .= 'SET ' . implode(' , ', $this->query->where)  . "\n"; 
+        }
+
+        if (!empty($this->query->columns)) {
+            $sql .= '(' . implode(', ', $this->query->columns) . ')' . "\n";
+        }
+
+        if (!empty($this->query->binds)) {
+            $sql .= 'VALUES (' . implode(', ', $this->query->binds)  . ')';
         }
 
         $sql .= ';';

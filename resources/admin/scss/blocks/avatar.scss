@@ -1,0 +1,16 @@
+.avatar {
+
+    &__title {
+        text-transform: capitalize;
+    }
+
+    &__img {
+        margin-bottom: $spacer;
+        max-width: 100%;
+        height: auto;
+    }
+
+    &__btn {
+        text-transform: capitalize;
+    }
+}
