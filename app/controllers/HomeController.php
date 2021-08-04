@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Model\Article;
+use App\Model\Category;
 use Home\CmsMini\Controller;
 
 class HomeController extends Controller
@@ -18,7 +19,7 @@ class HomeController extends Controller
 
     public function actionIndex()
     {
-        $articles = Article::findAll();
+        $articles = Article::all();
         
         $this->title = 'read our blog';
         $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
@@ -28,11 +29,30 @@ class HomeController extends Controller
 
     public function actionShow(int $id)
     {
-        $article = Article::findOneOr404($id);
+        $article = Article::getOr404($id);
 
         $this->title = $article->title;
         $this->description = $article->excerpt;
 
         return $this->render('home/show', compact('article'));
+    }
+
+    public function actionCategory(int $id)
+    {
+        $category = Category::getOr404($id);
+        $articles = $category->articles;
+        
+        $this->title = $category->title;
+        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
+        
+        return $this->render('home/index', compact('articles'));
+    }
+
+    public function actionLogin()
+    {
+        $this->layout = 'layouts/simple';
+        $this->header = 'login';
+
+        return $this->render('admin/user/login');
     }
 }

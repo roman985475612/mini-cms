@@ -45,7 +45,7 @@ abstract class Model
 
     public static function getOr404(int $id)
     {
-        $model = static::findOne($id);
+        $model = static::get($id);
 
         if (! $model instanceof Model) {
             throw new \Exception('Page not found');
@@ -54,7 +54,7 @@ abstract class Model
         return $model;
     }
 
-    public static function find(string $field, string $value)
+    protected static function find(string $field, string $value)
     {
         $query = Db::query(
             QueryBuilder::select()
@@ -68,28 +68,17 @@ abstract class Model
 
     public static function findOne(string $field, string $value)
     {
-        // $query = Db::query(
-        //     QueryBuilder::select()
-        //         ->from(static::getTableName())
-        //         ->where($field)
-        //         ->sql()
-        // );
-        // $query->setParam($field, $value);
-        // return $query->execute()->single(static::class);
         return static::find($field, $value)->single(static::class);
     }
 
     public static function findAll(string $field, string $value)
     {
-        // $query = Db::query(
-        //     QueryBuilder::select()
-        //         ->from(static::getTableName())
-        //         ->where($field)
-        //         ->sql()
-        // );
-        // $query->setParam($field, $value);
-        // return $query->execute()->list(static::class);
         return static::find($field, $value)->list(static::class);
+    }
+
+    public function save(): bool
+    {
+        return $this->isNew() ? $this->create() : $this->update();
     }
 
     public function isNew(): bool
@@ -97,7 +86,7 @@ abstract class Model
         return !isset($this->id);
     }
 
-    public function create(): int
+    public function create(): bool
     {
         $properties = get_object_vars($this);
         
@@ -115,49 +104,24 @@ abstract class Model
         
         $this->id = $query->lastId();
 
-        return $result->rowCount();
+        return (bool) $result->rowCount();
     }
 
-    public function save(): bool
+    public function update(): bool
     {
+        $properties = get_object_vars($this);
+        
+        $query = Db::query(
+            QueryBuilder::update(static::getTableName())
+                ->set(array_keys($properties))
+                ->sql()
+        );
 
-        if ($this->isNew()) {
-            return $this->create();
-        } else {
-            return $this->update();
+        foreach ($properties as $name => $value) {
+            $query->setParam($name, $value);
         }
 
-
-        if (isset($this->id)) {
-            $sets = [];
-            $data = [':id' => $this->id];
-            foreach ($this->fillable as $value) {
-                $sets[] = $value . ' = :' . $value;
-                $data[':' . $value] = $this->$value;
-            }
-
-            $sql = 'UPDATE ' . static::getTableName()
-                . ' SET ' . implode(',', $sets)
-                . ' WHERE id=:id';
-
-            $result = $query->execute($sql, $data);
-        } else {
-            $binds = [];
-            $data = [];
-            foreach ($this->fillable as $value) {
-                $columns[] = $value;
-                $binds[] = ':' . $value;
-                $data[':' . $value] = $this->$value;
-            }
-            
-            
-            $sql = 'INSERT INTO ' . static::getTableName() . ' ('
-                . implode(',', $columns) . ') VALUES ('
-                . implode(',', $binds)  . ')';
-
-        }
-
-        return $result;
+        return (bool) $query->execute()->rowCount();
     }
 
     public function delete(): int

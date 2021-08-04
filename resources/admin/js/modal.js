@@ -99,25 +99,25 @@ class Form {
 }
 
 new AddModal({
-    btnId: 'addPost',
-    title: 'Add Post',
+    btnId: 'addArticle',
+    title: 'Add Article',
     titleClass: 'bg-primary text-white',
     btnClass: 'primary',
-    body: new Form('/article-admin/create', [
+    body: new Form('/article/create', [
         {
             name: 'input',
             params: {
-                id:'postTitle', 
+                id:'articleTitle', 
                 type:'text', 
-                name:'name', 
-                title:'Name'
+                name:'article[title]', 
+                title:'Title'
             }
         },
         {
             'name': 'select',
             'params': {
-                id:'postCat', 
-                name:'category', 
+                id:'articleCat', 
+                name:'article[category]', 
                 title:'Category',
                 options: [
                     {value: 0, option: 'Web Development'},
@@ -130,18 +130,18 @@ new AddModal({
         {
             'name': 'input',
             'params': {
-                id:'postImage', 
+                id:'articleImage', 
                 type:'file', 
-                name:'image', 
+                name:'article[image]', 
                 title:'Upload image'
             }
         },
         {
             'name': 'text',
             'params': {
-                id:'postBody', 
-                name:'body', 
-                title:'Body'
+                id:'articlePost', 
+                name:'article[post]', 
+                title:'Post'
             }
         },
    ])

@@ -7,7 +7,7 @@
                     <div class="card-body">
                         <a href="<?= $article->category->getPermalink() ?>" class="btn btn-outline-primary text-capitalize btn-sm my-2"><?= $article->category ?></a>
                         <h5 class="card-title text-capitalize"><?= $article->title ?></h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Writen by John Doe on <?= $article->updated_at ?></h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Writen by <?= $article->author ?> on <?= $article->updated_at ?></h6>
                         <hr>
                         <p class="card-text"><?= $article->post ?></p>
                     </div>

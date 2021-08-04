@@ -6,7 +6,9 @@ use Home\CmsMini\Model;
 
 class Category extends Model
 {
-    protected string $title;
+    public string $title;
+
+    protected array $articles;
 
     protected static function getTableName()
     {
@@ -20,6 +22,7 @@ class Category extends Model
             case 'title': return $this->title;
             case 'created_at': return $this->date($this->created_at);
             case 'updated_at': return $this->date($this->updated_at);
+            case 'articles': return $this->articles();
         }
     }
 
@@ -49,11 +52,11 @@ class Category extends Model
 
     public function articles()
     {
-        return Article::find('category_id', $this->id);
+        return Article::findAll('category_id', $this->id);
     }
 
     public function getPermalink()
     {
-        return '/article/category/' . $this->id;
+        return '/home/category/' . $this->id;
     }
 }

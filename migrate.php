@@ -6,15 +6,21 @@ use Home\CmsMini\Db;
 
 $argsList = getArgs($argc, $argv);
 
-$filepath = __DIR__ . '/migrations/' . $argsList[0] . '.sql';
+$pattern = __DIR__ . '/migrations/' . $argsList[0] . '_*.sql';
 
-if (!file_exists($filepath)) {
+$filename = glob($pattern)[0];
+
+if (!file_exists($filename)) {
     exit('File not found');
 }
 
+echo "\t" . $filename . "\n";
+
 ob_start();
-include $filepath;
+include $filename;
 $sql = ob_get_clean();
+
+echo $sql . "\n";
 
 $query = Db::query($sql);
 echo $query->execute()->rowCount();

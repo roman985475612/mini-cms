@@ -16,7 +16,7 @@ class Unique implements ValidatorInterface
 
     public function validate(mixed $datum): bool
     {
-        return empty($this->model::find($this->field, $datum));
+        return empty($this->model::findOne($this->field, $datum));
     }
 
     public function errorMessage(): string

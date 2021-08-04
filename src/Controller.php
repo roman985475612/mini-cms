@@ -2,6 +2,8 @@
 
 namespace Home\CmsMini;
 
+use Home\CmsMini\Auth;
+
 abstract class Controller
 {
     protected string $layout = 'layouts/base';
@@ -10,12 +12,33 @@ abstract class Controller
 
     public function __construct()
     {
+        if (!$this->access()) {
+            $this->accessDeny();
+        }
+
         $this->brand = Config::instance()->config['app'];
         $this->title = Config::instance()->config['app'];
         $this->keywords = '';
         $this->description = '';
+
+        $this->setTitle(); 
+    }
+
+    protected function setTitle()
+    {
+        $this->title = Config::instance()->config['app'];
+    }
+
+    protected function access(): bool
+    {
+        return true;
     }
     
+    protected function accessDeny()
+    {
+        return throw new \Exception('Access deny');
+    }
+
     public function __set($name, $value)
     {
         $this->metadata[$name] = $value;

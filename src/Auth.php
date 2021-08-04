@@ -6,7 +6,7 @@ use App\Model\User;
 
 class Auth
 {
-    const LOGIN_URL = 'admin/login';
+    const LOGIN_URL = 'home/login';
 
     public static function checkUser()
     {
@@ -43,9 +43,14 @@ class Auth
         // setcookie('session', $session->session, $expires, '/');
     }
 
+    public static function userId()
+    {
+        return self::isLoggedIn() ? $_SESSION['user_id'] : null;
+    }
+
     public static function isLoggedIn()
     {   
-        return isset($_SESSION['user_id']);
+        return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
     }
 
     public static function loginRequired(string $back = '')

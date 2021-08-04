@@ -3,11 +3,11 @@
         <div class="row actions__btns">
             <div class="col-md-3">
                 <div class="d-grid gap-2">
-                    <a class="btn btn-primary actions__btn" id="addPost">
+                    <a class="btn btn-primary actions__btn" id="addArticle">
                         <svg class="actions__icon">
                             <use xlink:href="/assets/admin/icons/sprite.svg#plus-circle-solid"></use>
                         </svg>
-                        add post
+                        add article
                     </a>
                 </div>
             </div>
@@ -50,6 +50,7 @@
                             <th scope="col">#</th>
                             <th scope="col">title</th>
                             <th scope="col">category</th>
+                            <th scope="col">author</th>
                             <th scope="col">date</th>
                             <th scope="col">action</th>
                             </tr>
@@ -60,6 +61,7 @@
                                 <th scope="row"><?= $article->id ?></th>
                                 <td><?= $article->title ?></td>
                                 <td><?= $article->category ?></td>
+                                <td><?= $article->author ?></td>
                                 <td><?= $article->created_at ?></td>
                                 <td>
                                     <a href="/article-admin/update/<?= $article->id ?>" class="btn btn-warning posts__btn">
@@ -107,7 +109,7 @@
                             <svg class="widgets__icon">
                                 <use xlink:href="/assets/admin/icons/sprite.svg#users-solid"></use>
                             </svg>
-                            <span class="widgets__info">4</span>    
+                            <span class="widgets__info"><?= $counts['user'] ?></span>    
                         </div>
                         <a href="users.html" class="btn btn-outline-light">view</a>
                     </div>
