@@ -53,7 +53,6 @@ class Db
             case is_int($value): $type = \PDO::PARAM_INT; break;
             default: $type = \PDO::PARAM_STR;
         }
-
         $this->sth->bindParam(':' . $name, $value, $type);
     }
 

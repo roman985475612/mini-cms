@@ -49,13 +49,13 @@ class QueryBuilder
     {
         $this->query->columns = $columns;
         $this->query->binds = array_map(fn($column) => ':' . $column, $columns);
-
         return $this;
     }
 
-    public function set(string $field): QueryBuilder
+    public function set(array $columns): QueryBuilder
     {
-        $this->query->set[] = $field . ' = ' . ':' . $field;
+        $this->query->set = array_map(fn($column) => $column . ' = ' . ':' . $column, $columns);
+        return $this;
     }
 
     public function where(string $field, string $operator = ''): QueryBuilder
@@ -88,6 +88,10 @@ class QueryBuilder
         $sql = '';
         $sql .= $this->query->base;
 
+        if (!empty($this->query->set)) {
+            $sql .= 'SET ' . implode(', ', $this->query->set)  . "\n"; 
+        }
+
         if (!empty($this->query->where)) {
             $sql .= 'WHERE ' . implode(' AND ', $this->query->where)  . "\n"; 
         }
@@ -98,10 +102,6 @@ class QueryBuilder
 
         if (!empty($this->query->order)) {
             $sql .= $this->query->order . "\n";
-        }
-
-        if (!empty($this->query->set)) {
-            $sql .= 'SET ' . implode(' , ', $this->query->where)  . "\n"; 
         }
 
         if (!empty($this->query->columns)) {

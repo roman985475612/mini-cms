@@ -16,17 +16,30 @@ abstract class Controller
             $this->accessDeny();
         }
 
-        $this->brand = Config::instance()->config['app'];
-        $this->title = Config::instance()->config['app'];
-        $this->keywords = '';
-        $this->description = '';
-
         $this->setTitle(); 
+        $this->setBrand(); 
+        $this->setKeywords(); 
+        $this->setDescription(); 
     }
 
     protected function setTitle()
     {
         $this->title = Config::instance()->config['app'];
+    }
+
+    protected function setBrand()
+    {
+        $this->brand = Config::instance()->config['app'];
+    }
+
+    protected function setKeywords()
+    {
+        $this->keywords = '';
+    }
+
+    protected function setDescription()
+    {
+        $this->description = '';
     }
 
     protected function access(): bool
@@ -64,7 +77,7 @@ abstract class Controller
 
         extract($this->metadata);
         ob_start();
-        include dirname(__dir__) . '/resources/views/' . $this->layout . '.php';
+        include ROOT . '/resources/views/' . $this->layout . '.php';
         echo ob_get_clean();
         exit;
     }
@@ -73,7 +86,7 @@ abstract class Controller
     {
         extract($data);
 
-        $filename = dirname(__dir__) . '/resources/views/' . $template . '.php';
+        $filename = ROOT . '/resources/views/' . $template . '.php';
         if (!file_exists($filename)) {
             return false;
         }
@@ -95,5 +108,14 @@ abstract class Controller
     public function isPost()
     {
         return $_SERVER['REQUEST_METHOD'] === 'POST';
+    }
+
+    public function getTemplatePart(string $partName)
+    {
+        $filepath = ROOT . '/resources/views/layouts/inc/' . $partName . '.php';
+        if (file_exists($filepath)) {
+            return include $filepath;
+        } 
+        return 'Err';
     }
 }

@@ -64,7 +64,7 @@
                                 <td><?= $article->author ?></td>
                                 <td><?= $article->created_at ?></td>
                                 <td>
-                                    <a href="/article-admin/update/<?= $article->id ?>" class="btn btn-warning posts__btn">
+                                    <a href="<?= $article->getUpdateUrl() ?>" class="btn btn-warning posts__btn">
                                         <svg class="icon">
                                             <use xlink:href="/assets/admin/icons/sprite.svg#angle-double-right-solid"></use>
                                         </svg>            
@@ -87,7 +87,7 @@
                             </svg>
                             <span class="widgets__info"><?= $counts['article'] ?></span>    
                         </div>
-                        <a href="posts.html" class="btn btn-outline-light">view</a>
+                        <a href="/article/list" class="btn btn-outline-light">view</a>
                     </div>
                 </div>
                 <div class="card widgets__item widgets__item--success">

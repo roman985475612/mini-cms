@@ -25,6 +25,7 @@ class AdminController extends Controller
 
     protected function setTitle()
     {
+        parent::setTitle();
         $this->title = 'Admin' . ' | ' . $this->title;
     }
 

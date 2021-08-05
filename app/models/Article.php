@@ -48,6 +48,7 @@ class Article extends Model
             case 'title': return $this->title = $value;
             case 'post': return $this->post = $value;
             case 'category_id': return $this->category_id = $value;
+            case 'user_id': return $this->user_id = $value;
             case 'created_at': return $this->created_at = $value;
             case 'updated_at': return $this->updated_at = $value;
         }
@@ -81,5 +82,15 @@ class Article extends Model
     public function getPermalink()
     {
         return '/home/show/' . $this->id;
+    }
+
+    public function getUpdateUrl()
+    {
+        return '/article/update/' . $this->id;
+    }
+
+    public function getDeleteUrl()
+    {
+        return '/article/delete/' . $this->id;
     }
 }

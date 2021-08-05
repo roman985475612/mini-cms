@@ -45,10 +45,10 @@ class Validation
         }
     }
 
-    protected function sanitizeData()
-    {
-        foreach ($this->sourceData as $datum) {
-            $datum = trim(htmlspecialchars((stripslashes($datum)), ENT_QUOTES));
-        }
-    }
+    // protected function sanitizeData()
+    // {
+    //     foreach ($this->sourceData as $datum) {
+    //         $datum = trim(htmlspecialchars((stripslashes($datum)), ENT_QUOTES));
+    //     }
+    // }
 }

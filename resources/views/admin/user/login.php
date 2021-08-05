@@ -13,17 +13,21 @@
                                 <input 
                                     name="user[email]" 
                                     type="email" 
-                                    class="form-control <?= isset($errors['email']) ? 'is-invalid' : 'is-valid' ?>" 
+                                    <?php if ($showError): ?>
+                                        <?php if (isset($errors['email'])): ?>
+                                            class="form-control is-invalid"
+                                        <?php else: ?>
+                                            class="form-control is-valid"
+                                        <?php endif ?>
+                                    <?php else: ?>
+                                        class="form-control"
+                                    <?php endif ?>
                                     id="userEmail"
                                     placeholder="Enter Email"
                                     value="<?= isset($source['email']) ? $source['email'] : '' ?>"
                                 >
-                                <?php if (isset($errors['email'])): ?>
-                                    <div class="invalid-feedback">
-                                        <?= $errors['email'] ?>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="valid-feedback">Looks good!</div>
+                                <?php if ($showError && isset($errors['email'])): ?>
+                                    <div class="invalid-feedback"><?= $errors['email'] ?></div>
                                 <?php endif ?>
                             </div>
                             <div class="mb-3">
@@ -31,16 +35,20 @@
                                 <input 
                                     name="user[password]" 
                                     type="password" 
-                                    class="form-control <?= isset($errors['password']) ? 'is-invalid' : 'is-valid' ?>" 
+                                    <?php if ($showError): ?>
+                                        <?php if (isset($errors['password'])): ?>
+                                            class="form-control is-invalid"
+                                        <?php else: ?>
+                                            class="form-control is-valid"
+                                        <?php endif ?>
+                                    <?php else: ?>
+                                        class="form-control"
+                                    <?php endif ?>
                                     id="userPassword"
                                     placeholder="Enter Password"
                                 >
-                                <?php if (isset($errors['password'])): ?>
-                                    <div class="invalid-feedback">
-                                        <?= $errors['password'] ?>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="valid-feedback">Looks good!</div>
+                                <?php if ($showError && isset($errors['password'])): ?>
+                                    <div class="invalid-feedback"><?= $errors['password'] ?></div>
                                 <?php endif ?>
                             </div>
                             <div class="d-grid gap-2">

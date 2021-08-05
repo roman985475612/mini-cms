@@ -117,13 +117,13 @@ new AddModal({
             'name': 'select',
             'params': {
                 id:'articleCat', 
-                name:'article[category]', 
+                name:'article[category_id]', 
                 title:'Category',
                 options: [
-                    {value: 0, option: 'Web Development'},
-                    {value: 1, option: 'Tech Gadgets'},
-                    {value: 2, option: 'Business'},
-                    {value: 3, option: 'Health & Wellness'},
+                    {value: 1, option: 'Web Development'},
+                    {value: 2, option: 'Tech Gadgets'},
+                    {value: 3, option: 'Business'},
+                    {value: 4, option: 'Health & Wellness'},
                 ]
             }
         },

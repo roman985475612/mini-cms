@@ -8,21 +8,18 @@ use Home\CmsMini\Controller;
 
 class HomeController extends Controller
 {
-    public function __construct()
+    protected function setTitle()
     {
-        parent::__construct();
-
-        $this->title = 'HOME';
-        $this->keywords = 'home, sweet, home';
-        $this->description = 'Home sweet home';
+        parent::setTitle();
+        $this->title = 'read our blog' . ' | ' . $this->title;
     }
 
     public function actionIndex()
     {
         $articles = Article::all();
         
-        $this->title = 'read our blog';
-        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
+        $this->pageTitle = 'read our blog';
+        $this->pageSubTitle = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
         
         return $this->render('home/index', compact('articles'));
     }
@@ -53,6 +50,6 @@ class HomeController extends Controller
         $this->layout = 'layouts/simple';
         $this->header = 'login';
 
-        return $this->render('admin/user/login');
+        return $this->render('admin/user/login', ['showError' => false]);
     }
 }

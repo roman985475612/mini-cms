@@ -56,6 +56,7 @@ class UserController extends Controller
         if (!$this->isPost()) {
             $this->redirect('admin');
         }
+        $showError = true;
 
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
@@ -64,13 +65,14 @@ class UserController extends Controller
             ->add('email', new NotEmpty)
             ->add('email', new Email)
             ->add('password', new NotEmpty)
-            ->add('password', new Alphanumeric);
-        
-        $validation->validate();
+            ->add('password', new Alphanumeric)
+            ->validate();
+
         if ($validation->hasErrors) {
             $this->render('admin/user/login', [
                 'source' => $validation->sourceData,
                 'errors' => $validation->errors,
+                'showError' => $showError,
             ]);
         };
 
@@ -80,9 +82,13 @@ class UserController extends Controller
                 $validation->cleanedData['password']
             );    
         } catch (\Throwable $e) {
-            Flash::addError('Email and password does not matches!');
             $this->render('admin/user/login', [
-                'source' => $validation->sourceData
+                'source' => $validation->sourceData,
+                'errors' => [
+                    'email' => 'Email and password does not matches!', 
+                    'password' => 'Email and password does not matches!'
+                ],
+                'showError' => $showError,
             ]);
         }
 

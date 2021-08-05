@@ -43,8 +43,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 page-header__container">
-                    <h1 class="page-header__title"><?= $this->title ?></h1>
-                    <p class="page-header__text"><?= $this->description ?></p>
+                    <h1 class="page-header__title"><?= $this->pageTitle ?></h1>
+                    <p class="page-header__text"><?= $this->pageSubTitle ?></p>
                 </div>
             </div>
         </div>

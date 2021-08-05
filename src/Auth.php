@@ -80,7 +80,7 @@ class Auth
 
         // setcookie('session', '', time() - 24 * 60 * 60, '/');
 
-        header('Location: /' . Auth::$redirectTo);
+        header('Location: /' . Auth::LOGIN_URL);
         exit;
     }
 

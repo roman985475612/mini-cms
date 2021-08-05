@@ -76,9 +76,11 @@ abstract class Model
         return static::find($field, $value)->list(static::class);
     }
 
-    public function save(): bool
+    public function save(array $columns = []): bool
     {
-        return $this->isNew() ? $this->create() : $this->update();
+        return $this->isNew() 
+            ? $this->create(array_keys(get_object_vars($this))) 
+            : $this->update($columns);
     }
 
     public function isNew(): bool
@@ -86,18 +88,16 @@ abstract class Model
         return !isset($this->id);
     }
 
-    public function create(): bool
+    public function create(array $columns): bool
     {
-        $properties = get_object_vars($this);
-        
         $query = Db::query(
             QueryBuilder::insert(static::getTableName())
-                ->columns(array_keys($properties))
+                ->columns($columns)
                 ->sql()
         );
 
-        foreach ($properties as $name => $value) {
-            $query->setParam($name, $value);
+        foreach ($columns as $name) {
+            $query->setParam($name, $this->$name);
         }
 
         $result = $query->execute();
@@ -107,20 +107,19 @@ abstract class Model
         return (bool) $result->rowCount();
     }
 
-    public function update(): bool
+    public function update(array $columns): bool
     {
-        $properties = get_object_vars($this);
-        
         $query = Db::query(
             QueryBuilder::update(static::getTableName())
-                ->set(array_keys($properties))
+                ->set($columns)
+                ->where('id')
                 ->sql()
         );
-
-        foreach ($properties as $name => $value) {
-            $query->setParam($name, $value);
+        
+        foreach ($columns as $name) {
+            $query->setParam($name, $this->$name);
         }
-
+        $query->setParam('id', $this->id);
         return (bool) $query->execute()->rowCount();
     }
 

@@ -3,7 +3,7 @@
         <div class="row actions__btns">
             <div class="col-md-3">
                 <div class="d-grid gap-2">
-                    <a href="posts.html" class="btn btn-info actions__btn">
+                    <a href="/admin" class="btn btn-info actions__btn">
                         <svg class="actions__icon">
                             <use xlink:href="/assets/admin/icons/sprite.svg#arrow-circle-left-solid"></use>
                         </svg>
@@ -24,7 +24,7 @@
             <div class="col-md-3">
                 <div class="d-grid gap-2">
                     <a 
-                        href="/article-admin/delete/<?= $article->id ?>" 
+                        href="<?= $article->getDeleteUrl() ?>" 
                         class="btn btn-danger actions__btn"
                         onclick="return confirm('Are you sure?')"
                     >
@@ -49,29 +49,68 @@
                         <h4>edit post</h4>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form method="POST" action="<?= $article->getUpdateUrl() ?>">
                             <div class="mb-3">
-                                <label for="articleTitle" class="form-label">Title</label>
-                                <input 
+                                <label 
+                                    for="articleTitle" 
+                                    class="form-label"
+                                >
+                                    Title
+                                </label>
+                                <input
+                                    name="article[title]" 
                                     type="text" 
-                                    class="form-control" 
+                                    <?php if ($showError): ?>
+                                        <?php if (isset($errors['title'])): ?>
+                                            class="form-control is-invalid"
+                                        <?php else: ?>
+                                            class="form-control is-valid"
+                                        <?php endif ?>
+                                    <?php else: ?>
+                                        class="form-control"
+                                    <?php endif ?>
                                     id="articleTitle" 
-                                    aria-describedby="emailHelp"
                                     value="<?= $article->title ?>"
                                 >
-                                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                                <?php if ($showError && isset($errors['title'])): ?>
+                                    <div class="invalid-feedback"><?= $errors['title'] ?></div>
+                                <?php endif ?>
                             </div>
                             <div class="mb-3">
-                                <label for="postCat" class="form-label">Category</label>
-                                <select id="postCat" class="form-select">
-                                    <option value="">Web Development</option>
-                                    <option value="" selected>Tech Gadgets</option>
-                                    <option value="">Business</option>
-                                    <option value="">Health & Wellness</option>
+                                <label 
+                                    for="postCat" 
+                                    class="form-label"
+                                >
+                                    Category
+                                </label>
+                                <select 
+                                    id="postCat" 
+                                    name="article[category_id]"
+                                    <?php if ($showError): ?>
+                                        <?php if (isset($errors['category_id'])): ?>
+                                            class="form-select is-invalid"
+                                        <?php else: ?>
+                                            class="form-select is-valid"
+                                        <?php endif ?>
+                                    <?php else: ?>
+                                        class="form-select"
+                                    <?php endif ?>
+                                >
+                                    <?php foreach ($categories as $cat): ?>
+                                        <option 
+                                            value="<?= $cat->id ?>"
+                                            <?php if ($cat->id == $article->category_id): ?> selected<?php endif ?>
+                                        >
+                                            <?= $cat->title ?>
+                                        </option>
+                                    <?php endforeach ?>
                                 </select>
+                                <?php if ($showError && isset($errors['category_id'])): ?>
+                                    <div class="invalid-feedback"><?= $errors['category_id'] ?></div>
+                                <?php endif ?>
                             </div>
-                            <div class="mb-3">
-                                <label for="formFile" class="form-label">Default file input example</label>
+                            <!-- <div class="mb-3">
+                                <label for="formFile" class="form-label">Picture</label>
                                 <input class="form-control" type="file" id="formFile">
                             </div>
                             <div class="mb-3">
@@ -81,14 +120,31 @@
                                     id="articleExcerpt" 
                                     rows="3"
                                 ><?= $article->excerpt ?></textarea>
-                            </div>
+                            </div> -->
                             <div class="mb-3">
-                                <label for="articlePost" class="form-label">Post</label>
+                                <label 
+                                    for="articlePost" 
+                                    class="form-label"
+                                >
+                                    Post
+                                </label>
                                 <textarea 
-                                    class="form-control" 
+                                    <?php if ($showError): ?>
+                                        <?php if (isset($errors['post'])): ?>
+                                            class="form-control is-invalid"
+                                        <?php else: ?>
+                                            class="form-control is-valid"
+                                        <?php endif ?>
+                                    <?php else: ?>
+                                        class="form-control"
+                                    <?php endif ?>
                                     id="articlePost" 
                                     rows="3"
+                                    name="article[post]"
                                 ><?= $article->post ?></textarea>
+                                <?php if ($showError && isset($errors['post'])): ?>
+                                    <div class="invalid-feedback"><?= $errors['post'] ?></div>
+                                <?php endif ?>
                             </div>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
