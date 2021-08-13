@@ -36,11 +36,6 @@ class User extends Model
         return ucfirst($this->username);
     }
 
-    public static function getTableName(): string
-    {
-        return 'users';
-    }
-
     public static function attempt(string $email, string $password): User
     {
         $user = static::findOne('email', $email);

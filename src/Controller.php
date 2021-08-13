@@ -6,15 +6,20 @@ use Home\CmsMini\Auth;
 
 abstract class Controller
 {
-    protected string $layout = 'layouts/base';
+    protected string $layout;
+
+    protected string $template;
 
     protected array $metadata = [];
 
-    public function __construct()
+    public function __construct(array $route)
     {
         if (!$this->access()) {
             $this->accessDeny();
         }
+
+        $this->layout = '/layouts/' . App::$config->default->layout; 
+        $this->template = '/' . $route[0] . '/' . $route[1];
 
         $this->setTitle(); 
         $this->setBrand(); 
@@ -24,12 +29,12 @@ abstract class Controller
 
     protected function setTitle()
     {
-        $this->title = Config::instance()->config['app'];
+        $this->title = App::$config->app;
     }
 
     protected function setBrand()
     {
-        $this->brand = Config::instance()->config['app'];
+        $this->brand = App::$config->app;
     }
 
     protected function setKeywords()
@@ -71,13 +76,13 @@ abstract class Controller
         return isset($this->metadata[$name]);
     }
 
-    protected function render(string $template, array $data = [])
+    protected function render(array $data = [])
     {
-        $content = $this->renderContent($template, $data);
+        $content = $this->renderContent($this->template, $data);
 
         extract($this->metadata);
         ob_start();
-        include ROOT . '/resources/views/' . $this->layout . '.php';
+        include ROOT . '/resources/views' . $this->layout . '.php';
         echo ob_get_clean();
         exit;
     }
@@ -86,7 +91,7 @@ abstract class Controller
     {
         extract($data);
 
-        $filename = ROOT . '/resources/views/' . $template . '.php';
+        $filename = ROOT . '/resources/views' . $template . '.php';
         if (!file_exists($filename)) {
             return false;
         }

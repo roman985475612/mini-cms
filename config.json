@@ -7,7 +7,9 @@
         "pass": "123456"
     },
     "default": {
-        "controller": "HomeController",
-        "action": "actionIndex"
-    }
+        "controller": "Home",
+        "action": "index",
+        "layout": "base"
+    },
+    "debug": false
 }

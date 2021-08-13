@@ -6,33 +6,23 @@ use Home\CmsMini\Model;
 
 class Article extends Model
 {
-    protected string $title;
+    public string $title;
 
     protected ?string $excerpt;
 
-    protected string $post;
+    public string $post;
 
     protected ?string $img;
     
-    protected int $category_id;
+    public int $category_id;
 
-    protected int $user_id;
-
-    protected static function getTableName()
-    {
-        return 'articles';
-    }
+    public int $user_id;
 
     public function __get($name)
     {
         switch ($name) {
-            case 'id': return $this->id;
-            case 'title': return $this->title;
             case 'excerpt': return $this->getExcerpt();
-            case 'post': return $this->post;
-            case 'category_id': return $this->category_id;
             case 'category': return Category::get($this->category_id);
-            case 'user_id': return $this->user_id;
             case 'img': return $this->getImage();
             case 'created_at': return $this->date($this->created_at);
             case 'updated_at': return $this->date($this->updated_at);

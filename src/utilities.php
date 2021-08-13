@@ -14,3 +14,13 @@ function dd(mixed $data, bool $exit = true): void
     
     if ($exit) { exit; }
 }
+
+function upperCamelCase(string $name): string
+{
+    return str_replace(' ', '', ucwords(str_replace('-', ' ', $name)));
+}
+
+function lowerCamelCase(string $name): string
+{
+    return lcfirst(upperCamelCase($name));
+}

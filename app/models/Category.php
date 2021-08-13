@@ -10,11 +10,6 @@ class Category extends Model
 
     protected array $articles;
 
-    protected static function getTableName()
-    {
-        return 'categories';
-    }
-
     public function __get($name)
     {
         switch ($name) {

@@ -2,8 +2,6 @@
 
 define("ROOT", dirname(__DIR__));
 
-session_start();
-
 require ROOT . '/vendor/autoload.php';
 
-(new \Home\CmsMini\Router);
+new \Home\CmsMini\App;

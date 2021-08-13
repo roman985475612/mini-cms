@@ -2,45 +2,62 @@
 
 namespace Home\CmsMini;
 
+use Home\CmsMini\Exception\Http404Exception;
+
 abstract class Model
 {
-    protected int $id;
+    public int $id;
 
-    protected string $created_at;
+    public string $created_at;
 
-    protected string $updated_at;
+    public string $updated_at;
 
-    public static function count()
+    protected static function getTableName()
     {
-        $query = Db::query(
-            QueryBuilder::select(['count(*) AS count'])
-                ->from(static::getTableName())
-                ->sql()
-        );
-        return $query->execute()->fetch()['count'];
+        $ref = new \ReflectionClass(static::class);
+        return strtolower($ref->getShortName());
     }
 
-    public static function all()
+    public static function __callStatic($name, $arguments)
     {
-        $query = Db::query(
-            QueryBuilder::select()
-                ->from(static::getTableName())
-                ->order('updated_at')
-                ->sql()
-        );
-        return $query->execute()->list(static::class);
-    }
+        switch ($name) {
+            case 'count':
+                $query = Db::query(
+                    QueryBuilder::select(['count(*) AS count'])
+                        ->from(static::getTableName())
+                        ->sql()
+                );
+                return $query->execute()->fetch()['count'];
+        
+            case 'all':
+                $query = Db::query(
+                    QueryBuilder::select()
+                        ->from(static::getTableName())
+                        ->order('updated_at')
+                        ->sql()
+                );
+                return $query->execute()->list(static::class);
+        
+            case 'get':
+                $query = Db::query(
+                    QueryBuilder::select()
+                        ->from(static::getTableName())
+                        ->where('id')
+                        ->sql()
+                );
+                $query->setParam('id', $arguments[0]);
+                return $query->execute()->single(static::class);
 
-    public static function get(int $id)
-    {
-        $query = Db::query(
-            QueryBuilder::select()
-                ->from(static::getTableName())
-                ->where('id')
-                ->sql()
-        );
-        $query->setParam('id', $id);
-        return $query->execute()->single(static::class);
+            case 'find':
+                $query = Db::query(
+                    QueryBuilder::select()
+                        ->from(static::getTableName())
+                        ->where($arguments[0])
+                        ->sql()
+                );
+                $query->setParam($arguments[0], $arguments[1]);
+                return $query->execute();
+        }
     }
 
     public static function getOr404(int $id)
@@ -48,22 +65,10 @@ abstract class Model
         $model = static::get($id);
 
         if (! $model instanceof Model) {
-            throw new \Exception('Page not found');
+            throw new Http404Exception('Page not found');
         }
 
         return $model;
-    }
-
-    protected static function find(string $field, string $value)
-    {
-        $query = Db::query(
-            QueryBuilder::select()
-                ->from(static::getTableName())
-                ->where($field)
-                ->sql()
-        );
-        $query->setParam($field, $value);
-        return $query->execute();
     }
 
     public static function findOne(string $field, string $value)

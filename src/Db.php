@@ -22,13 +22,11 @@ class Db
 
     protected function __construct()
     {
-        $config = Config::instance()->config['db'];
-
         try {
             $this->dbh = new \PDO(
-                'mysql:host=' . $config['host'] . ';dbname=' . $config['name'],
-                $config['user'],
-                $config['pass']
+                'mysql:host=' . App::$config->db->host . ';dbname=' . App::$config->db->name,
+                App::$config->db->user,
+                App::$config->db->pass
             );    
         } catch (PDOExecption $e) {
             echo $e->getMessage();
@@ -46,7 +44,7 @@ class Db
         return $db;
     }
 
-    public function setParam($name, $value)
+    public function setParam(string $name, mixed $value): void
     {
         switch ($value) {
             case is_bool($value): $type = \PDO::PARAM_BOOL; break;
