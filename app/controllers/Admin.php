@@ -9,9 +9,9 @@ use Home\CmsMini\Auth;
 use Home\CmsMini\Controller;
 use Home\CmsMini\Flash;
 
-class AdminController extends Controller
+class Admin extends Controller
 {
-    protected string $layout = 'layouts/secondary';
+    protected string $layout = 'secondary';
 
     protected function access(): bool
     {
@@ -23,13 +23,7 @@ class AdminController extends Controller
         return $this->redirect(Auth::LOGIN_URL);
     }
 
-    protected function setTitle()
-    {
-        parent::setTitle();
-        $this->title = 'Admin' . ' | ' . $this->title;
-    }
-
-    public function actionIndex()
+    public function index()
     {
         $counts['article'] = Article::count();
         $counts['category'] = Category::count();
@@ -41,7 +35,7 @@ class AdminController extends Controller
         return $this->render('admin/index', compact('articles', 'counts'));
     }
 
-    public function actionLogout()
+    public function logout()
     {
         Auth::logout();
     }

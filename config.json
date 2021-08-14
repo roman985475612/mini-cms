@@ -11,5 +11,5 @@
         "action": "index",
         "layout": "base"
     },
-    "debug": false
+    "debug": true
 }

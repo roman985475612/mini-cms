@@ -1,4 +1,6 @@
-<section class="blog">
+<?php $this->renderPart('searchBar') ?>
+
+<section class="blog mt-3">
     <div class="container">
         <div class="row row-cols-1 row-cols-md-3 g-4">
         <?php foreach ($articles as $article): ?>

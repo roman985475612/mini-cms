@@ -16,13 +16,22 @@ class App
 
         try {
             new Router;
+        
         } catch (Http404Exception $e) {
             if (self::$config->debug) {
                 dd($e);
             }
             http_response_code($e->getCode());
-            include ROOT . '/app/views/errors/' . $e->getCode() . '.php';
-            exit;
-        }
+            $view = new View(template: '/errors/' . $e->getCode());
+            $view->render();
+        
+        } catch (\Exception $e) {
+            if (self::$config->debug) {
+                dd($e);
+            }            
+            http_response_code(500);
+            $view = new View(template: '/errors/500');
+            $view->render();
+         }
     }
 }

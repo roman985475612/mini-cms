@@ -6,11 +6,7 @@ use Home\CmsMini\Auth;
 
 abstract class Controller
 {
-    protected string $layout;
-
-    protected string $template;
-
-    protected array $metadata = [];
+    public View $view;
 
     public function __construct(array $route)
     {
@@ -18,33 +14,44 @@ abstract class Controller
             $this->accessDeny();
         }
 
-        $this->layout = '/layouts/' . App::$config->default->layout; 
-        $this->template = '/' . $route[0] . '/' . $route[1];
-
-        $this->setTitle(); 
-        $this->setBrand(); 
-        $this->setKeywords(); 
-        $this->setDescription(); 
+        $this->view = new View($route[0] . '/' . $route[1]);
+        $this->view->layout = $this->layout;
     }
 
-    protected function setTitle()
+    public function __call($name, $arguments)
     {
-        $this->title = App::$config->app;
+        switch ($name) {
+            case 'render':
+                $this->view->render($arguments[0]);
+                break;
+
+            case 'renderPart':
+                $this->view->renderPart($arguments[0]);
+                break;
+        }
     }
 
-    protected function setBrand()
+    public function __set(string $name, mixed $value): void
     {
-        $this->brand = App::$config->app;
+        switch ($name) {
+            case 'title':
+                $this->view->title = $value . ' | ' . $this->title;
+                break;
+
+            default:
+                $this->view->$name = $value;
+        }
     }
 
-    protected function setKeywords()
+    public function __get(string $name): mixed
     {
-        $this->keywords = '';
-    }
+        switch ($name) {
+            case 'title':
+                return $this->view->title;
 
-    protected function setDescription()
-    {
-        $this->description = '';
+            default:
+                return $this->view->$name;
+        }
     }
 
     protected function access(): bool
@@ -57,47 +64,9 @@ abstract class Controller
         return throw new \Exception('Access deny');
     }
 
-    public function __set($name, $value)
+    public function isPost()
     {
-        $this->metadata[$name] = $value;
-    }
-
-    public function __get($name)
-    {
-        switch ($name) {
-            case 'title': return ucwords($this->metadata[$name]);
-            default:
-                return $this->metadata[$name] ?? null;
-        }
-    }
-
-    public function __isset($name)
-    {
-        return isset($this->metadata[$name]);
-    }
-
-    protected function render(array $data = [])
-    {
-        $content = $this->renderContent($this->template, $data);
-
-        extract($this->metadata);
-        ob_start();
-        include ROOT . '/resources/views' . $this->layout . '.php';
-        echo ob_get_clean();
-        exit;
-    }
-
-    protected function renderContent(string $template, array $data): string
-    {
-        extract($data);
-
-        $filename = ROOT . '/resources/views' . $template . '.php';
-        if (!file_exists($filename)) {
-            return false;
-        }
-        ob_start();
-        include $filename;
-        return ob_get_clean();
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
     
     public function redirect(string $url = '')
@@ -108,19 +77,5 @@ abstract class Controller
 
         header('Location: /' . $url);
         exit;
-    }
-
-    public function isPost()
-    {
-        return $_SERVER['REQUEST_METHOD'] === 'POST';
-    }
-
-    public function getTemplatePart(string $partName)
-    {
-        $filepath = ROOT . '/resources/views/layouts/inc/' . $partName . '.php';
-        if (file_exists($filepath)) {
-            return include $filepath;
-        } 
-        return 'Err';
     }
 }

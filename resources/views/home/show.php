@@ -1,4 +1,4 @@
-<section class="blog">
+<section class="blog mt-3">
     <div class="container">
         <div class="row">
             <div class="col-md-8 mx-auto">
