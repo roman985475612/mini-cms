@@ -1,0 +1,27 @@
+.icon-boxes {
+    @include section();
+
+    &__list {
+        margin-bottom: $spacer * 1.5;
+    }
+
+    &__inner {
+        padding: $spacer * 1.5;
+        background: $red;
+        color: $white;
+        text-align: center;
+
+        &--even {
+            background: $dark;
+        }
+    }
+
+    &__title {
+        text-transform: capitalize;
+    }
+
+    &__icon {
+        margin-bottom: $spacer * .5;
+        font-size: 3em;
+    }
+}

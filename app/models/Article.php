@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use Home\CmsMini\Model;
+use Home\CmsMini\Storage;
 
 class Article extends Model
 {
@@ -46,11 +47,8 @@ class Article extends Model
 
     public function getImage()
     {
-        $filepath = ROOT . '/public/assets/front/img/' . $this->img;
-        if (!is_null($this->img) && file_exists($filepath)) {
-            return '/assets/front/img/' . $this->img;
-        }
-        return 'https://source.unsplash.com/random';
+        [$ok, $filepath] = Storage::get($this->img);
+        return $ok ? $filepath : 'https://source.unsplash.com/random';
     }
 
     public function getExcerpt()

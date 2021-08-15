@@ -1,0 +1,15 @@
+.newsletter {
+    @include section();
+    background-color: $dark;
+    color: $white;
+    text-align: center;
+
+    &__title {
+        text-transform: capitalize;
+    }
+    
+    &__form {
+        justify-content: center;
+        align-items: center;
+    }
+}

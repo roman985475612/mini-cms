@@ -1,0 +1,17 @@
+.gallery {
+    @include section();
+
+    &__title {
+        text-align: center;
+        text-transform: capitalize;
+    }
+
+    &__text {
+        text-align: center;
+        text-transform: capitalize;
+    }
+
+    &__item {
+        margin-bottom: 1.5em;
+    }
+}

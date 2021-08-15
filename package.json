@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "cross-env NODE_ENV=dev gulp",
     "gulp:admin": "cross-env NODE_ENV=dev gulp default:admin",
     "build:admin": "cross-env NODE_ENV=prod gulp build:admin"
   },

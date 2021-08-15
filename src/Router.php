@@ -58,22 +58,22 @@ class Router
     
                 $di = [$paramName => $model];
             }
-       }
+        }
 
         $actionRef->invokeArgs(new $this->controllerName($this->route), $di);
     }
 
     protected function matchRoute()
     {
-        $this->controllerName = '\\App\\Controller\\' . upperCamelCase($this->route[0]);
-        $this->actionName = lowerCamelCase($this->route[1]);
+        $this->controllerName = '\\App\\Controller\\' . upperCamelCase($this->route['controller']);
+        $this->actionName     = lowerCamelCase($this->route['action']);
     }
 
     protected function initRoute()
     {
         $this->route = [
-            App::$config->default->controller,
-            App::$config->default->action
+            'controller' => strtolower(App::$config->default->controller),
+            'action'     => strtolower(App::$config->default->action)
         ];
     }
 
@@ -84,18 +84,24 @@ class Router
             $url = filter_var($_GET['URI'], FILTER_SANITIZE_URL);
             $url = trim($url, '/');
             $url = explode('/', $url);
-            
-            if (isset($url[0]) && !empty($url[0])) {
-                $this->route[0] = $url[0];
-            }
-            
-            if (isset($url[1]) && !empty($url[1])) {
-                $this->route[1] = $url[1];
-            }
 
-            if (isset($url[2]) && !empty($url[2])) {
-                $this->params['id'] = $url[2];
-            }    
+            if (count($url) > 1) {
+                if (isset($url[0]) && !empty($url[0])) {
+                    $this->route['controller'] = $url[0];
+                }
+                
+                if (isset($url[1]) && !empty($url[1])) {
+                    $this->route['action'] = $url[1];
+                }
+    
+                if (isset($url[2]) && !empty($url[2])) {
+                    $this->params['id'] = $url[2];
+                }   
+            } elseif (count($url) == 1) {
+                if (isset($url[0]) && !empty($url[0])) {
+                    $this->route['action'] = $url[0];
+                }
+            }
         }
     }
 }

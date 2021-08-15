@@ -16,7 +16,7 @@
         </div>
         <div class="row">
             <div class="col-md-8 mt-3 mx-auto">
-                <a href="/home" class="btn btn-secondary">Back</a>
+                <a href="/blog" class="btn btn-secondary">Back</a>
             </div>
         </div>
     </div>

@@ -1,0 +1,16 @@
+.home-icons {
+    @include section();
+
+    &__item {
+        margin-bottom: $spacer * 1.5;
+        text-align: center;
+    }
+
+    &__icon {
+        font-size: 3em;
+    }
+
+    &__title {
+        text-transform: capitalize;
+    }
+}

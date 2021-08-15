@@ -1,0 +1,45 @@
+.faq {
+    @include section();
+    background: $dark;
+    color: $white;
+
+    &__title {
+        text-align: center;
+        text-transform: capitalize;
+    }
+}
+
+$radius: 4px;
+
+.accord {
+    border: 1px solid $gray-300;
+    border-radius: $radius;    
+
+    &__item {
+        border: 1px solid $gray-300;
+
+        &--open {
+            .accord__header {
+                border-bottom: 1px solid $gray-300;
+            }
+
+            .accord__body {
+                display: block;
+            }
+        }
+    }
+
+    &__header {
+        padding: $spacer;
+        font-size: 1.5rem;
+        text-align: center;
+        text-transform: capitalize;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    &__body {
+        display: none;
+        padding: $spacer;
+    }
+}

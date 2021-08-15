@@ -17,39 +17,11 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarMain">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.html">about us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="services.html">services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="blog.html">blog</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.html">contact</a>
-                    </li>
-                </ul>
+                <?php $this->renderPart('menu') ?>
             </div>
         </div>
     </nav>
     <!-- /.navbar -->
-
-    <header class="page-header">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 page-header__container">
-                    <h1 class="page-header__title"><?= $this->header ?></h1>
-                    <p class="page-header__text"><?= $this->description ?></p>
-                </div>
-            </div>
-        </div>
-    </header>
-    <!-- /.page-header -->
 
     <?= $content ?>
 
@@ -66,5 +38,22 @@
 
     <script src="/assets/front/js/bootstrap.bundle.min.js"></script>
     <script src="/assets/front/js/main.min.js"></script>
+    <script>
+        if (document.querySelector('.slider__item')) {
+            const slider = new Slider('.slider__item', 'slider__item--visible')
+        }
+        if (document.querySelector('.newsletter__form')) {
+            const form1 = new Form('.newsletter__form')
+        }
+        if (document.querySelector('.contact__form')) {
+            const form2 = new Form('.contact__form')
+        }
+        if (document.querySelector('.accord1')) {
+            const accord1 = new Accord('.accord1')
+        }
+        if (document.querySelector('.accord2')) {
+            const accord2 = new Accord('.accord2')
+        }
+    </script>
 </body>
 </html>

@@ -14,15 +14,18 @@ abstract class Controller
             $this->accessDeny();
         }
 
-        $this->view = new View($route[0] . '/' . $route[1]);
+        $this->view = new View($route['controller'] . '/' . $route['action']);
         $this->view->layout = $this->layout;
+        $this->view->controller = $route['controller'];
+        $this->view->action = $route['action'];
     }
 
     public function __call($name, $arguments)
     {
+        $data = $arguments[0] ?? [];
         switch ($name) {
             case 'render':
-                $this->view->render($arguments[0]);
+                $this->view->render($data);
                 break;
 
             case 'renderPart':

@@ -1,0 +1,23 @@
+.home-heading {
+    @include section();
+    position: relative;
+    min-height: 200px;
+    background: url('../img/lights.webp');
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    text-align: center;
+    color: $white;
+
+    &__title {
+        padding-top: $spacer * 3;
+        text-transform: capitalize;
+    }
+
+    &__text {
+        display: block;
+
+        @media (max-width: 768px) {
+            display: none;
+        }
+    }
+}

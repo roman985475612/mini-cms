@@ -12,14 +12,45 @@ class Home extends Controller
 
     public function index()
     {
+        return $this->render();
+    }
+
+    public function about()
+    {
+        $this->title = 'about us';
+        $this->header = 'about us';
+        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
+        
+        return $this->render();
+    }
+
+    public function services()
+    {
+        $this->title = 'our services';
+        $this->header = 'our services';
+        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
+        
+        return $this->render();
+    }
+
+    public function blog()
+    {
         $articles = Article::all();
 
-        // $this->layout = 'secondary';
         $this->title = 'read our blog';
         $this->header = 'read our blog';
         $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
         
         return $this->render(compact('articles'));
+   }
+
+    public function contact()
+    {
+        $this->title = 'contact us';
+        $this->header = 'contact us';
+        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
+
+        return $this->render();
     }
 
     public function show(Article $article)

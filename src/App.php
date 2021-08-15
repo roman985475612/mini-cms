@@ -12,7 +12,7 @@ class App
     {
         session_start();
         
-        self::$config = json_decode(file_get_contents(ROOT . '/config.json'));
+        self::$config = json_decode(file_get_contents(CONFIG . '/config.json'));
 
         try {
             new Router;

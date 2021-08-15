@@ -1,0 +1,36 @@
+// External
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+
+// Common
+@import 'params';
+@import 'mixins';
+@import 'core';
+
+// Index page
+@import 'blocks/navbarTop';
+@import 'blocks/sectionShowcase';
+@import 'blocks/homeIcons';
+@import 'blocks/home-heading';
+@import 'blocks/info';
+@import 'blocks/video-player';
+@import 'blocks/gallery';
+@import 'blocks/newsletter';
+@import 'blocks/main-footer';
+@import 'blocks/form';
+
+// About page
+@import 'blocks/page-header';
+@import 'blocks/about';
+@import 'blocks/icon-boxes';
+@import 'blocks/testimonials';
+
+// Services page
+@import 'blocks/services';
+@import 'blocks/faq';
+
+// Blog page
+@import 'blocks/blog';
+
+// Contact page
+@import 'blocks/contact';
+@import 'blocks/staff';

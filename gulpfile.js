@@ -88,16 +88,16 @@ task('js:admin', () => {
         .pipe(dest(`${DIST_PATH_ADMIN}/js`))
 })
 
-task('img:admin', () => {
-    return src(`${SRC_PATH_ADMIN}/img/**/*.{png,jpg,jpeg}`)
+task('img:min', () => {
+    return src('resources/img/**/*.{png,jpg,jpeg}')
         .pipe(imagemin())
-        .pipe(dest(`${DIST_PATH_ADMIN}/img`))
+        .pipe(dest('public/assets/img'))
 })
 
-task('img:webp:admin', () => {
-    return src(`${SRC_PATH_ADMIN}/img/**/*.{png,jpg,jpeg}`)
+task('img:webp', () => {
+    return src('resources/img/**/*.{png,jpg,jpeg}')
         .pipe(webp())
-        .pipe(dest(`${DIST_PATH_ADMIN}/img`))
+        .pipe(dest('public/assets/img'))
 })
 
 task('img:svg:admin', () => {
@@ -126,19 +126,6 @@ task('watch:admin', () => {
     watch(`./${SRC_PATH_ADMIN}/js/**/*.js`, series('js:admin'))
 })
 
-task('static:admin',
-    series(
-        'clean:all:admin',
-        parallel(
-            'img:admin', 
-            'img:webp:admin',
-            'img:svg:admin', 
-            'copy:fonts:admin', 
-            'copy:icons:admin' 
-        )
-    )
-)
-
 task('default:admin', 
     series(
         'clean:admin', 
@@ -157,8 +144,8 @@ task('build:admin',
         parallel(
             'scss:admin', 
             'js:admin', 
-            'img:admin', 
-            'img:webp:admin', 
+            'img:min', 
+            'img:webp',
             'copy:js:admin',
             'copy:fonts:admin', 
             'copy:icons:admin' 

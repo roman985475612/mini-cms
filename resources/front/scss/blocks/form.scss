@@ -1,0 +1,11 @@
+.form {
+
+    &__control,
+    &__control:focus
+    &__submit,
+    &__submit:focus {
+        box-shadow: none !important;
+        outline: 0 !important;
+        outline-offset: 0 !important;
+    }
+}
