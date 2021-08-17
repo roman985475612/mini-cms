@@ -16,8 +16,8 @@ abstract class Controller
 
         $this->view = new View($route['controller'] . '/' . $route['action']);
         $this->view->layout = $this->layout;
-        $this->view->controller = $route['controller'];
-        $this->view->action = $route['action'];
+        $this->view->controller = strtolower($route['controller']);
+        $this->view->action = strtolower($route['action']);
     }
 
     public function __call($name, $arguments)

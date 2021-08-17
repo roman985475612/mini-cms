@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/bootstrap/init.php';
 
 use Home\CmsMini\Db;
 
 $argsList = getArgs($argc, $argv);
 
-$pattern = __DIR__ . '/migrations/' . $argsList[0] . '_*.sql';
+$pattern = ROOT . '/migrations/' . $argsList[0] . '_*.sql';
 
 $filename = glob($pattern)[0];
 

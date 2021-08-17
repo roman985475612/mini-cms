@@ -15,8 +15,7 @@ class App
         self::$config = json_decode(file_get_contents(CONFIG . '/config.json'));
 
         try {
-            new Router;
-        
+            Router::init();
         } catch (Http404Exception $e) {
             if (self::$config->debug) {
                 dd($e);
@@ -32,6 +31,6 @@ class App
             http_response_code(500);
             $view = new View(template: '/errors/500');
             $view->render();
-         }
+        }
     }
 }
