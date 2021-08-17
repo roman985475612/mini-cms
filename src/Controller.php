@@ -22,14 +22,25 @@ abstract class Controller
 
     public function __call($name, $arguments)
     {
-        $data = $arguments[0] ?? [];
+        switch (count($arguments)) {
+            case 0:
+                break;
+
+            case 1:
+                $data = $arguments[0] ?? [];
+                break;
+
+            case 2:
+                break;
+        }
+        
         switch ($name) {
             case 'render':
                 $this->view->render($data);
                 break;
 
             case 'renderPart':
-                $this->view->renderPart($arguments[0]);
+                $this->view->renderPart($data);
                 break;
         }
     }

@@ -25,7 +25,7 @@ class Router
     public static function get(
         string $route, 
         string $controller, 
-        string $action,
+        string $action = 'index',
     ): void
     {
         self::add($route, $controller, $action, ['GET']);
@@ -34,7 +34,7 @@ class Router
     public static function post(
         string $route, 
         string $controller, 
-        string $action,
+        string $action = 'index',
     ): void
     {
         self::add(
@@ -62,8 +62,8 @@ class Router
     private static function add(
         string $route, 
         string $controller, 
-        string $action,
-        array $method
+        string $action = 'index',
+        array $method = ['GET', 'POST']
     ): void
     {
         $route = str_replace('<', '(?P<', $route);
