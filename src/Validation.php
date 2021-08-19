@@ -21,7 +21,7 @@ class Validation
         $this->sourceData = $sourceData;
     }
 
-    public function add(string $key, ValidatorInterface $validator)
+    public function rule(string $key, ValidatorInterface $validator)
     {
         if (!isset($this->constraint[$key])) {
             $this->constraint[$key] = [];
@@ -30,8 +30,9 @@ class Validation
         return $this;
     }
 
-    public function validate()
+    public function validate(): bool
     {
+        $validateSuccess = true;
         foreach ($this->constraint as $key => $validators) {
             foreach ($validators as $validator) {
                 if ($validator->validate($this->sourceData[$key])) {
@@ -39,16 +40,10 @@ class Validation
                 } else {
                     $this->hasErrors = true;
                     $this->errors[$key] = $validator->errorMessage();
-                    $isValid = false;
+                    $validateSuccess = false;
                 }    
             }
         }
+        return $validateSuccess;
     }
-
-    // protected function sanitizeData()
-    // {
-    //     foreach ($this->sourceData as $datum) {
-    //         $datum = trim(htmlspecialchars((stripslashes($datum)), ENT_QUOTES));
-    //     }
-    // }
 }

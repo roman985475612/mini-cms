@@ -6,7 +6,7 @@ use App\Model\User;
 
 class Auth
 {
-    const LOGIN_URL = 'home/login';
+    const LOGIN_URL = '/login';
 
     public static function checkUser()
     {

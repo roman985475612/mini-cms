@@ -6,15 +6,12 @@ use Home\CmsMini\Auth;
 
 abstract class Controller
 {
-    public View $view;
-
-    public function __construct(array $route)
+    public function __construct(protected View $view)
     {
         if (!$this->access()) {
             $this->accessDeny();
         }
 
-        $this->view = new View($route['controller'] . '/' . $route['action']);
         $this->view->layout = $this->layout;
         $this->view->controller = strtolower($route['controller']);
         $this->view->action = strtolower($route['action']);

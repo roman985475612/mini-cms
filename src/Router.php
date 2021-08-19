@@ -146,6 +146,7 @@ class Router
         }
         
         $route = ['controller' => $controllerRef->getShortName(), 'action' => self::$action];
-        $actionRef->invokeArgs(new self::$controller($route), self::$params);
+        $view = new View($route['controller'] . '/' . $route['action']);
+        $actionRef->invokeArgs(new self::$controller($view), self::$params);
     }
 }
