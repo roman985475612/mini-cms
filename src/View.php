@@ -6,25 +6,21 @@ class View
 {
     protected array $meta = [];
 
-    public function __construct(
-        string $template,
-        ?string $layout = null,
-    ) {
-        $this->template = $template;
+    public function __construct(string | null $layout = null)
+    {
         $this->layout ??= App::$config->default->layout;
         $this->title = App::$config->app;
         $this->brand = App::$config->app;
     }
 
-    public function __call($name, $arguments)
+    public function getLayout(): string
     {
-        switch ($name) {
-            case 'getLayout':
-                return VIEW . '/layouts/' . $this->meta['layout'] . '.php';
+        return VIEW . '/layouts/' . $this->meta['layout'] . '.php';
+    }
 
-            case 'getTemplate':
-                return VIEW . '/' . $this->meta['template'] . '.php';
-        }
+    public function getTemplate(string $template): string
+    {
+        return VIEW . '/' . $template . '.php';
     }
 
     public function __set(string $name, mixed $value): void
@@ -42,9 +38,9 @@ class View
         return isset($this->meta[$name]);
     }
     
-    public function render(array $data = []): void
+    public function render(string $template, array $data = []): void
     {
-        $this->content = $this->renderFile($this->getTemplate(), $data);
+        $this->content = $this->renderFile($this->getTemplate($template), $data);
 
         echo $this->renderFile($this->getLayout(), $this->meta);
     }

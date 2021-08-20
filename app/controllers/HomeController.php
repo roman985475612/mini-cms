@@ -6,13 +6,11 @@ use App\Model\Article;
 use App\Model\Category;
 use Home\CmsMini\Controller;
 
-class Home extends Controller
+class HomeController extends Controller
 {
-    // public string $layout = 'secondary';
-
     public function index()
     {
-        return $this->render();
+        return $this->render('home/index');
     }
 
     public function about()
@@ -21,7 +19,7 @@ class Home extends Controller
         $this->header = 'about us';
         $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
         
-        return $this->render();
+        return $this->render('home/about');
     }
 
     public function services()
@@ -30,7 +28,7 @@ class Home extends Controller
         $this->header = 'our services';
         $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
         
-        return $this->render();
+        return $this->render('home/services');
     }
 
     public function blog()
@@ -42,7 +40,7 @@ class Home extends Controller
         $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
         
         return $this->render(compact('articles'));
-   }
+    }
 
     public function contact()
     {
@@ -72,14 +70,5 @@ class Home extends Controller
         $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
         
         return $this->render(compact('articles'));
-    }
-
-    public function login()
-    {
-        $this->layout = 'simple';
-        $this->title = 'Log In';
-        $this->header = 'login';
-
-        return $this->render(['showError' => false]);
     }
 }

@@ -93,12 +93,13 @@ class Router
     private static function matchRoute(): bool
     {
         $method = self::getMethod();
+        $path = self::getPath();
         foreach (self::$routes as $pattern => $route) {
             if (!in_array($method, $route['method'])) {
                 continue;
             }
 
-            if (preg_match($pattern, self::getPath(), $matches)) {
+            if (preg_match($pattern, $path, $matches)) {
                 self::$controller = $route['controller'];
                 self::$action = $route['action'];
 

@@ -8,6 +8,7 @@ use Home\CmsMini\Controller;
 use Home\CmsMini\Flash;
 use Home\CmsMini\Validation;
 use Home\CmsMini\Validator\{Alphanumeric, NotEmpty, Email, Equal, Unique};
+use Home\CmsMini\Request;
 
 class UserController extends Controller
 {
@@ -15,9 +16,7 @@ class UserController extends Controller
 
     public function store()
     {
-        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-        $v = new Validation($_POST['user']);
+        $v = new Validation(Request::post()['user']);
         $v->rule('name', new NotEmpty);
         $v->rule('name', new Alphanumeric);
         $v->rule('email', new NotEmpty);
@@ -27,11 +26,11 @@ class UserController extends Controller
         $v->rule('password', new Alphanumeric);
         $v->rule('password_confirm', new NotEmpty);
         $v->rule('password_confirm', new Alphanumeric);
-        $v->rule('password', new Equal('Password confirm', $_POST['user']['password_confirm']));
+        $v->rule('password', new Equal('Password confirm', Request::post()['user']['password_confirm']));
 
-        if ($v->validate()) {
+        if (!$v->validate()) {
             Flash::addError('Registratioin failed');
-            $this->redirect('admin');
+            Request::redirect();
         };
 
         $user = new User;
@@ -42,26 +41,30 @@ class UserController extends Controller
 
         Flash::addSuccess('Registratioin success!');
 
-        return $this->redirect('admin');
+        return Request::redirect();
+    }
+
+    public function loginForm()
+    {
+        $this->layout = 'simple';
+        $this->title = 'Log In';
+        $this->header = 'login';
+
+        return $this->render('admin/login', ['showError' => false]);
     }
 
     public function login()
     {
-        if (!$this->isPost()) {
-            $this->redirect('admin');
-        }
         $showError = true;
 
-        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-        $v = new Validation($_POST['user']);
+        $v = new Validation(Request::post()['user']);
         $v->rule('email', new NotEmpty);
         $v->rule('email', new Email);
         $v->rule('password', new NotEmpty);
         $v->rule('password', new Alphanumeric);
 
-        if ($v->validate()) {
-            $this->render('admin/user/login', [
+        if (!$v->validate()) {
+            $this->render('admin/login', [
                 'source' => $v->sourceData,
                 'errors' => $v->errors,
                 'showError' => $showError,
@@ -74,7 +77,7 @@ class UserController extends Controller
                 $v->cleanedData['password']
             );    
         } catch (\Throwable $e) {
-            $this->render('admin/user/login', [
+            $this->render('admin/login', [
                 'source' => $v->sourceData,
                 'errors' => [
                     'email' => 'Email and password does not matches!', 
@@ -85,13 +88,13 @@ class UserController extends Controller
         }
 
         Auth::login($user);
-
         Flash::addSuccess('Welcome, ' . ucfirst($user->username) . '!');
-        $this->redirect('admin');
+        Request::redirect('admin');
     }
 
     public function logout()
     {
-
+        Auth::logout();
+        Request::redirect();
     }
 }

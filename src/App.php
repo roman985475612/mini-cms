@@ -18,19 +18,17 @@ class App
             Router::init();
         } catch (Http404Exception $e) {
             if (self::$config->debug) {
-                dd($e);
+                // dd($e);
             }
             http_response_code($e->getCode());
-            $view = new View(template: '/errors/' . $e->getCode());
-            $view->render();
+            (new View)->render('/errors/' . $e->getCode());
         
         } catch (\Exception $e) {
             if (self::$config->debug) {
-                dd($e);
+                // dd($e);
             }            
             http_response_code(500);
-            $view = new View(template: '/errors/500');
-            $view->render();
+            (new View)->render('/errors/500');
         }
     }
 }
