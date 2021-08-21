@@ -22,7 +22,16 @@ $sql = ob_get_clean();
 
 echo $sql . "\n";
 
-$query = Db::query($sql);
+$config = json_decode(file_get_contents(CONFIG . '/config.json'));
+
+Db::instance(
+    $config->db->host,
+    $config->db->name,
+    $config->db->user,
+    $config->db->pass
+);
+
+$query = \Home\CmsMini\Db::query($sql);
 echo $query->execute()->rowCount();
 
 function getArgs($argc, $argv)

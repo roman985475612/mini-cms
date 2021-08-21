@@ -9,6 +9,7 @@
             "Home\\CmsMini\\": "src",
             "Home\\CmsMini\\Validator\\": "src/validators",
             "Home\\CmsMini\\Exception\\": "src/exceptions",
+            "Home\\CmsMini\\Form\\": "src/forms",
             "App\\Controller\\": "app/controllers",
             "App\\Model\\": "app/models"
         }

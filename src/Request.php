@@ -4,6 +4,8 @@ namespace Home\CmsMini;
 
 class Request
 {
+    public static array $old = [];
+
     public static function get() 
     {
 
@@ -11,12 +13,24 @@ class Request
 
     public static function post() 
     {
-        return filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $_SESSION['old'] = $post;
+        return $post;
     }
 
     public static function file() 
     {
 
+    }
+
+    public static function old(string $key)
+    {
+        return $_SESSION['old'][$key] ?? '';
+    }
+
+    public static function error(string $key)
+    {
+        return $_SESSION['error'][$key] ?? false;
     }
 
     public static function isPost() 

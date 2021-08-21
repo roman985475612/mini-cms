@@ -3,6 +3,7 @@
 namespace Home\CmsMini;
 
 use Home\CmsMini\Exception\Http404Exception;
+use Home\CmsMini\App;
 
 class Router
 {
@@ -60,16 +61,17 @@ class Router
     }
 
     private static function add(
-        string $route, 
+        string $pattern, 
         string $controller, 
         string $action = 'index',
         array $method = ['GET', 'POST']
     ): void
     {
-        $route = str_replace('<', '(?P<', $route);
-        $route = str_replace('>', '>\d+)', $route);
-        $route = "#^{$route}$#";
-        self::$routes[$route] = [
+        $pattern = str_replace('<', '(?P<', $pattern);
+        $pattern = str_replace('>', '>\d+)', $pattern);
+        $pattern = "#^{$pattern}$#";
+        self::$routes[] = [
+            'pattern'    => $pattern,
             'controller' => $controller,
             'action'     => $action,
             'method'     => $method
@@ -94,12 +96,12 @@ class Router
     {
         $method = self::getMethod();
         $path = self::getPath();
-        foreach (self::$routes as $pattern => $route) {
+        foreach (self::$routes as $route) {
             if (!in_array($method, $route['method'])) {
                 continue;
             }
 
-            if (preg_match($pattern, $path, $matches)) {
+            if (preg_match($route['pattern'], $path, $matches)) {
                 self::$controller = $route['controller'];
                 self::$action = $route['action'];
 
@@ -133,7 +135,7 @@ class Router
             throw new Http404Exception('ID not found!');
         }
 
-        $di = self::$params;
+        $params = self::$params;
         if (isset($paramsRef[0])) {
             $param = $paramsRef[0];
             $paramName = $param->getName();
@@ -142,12 +144,16 @@ class Router
                 $modelName = $param->getType()->getName();
                 $model = $modelName::getOr404(self::$params['id']);    
     
-                $di = [$paramName => $model];
+                $params = [$paramName => $model];
             }
         }
         
-        $route = ['controller' => $controllerRef->getShortName(), 'action' => self::$action];
-        $view = new View($route['controller'] . '/' . $route['action']);
-        $actionRef->invokeArgs(new self::$controller($view), self::$params);
+        App::$route = [
+            'controller' => $controllerRef->getShortName(), 
+            'action' => self::$action,
+            'url' => self::getPath()
+        ];
+        
+        $actionRef->invokeArgs(new self::$controller(new View), $params);
     }
 }

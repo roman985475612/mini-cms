@@ -49,9 +49,4 @@ class Category extends Model
     {
         return Article::findAll('category_id', $this->id);
     }
-
-    public function getPermalink()
-    {
-        return '/home/category/' . $this->id;
-    }
 }

@@ -6,7 +6,7 @@ use App\Model\User;
 use Home\CmsMini\Auth;
 use Home\CmsMini\Controller;
 use Home\CmsMini\Flash;
-use Home\CmsMini\Validation;
+use Home\CmsMini\Validator\Validation;
 use Home\CmsMini\Validator\{Alphanumeric, NotEmpty, Email, Equal, Unique};
 use Home\CmsMini\Request;
 
@@ -40,7 +40,6 @@ class UserController extends Controller
         $user->save();
 
         Flash::addSuccess('Registratioin success!');
-
         return Request::redirect();
     }
 

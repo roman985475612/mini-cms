@@ -18,7 +18,7 @@ class Auth
     public static function checkOrRedirect(string $allowPriv = '*', string $back = '')
     {
         if (!static::checkUser()) {
-            header('Location: /' . Auth::$redirectTo . '?back=' . $back);
+            header('Location: /' . Auth::LOGIN_URL . '?back=' . $back);
             exit;
         }
 
@@ -49,6 +49,16 @@ class Auth
     }
 
     public static function isLoggedIn()
+    {   
+        return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
+    }
+
+    public static function isGuest()
+    {   
+        return !isset($_SESSION['user_id']);
+    }
+
+    public static function isAdmin()
     {   
         return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
     }

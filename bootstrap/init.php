@@ -3,7 +3,7 @@
 define("ROOT"  , dirname(__DIR__));
 define("CONFIG", ROOT . '/config');
 define("WWW"   , ROOT . '/public');
-define("VIEW"  , ROOT . '/resources/views');
+define("VIEW"  , ROOT . '/app/Views');
 
 spl_autoload_register(function ($class) {
     $cls = explode('\\', $class);

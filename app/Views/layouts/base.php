@@ -22,7 +22,7 @@
         </div>
     </nav>
     <!-- /.navbar -->
-
+    
     <?= $content ?>
 
     <footer class="main-footer">
@@ -41,12 +41,6 @@
     <script>
         if (document.querySelector('.slider__item')) {
             const slider = new Slider('.slider__item', 'slider__item--visible')
-        }
-        if (document.querySelector('.newsletter__form')) {
-            const form1 = new Form('.newsletter__form')
-        }
-        if (document.querySelector('.contact__form')) {
-            const form2 = new Form('.contact__form')
         }
         if (document.querySelector('.accord1')) {
             const accord1 = new Accord('.accord1')

@@ -12,36 +12,49 @@ class Db
 
     protected $result;
 
-    public static function instance()
+    public static function instance(
+        string $host, 
+        string $name, 
+        string $user, 
+        string $pass, 
+    )
     {
         if (is_null(static::$instance)) {
-            static::$instance = new static;
+            static::$instance = new static($host, $name, $user, $pass);
         }
         return static::$instance;
     }
 
-    protected function __construct()
+    public function __construct(
+        string $host, 
+        string $name, 
+        string $user, 
+        string $pass, 
+    )
     {
         try {
             $this->dbh = new \PDO(
-                'mysql:host=' . App::$config->db->host . ';dbname=' . App::$config->db->name,
-                App::$config->db->user,
-                App::$config->db->pass
+                'mysql:host=' . $host . ';dbname=' . $name,
+                $user,
+                $pass
             );    
-        } catch (PDOExecption $e) {
+        } catch (\PDOException $e) {
             echo $e->getMessage();
         }
     }
 
-    protected function __clone() 
-    {
-    }
+    protected function __clone() {}
 
-    public static function query(string $query)
+    // public static function query(string $query)
+    // {
+    //     static::$instance->sth = static::$instance->dbh->prepare($query);
+    //     return static::$instance;
+    // }
+
+    public function query(string $query)
     {
-        $db = static::instance();
-        $db->sth = $db->dbh->prepare($query);
-        return $db;
+        $this->sth = $this->dbh->prepare($query);
+        return $this;
     }
 
     public function setParam(string $name, mixed $value): void

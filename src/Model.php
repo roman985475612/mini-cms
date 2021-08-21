@@ -6,6 +6,8 @@ use Home\CmsMini\Exception\Http404Exception;
 
 abstract class Model
 {
+    use PermalinkTrait;
+    
     public int $id;
 
     public string $created_at;
@@ -22,41 +24,41 @@ abstract class Model
     {
         switch ($name) {
             case 'count':
-                $query = Db::query(
+                $db = App::$db->query(
                     QueryBuilder::select(['count(*) AS count'])
                         ->from(static::getTableName())
                         ->sql()
                 );
-                return $query->execute()->fetch()['count'];
+                return $db->execute()->fetch()['count'];
         
             case 'all':
-                $query = Db::query(
+                $db = App::$db->query(
                     QueryBuilder::select()
                         ->from(static::getTableName())
                         ->order('updated_at')
                         ->sql()
                 );
-                return $query->execute()->list(static::class);
+                return $db->execute()->list(static::class);
         
             case 'get':
-                $query = Db::query(
+                $db = App::$db->query(
                     QueryBuilder::select()
                         ->from(static::getTableName())
                         ->where('id')
                         ->sql()
                 );
-                $query->setParam('id', $arguments[0]);
-                return $query->execute()->single(static::class);
+                $db->setParam('id', $arguments[0]);
+                return $db->execute()->single(static::class);
 
             case 'find':
-                $query = Db::query(
+                $db = App::$db->query(
                     QueryBuilder::select()
                         ->from(static::getTableName())
                         ->where($arguments[0])
                         ->sql()
                 );
-                $query->setParam($arguments[0], $arguments[1]);
-                return $query->execute();
+                $db->setParam($arguments[0], $arguments[1]);
+                return $db->execute();
         }
     }
 
@@ -81,6 +83,13 @@ abstract class Model
         return static::find($field, $value)->list(static::class);
     }
 
+    public function fill(array $data)
+    {
+        foreach ($data as $field => $datum) {
+            $this->$field = $datum;
+        }
+    }
+
     public function save(array $columns = []): bool
     {
         return $this->isNew() 
@@ -95,26 +104,26 @@ abstract class Model
 
     public function create(array $columns): bool
     {
-        $query = Db::query(
+        $db = App::$db->query(
             QueryBuilder::insert(static::getTableName())
                 ->columns($columns)
                 ->sql()
         );
 
         foreach ($columns as $name) {
-            $query->setParam($name, $this->$name);
+            $db->setParam($name, $this->$name);
         }
 
-        $result = $query->execute();
+        $result = $db->execute();
         
-        $this->id = $query->lastId();
+        $this->id = $db->lastId();
 
         return (bool) $result->rowCount();
     }
 
     public function update(array $columns): bool
     {
-        $query = Db::query(
+        $db = App::$db->query(
             QueryBuilder::update(static::getTableName())
                 ->set($columns)
                 ->where('id')
@@ -122,23 +131,23 @@ abstract class Model
         );
         
         foreach ($columns as $name) {
-            $query->setParam($name, $this->$name);
+            $db->setParam($name, $this->$name);
         }
-        $query->setParam('id', $this->id);
-        return (bool) $query->execute()->rowCount();
+        $db->setParam('id', $this->id);
+        return (bool) $db->execute()->rowCount();
     }
 
     public function delete(): int
     {
-        $query = Db::query(
+        $db = App::$db->query(
             QueryBuilder::delete()
                 ->from(static::getTableName())
                 ->where('id')
                 ->sql()
         );
 
-        $query->setParam('id', $this->id);
+        $db->setParam('id', $this->id);
         
-        return $query->execute()->rowCount();
+        return $db->execute()->rowCount();
     }
 }

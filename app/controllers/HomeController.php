@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
-use App\Model\Article;
-use App\Model\Category;
 use Home\CmsMini\Controller;
+use Home\CmsMini\Flash;
+use Home\CmsMini\Request;
+use Home\CmsMini\Validator\Validation;
+use Home\CmsMini\Validator\{Alphanumeric, NotEmpty, Email, Phone};
+use App\Model\Message;
 
 class HomeController extends Controller
 {
@@ -31,44 +34,34 @@ class HomeController extends Controller
         return $this->render('home/services');
     }
 
-    public function blog()
-    {
-        $articles = Article::all();
-
-        $this->title = 'read our blog';
-        $this->header = 'read our blog';
-        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
-        
-        return $this->render(compact('articles'));
-    }
-
     public function contact()
     {
         $this->title = 'contact us';
         $this->header = 'contact us';
         $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
 
-        return $this->render();
+        return $this->render('home/contact');
     }
 
-    public function show(Article $article)
+    public function contactStore()
     {
-        $this->title = $article->category->title;
-        $this->title = $article->title;
-        $this->header = $article->title;
-        $this->description = $article->excerpt;
+        $v = new Validation(Request::post('contact'));
+        $v->rule('firstname', new Alphanumeric);
+        $v->rule('lastname', new Alphanumeric);
+        $v->rule('email', new Email);
+        $v->rule('phone', new Phone);
+        $v->rule('body', new NotEmpty);
 
-        return $this->render(compact('article'));
-    }
+        if (!$v->validate()) {
+            Flash::addError('Message error!');
+            Request::redirect();
+        };
 
-    public function category(Category $category)
-    {
-        $articles = $category->articles;
-        
-        $this->title = $category->title;
-        $this->header = $category->title;
-        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
-        
-        return $this->render(compact('articles'));
+        $message = new Message;
+        $message->fill($v->cleanedData);
+        $message->save();
+
+        Flash::addSuccess('Message added!');
+        return Request::redirect('/contact');
     }
 }

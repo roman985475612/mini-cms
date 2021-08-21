@@ -11,7 +11,7 @@
                         <h6 class="card-subtitle mb-2 text-muted">Writen by <?= $article->author ?> on <?= $article->updated_at ?></h6>
                         <hr>
                         <p class="card-text"><?= $article->excerpt ?></p>
-                        <a href="<?= $article->absUrl ?>" class="btn btn-secondary">Read more...</a>
+                        <a href="<?= $article->getPermalink() ?>" class="btn btn-secondary">Read more...</a>
                     </div>
                 </div>
             </div>

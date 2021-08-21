@@ -41,9 +41,9 @@ class Flash
     public static function render(array $messages)
     {
         ?>
-        <div class="container my-3">
+        <div class="container">
             <?php foreach ($messages as $status => $msg): ?>
-                <div class="alert alert-<?= $status ?> alert-dismissible fade show" role="alert">
+                <div class="alert alert-<?= $status ?> alert-dismissible fade show my-3" role="alert">
                     <strong><?= ucfirst($status) ?>!</strong> <?= $msg ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>                
