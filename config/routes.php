@@ -18,9 +18,13 @@ Router::get('/blog', BlogController::class);
 Router::get('/blog/<id>', BlogController::class, 'show');
 Router::get('/category/<id>', BlogController::class, 'category');
 
-Router::post('/signup', AuthController::class, 'signup');
-Router::any('/login', AuthController::class, 'login');
-Router::get('/logout', AuthController::class, 'logout');
+Router::get('/signup'  , AuthController::class, 'signup');
+Router::get('/signin'    , AuthController::class, 'signin');
+Router::get('/logout'   , AuthController::class, 'logout');
+
+Router::post('/register', AuthController::class, 'register');
+Router::post('/login', AuthController::class, 'login');
+
 Router::get('/admin', AdminController::class);
 
 Router::get('/patterns/composite', Patterns::class, 'composite');

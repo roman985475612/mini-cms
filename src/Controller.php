@@ -2,7 +2,7 @@
 
 namespace Home\CmsMini;
 
-use Home\CmsMini\Auth;
+use Home\CmsMini\Exception\Http404Exception;
 
 abstract class Controller
 {
@@ -55,6 +55,6 @@ abstract class Controller
     
     protected function accessDeny()
     {
-        return throw new \Exception('Access deny');
+        return throw new Http404Exception('Access deny');
     }
 }

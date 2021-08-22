@@ -1,9 +1,11 @@
 <?php declare(strict_types=1);
 
-define("ROOT"  , dirname(__DIR__));
-define("CONFIG", ROOT . '/config');
-define("WWW"   , ROOT . '/public');
-define("VIEW"  , ROOT . '/app/Views');
+define("ROOT"   , dirname(__DIR__));
+define("CONFIG" , ROOT . '/config');
+define("WWW"    , ROOT . '/public');
+define("VIEW"   , ROOT . '/app/Views/');
+define("LAYOUTS", ROOT . '/app/Views/layouts/');
+define("INC"    , ROOT . '/app/Views/layouts/inc/');
 
 spl_autoload_register(function ($class) {
     $cls = explode('\\', $class);

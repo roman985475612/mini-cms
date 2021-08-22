@@ -6,6 +6,7 @@ class Label implements Renderable
 {
     public function __construct(
         private string $text,
+        private bool $require = false,
         private array $atts = []
     ) {}
 
@@ -15,6 +16,9 @@ class Label implements Renderable
         foreach ($this->atts as $key => $value) {
             $output .= ' ' . $key . '="' . $value . '"';
         }
-        return $output . '>' . ucfirst($this->text) . '</label>';
+        $output .= '>' . ucfirst($this->text). ':';
+        $output .= $this->require ? ' <sup>*</sup>' : '';
+
+        return $output . '</label>';
     }
 }

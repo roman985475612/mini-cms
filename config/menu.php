@@ -23,12 +23,12 @@ return [
     ],
     [
         'title' => 'signup',
-        'url'   => '/singup',
+        'url'   => '/signup',
         'role'  => 'isGuest'
     ],
     [
-        'title' => 'login',
-        'url'   => '/login',
+        'title' => 'signin',
+        'url'   => '/signin',
         'role'  => 'isGuest'
     ],
     [

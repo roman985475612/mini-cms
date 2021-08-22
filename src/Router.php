@@ -148,12 +148,12 @@ class Router
             }
         }
         
-        App::$route = [
+        App::$route = (object) [
             'controller' => $controllerRef->getShortName(), 
             'action' => self::$action,
             'url' => self::getPath()
         ];
-        
+
         $actionRef->invokeArgs(new self::$controller(new View), $params);
     }
 }

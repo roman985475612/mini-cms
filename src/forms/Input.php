@@ -26,6 +26,15 @@ class Input implements Renderable
 
             $output .= ' value="' . Request::old($this->atts['name']) . '"';
         }
-        return $output . ' />';
+        $output .= ' />';
+
+        if ( ! empty( Request::error($this->atts['name']) ) )
+        {
+            $output .= '<div class="invalid-feedback">';
+            $output .= Request::error($this->atts['name']);
+            $output .= '</div>';
+        }
+
+        return $output; 
     }
 }

@@ -11,7 +11,8 @@
             "Home\\CmsMini\\Exception\\": "src/exceptions",
             "Home\\CmsMini\\Form\\": "src/forms",
             "App\\Controller\\": "app/controllers",
-            "App\\Model\\": "app/models"
+            "App\\Model\\": "app/models",
+            "App\\Widget\\": "app/widgets"
         }
     },
     "require-dev": {

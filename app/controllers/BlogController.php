@@ -8,7 +8,6 @@ use Home\CmsMini\Controller;
 
 class BlogController extends Controller
 {
-    
     public function index()
     {
         $articles = Article::all();

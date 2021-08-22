@@ -6,6 +6,12 @@ use Home\CmsMini\Model;
 
 class User extends Model
 {
+    const ADMIN = 'admin';
+
+    const EDITOR = 'editor';
+
+    const GUEST = 'guest';
+
     protected string $username;
 
     protected string $password;
@@ -14,12 +20,33 @@ class User extends Model
 
     protected string $token = '';
 
+    protected string $role;
+
+    public function __call($name, $arguments)
+    {
+        switch ($name) {
+            case 'setAdmin':
+                $this->role = static::ADMIN;
+                break;
+
+            case 'setEditor':
+                $this->role = static::EDITOR;
+                break;
+
+            case 'setGuest':
+                $this->role = static::GUEST;
+                break;
+        }
+    }
+
     public function __get(string $name)
     {
         switch ($name) {
             case 'id': return $this->id;
             case 'username': return $this->username;
             case 'email': return $this->email;
+            case 'token': return $this->token;
+            case 'role': return $this->role;
         }
     }
 
@@ -53,5 +80,15 @@ class User extends Model
     public function checkPassword(string $password): bool
     {
         return password_verify($password, $this->password);
+    }
+
+    public function setToken(): void
+    {
+        do {
+            $token = uniqid();
+        } while (static::findOne('token', $token));   
+
+        $this->token = $token;
+        $this->save();
     }
 }

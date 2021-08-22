@@ -19,6 +19,9 @@ class Validation
     public function __construct(array $sourceData)
     {
         $this->sourceData = $sourceData;
+
+        $_SESSION['error'] = [];
+        $_SESSION['old'] = $this->sourceData;
     }
 
     public function rule(string $key, ValidatorInterface $validator)
@@ -33,7 +36,6 @@ class Validation
     public function validate(): bool
     {
         $validateSuccess = true;
-        $_SESSION['error'] = [];
 
         foreach ($this->constraint as $key => $validators) {
             foreach ($validators as $validator) {

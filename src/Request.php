@@ -11,11 +11,15 @@ class Request
 
     }
 
-    public static function post() 
+    public static function post(string $key = '') 
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        $_SESSION['old'] = $post;
-        return $post;
+
+        if (empty($key)) {
+            return $post;
+        } else {
+            return $post[$key] ?? '';
+        }
     }
 
     public static function file() 

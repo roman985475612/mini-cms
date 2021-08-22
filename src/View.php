@@ -15,12 +15,12 @@ class View
 
     public function getLayout(): string
     {
-        return VIEW . '/layouts/' . $this->meta['layout'] . '.php';
+        return LAYOUTS . $this->meta['layout'] . '.php';
     }
 
     public function getTemplate(string $template): string
     {
-        return VIEW . '/' . $template . '.php';
+        return VIEW . $template . '.php';
     }
 
     public function __set(string $name, mixed $value): void
@@ -47,7 +47,7 @@ class View
 
     public function renderPart(string $template, array $data = []): void
     {
-        echo $this->renderFile(VIEW . '/layouts/inc/' . $template . '.php', $data);
+        echo $this->renderFile(INC . $template . '.php', $data);
     } 
 
     protected function renderFile(string $filename, array $data = []): string

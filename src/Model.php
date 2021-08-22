@@ -90,11 +90,12 @@ abstract class Model
         }
     }
 
-    public function save(array $columns = []): bool
+    public function save(?array $columns = null): bool
     {
+
         return $this->isNew() 
             ? $this->create(array_keys(get_object_vars($this))) 
-            : $this->update($columns);
+            : $this->update($columns ?? array_keys(get_object_vars($this)));
     }
 
     public function isNew(): bool
