@@ -2,43 +2,43 @@
 
 return [
     [
-        'title' => 'home',
-        'url'   => '/'
+        'title'     => 'home',
+        'urlName'   => 'home'
     ],
     [
-        'title' => 'about us',
-        'url'   => '/about'
+        'title'     => 'about us',
+        'urlName'   => 'about'
     ],
     [
-        'title' => 'services',
-        'url'   => '/services'
+        'title'     => 'services',
+        'urlName'   => 'services'
     ],
     [
-        'title' => 'blog',
-        'url'   => '/blog'
+        'title'     => 'blog',
+        'urlName'   => 'blog'
     ],
     [
-        'title' => 'contact',
-        'url'   => '/contact'
+        'title'     => 'contact',
+        'urlName'   => 'contact'
     ],
     [
-        'title' => 'signup',
-        'url'   => '/signup',
-        'role'  => 'isGuest'
+        'title'     => 'signup',
+        'urlName'   => 'signup',
+        'role'      => 'isGuest'
     ],
     [
-        'title' => 'signin',
-        'url'   => '/signin',
-        'role'  => 'isGuest'
+        'title'     => 'signin',
+        'urlName'   => 'signin',
+        'role'      => 'isGuest'
     ],
     [
-        'title' => 'logout',
-        'url'   => '/logout',
-        'role'  => 'isLoggedIn'
+        'title'     => 'logout',
+        'urlName'   => 'logout',
+        'role'      => 'isLoggedIn'
     ],
     [
-        'title' => 'admin',
-        'url'   => '/admin',
-        'role'  => 'isAdmin'
+        'title'     => 'admin',
+        'urlName'   => 'admin',
+        'role'      => 'isAdmin'
     ],
 ];

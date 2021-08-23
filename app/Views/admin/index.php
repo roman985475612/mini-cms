@@ -1,3 +1,6 @@
+<?php
+use \Home\CmsMini\Router;
+?>
 <section class="actions">
     <div class="container">
         <div class="row actions__btns">
@@ -64,7 +67,7 @@
                                 <td><?= $article->author ?></td>
                                 <td><?= $article->created_at ?></td>
                                 <td>
-                                    <a href="<?= $article->getUpdateUrl() ?>" class="btn btn-warning posts__btn">
+                                    <a href="<?= Router::url('article-edit', ['id' => $article->id]) ?>" class="btn btn-warning posts__btn">
                                         <svg class="icon">
                                             <use xlink:href="/assets/admin/icons/sprite.svg#angle-double-right-solid"></use>
                                         </svg>            
@@ -87,7 +90,7 @@
                             </svg>
                             <span class="widgets__info"><?= $counts['article'] ?></span>    
                         </div>
-                        <a href="/article/list" class="btn btn-outline-light">view</a>
+                        <a href="<?= Router::url('articles') ?>" class="btn btn-outline-light">view</a>
                     </div>
                 </div>
                 <div class="card widgets__item widgets__item--success">
@@ -99,7 +102,7 @@
                             </svg>
                             <span class="widgets__info"><?= $counts['category'] ?></span>    
                         </div>
-                        <a href="categories.html" class="btn btn-outline-light">view</a>
+                        <a href="<?= Router::url('categories') ?>" class="btn btn-outline-light">view</a>
                     </div>
                 </div>
                 <div class="card widgets__item widgets__item--warning">
@@ -111,7 +114,7 @@
                             </svg>
                             <span class="widgets__info"><?= $counts['user'] ?></span>    
                         </div>
-                        <a href="users.html" class="btn btn-outline-light">view</a>
+                        <a href="<?= Router::url('users') ?>" class="btn btn-outline-light">view</a>
                     </div>
                 </div>
             </div>

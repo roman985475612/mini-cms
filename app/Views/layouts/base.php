@@ -1,3 +1,6 @@
+<?php
+    use Home\CmsMini\Router;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +15,7 @@
 <body>
     <nav id="sectionTop" class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="/"><?= $this->brand ?></a>
+            <a class="navbar-brand" href="<?= Router::url('home'); ?>"><?= $this->brand ?></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -28,29 +31,20 @@
     
     <?= $content ?>
 
-    <footer class="main-footer">
-        <div class="conteiner">
-            <div class="row">
-                <div class="col">
-                    <p>Copyright &copy; 2021 <?= $this->brand ?></p>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- /.main-footer -->
+    <?php $this->renderPart('footer') ?>
 
-    <script src="/assets/front/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/front/js/main.min.js"></script>
-    <script>
-        if (document.querySelector('.slider__item')) {
-            const slider = new Slider('.slider__item', 'slider__item--visible')
-        }
-        if (document.querySelector('.accord1')) {
-            const accord1 = new Accord('.accord1')
-        }
-        if (document.querySelector('.accord2')) {
-            const accord2 = new Accord('.accord2')
-        }
-    </script>
+<script src="/assets/front/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/front/js/main.min.js"></script>
+<script>
+    if (document.querySelector('.slider__item')) {
+        const slider = new Slider('.slider__item', 'slider__item--visible')
+    }
+    if (document.querySelector('.accord1')) {
+        const accord1 = new Accord('.accord1')
+    }
+    if (document.querySelector('.accord2')) {
+        const accord2 = new Accord('.accord2')
+    }
+</script>
 </body>
 </html>

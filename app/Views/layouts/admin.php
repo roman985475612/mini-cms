@@ -1,6 +1,7 @@
 <?php
     use Home\CmsMini\Auth;
     use Home\CmsMini\Flash;
+    use Home\CmsMini\Router;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +14,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark main-menu">
         <div class="container">
-          <a class="navbar-brand" href="/admin"><?= $this->brand ?></a>
+          <a class="navbar-brand" href="<?= Router::url('home'); ?>"><?= $this->brand ?></a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -29,7 +30,7 @@
                         <svg class="main-menu__icon">
                             <use xlink:href="/assets/admin/icons/sprite.svg#user-solid"></use>
                         </svg>
-                        Welcome, <?= Auth::name() ?>
+                        Welcome, <?= Auth::user()->username ?>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
                         <li>
@@ -51,7 +52,7 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link main-menu__link" href="/admin/logout">
+                    <a class="nav-link main-menu__link" href="<?= Router::url('logout'); ?>">
                         <svg class="main-menu__icon">
                             <use xlink:href="/assets/admin/icons/sprite.svg#user-times-solid"></use>
                         </svg>
@@ -67,18 +68,7 @@
 
     <?= $content ?>
 
-    <footer class="main-footer">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <p class="main-footer__copy">
-                        Copyright &copy; 2021 <?= $this->brand ?>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- /.main-footer -->
+    <?php $this->renderPart('footer') ?>
 
 <script src="/assets/admin/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/admin/js/main.min.js"></script>

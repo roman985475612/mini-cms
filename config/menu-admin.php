@@ -2,23 +2,23 @@
 
 return [
     [
-        'title' => 'dashboard',
-        'url'   => '/admin/dashboard',
-        'role'  => 'isAdmin'
+        'title'     => 'dashboard',
+        'urlName'   => 'admin',
+        'role'      => 'isAdmin'
     ],
     [
-        'title' => 'posts',
-        'url'   => '/admin/posts',
-        'role'  => 'isAdmin'
+        'title'     => 'articles',
+        'urlName'   => 'articles',
+        'role'      => 'isAdmin'
     ],
     [
-        'title' => 'categories',
-        'url'   => '/admin/categories',
-        'role'  => 'isAdmin'
+        'title'     => 'categories',
+        'urlName'   => 'categories',
+        'role'      => 'isAdmin'
     ],
     [
-        'title' => 'users',
-        'url'   => '/admin/users',
-        'role'  => 'isAdmin'
+        'title'     => 'users',
+        'urlName'   => 'users',
+        'role'      => 'isAdmin'
     ],
 ];

@@ -7,15 +7,11 @@ define("VIEW"   , ROOT . '/app/Views/');
 define("LAYOUTS", ROOT . '/app/Views/layouts/');
 define("INC"    , ROOT . '/app/Views/layouts/inc/');
 
+require ROOT . '/vendor/autoload.php';
+
 spl_autoload_register(function ($class) {
-    $cls = explode('\\', $class);
-    if ($cls[0] == 'DesignPatterns') {
-        $filepath = ROOT . '/app/' . implode('/', $cls) . '.php';
-        
-        if (file_exists($filepath)) {
-            include $filepath;
-        }
+    $filename = ROOT . '/' . str_replace('\\', '/', $class) . '.php';
+    if (file_exists($filename)) {
+        require $filename;
     }
 });
-
-require ROOT . '/vendor/autoload.php';

@@ -37,9 +37,28 @@ class Request
         return $_SESSION['error'][$key] ?? false;
     }
 
-    public static function isPost() 
+    public static function getMethod(): string
+    {
+        return $_SERVER['REQUEST_METHOD'];
+    }
+
+    public static function isPost(): bool 
     {
         return $_SERVER['REQUEST_METHOD'] === 'POST';
+    }
+
+    public static function getPath(): string
+    {
+        $path = $_GET['URI'] ?? '';
+        $path = ltrim($path, '/');
+        $path = rtrim($path, '/');
+        
+        return '/' . $path;
+    }
+
+    public static function getQuery(): array | string
+    {
+        return $_GET;
     }
 
     public static function redirect(string $url = '')

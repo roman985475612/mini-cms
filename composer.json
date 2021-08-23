@@ -2,17 +2,13 @@
     "name": "home/cms-mini",
     "autoload": {
         "files": [
-            "src/utilities.php",
-            "config/routes.php"
+            "src/utilities.php"
         ],
         "psr-4": {
             "Home\\CmsMini\\": "src",
             "Home\\CmsMini\\Validator\\": "src/validators",
             "Home\\CmsMini\\Exception\\": "src/exceptions",
-            "Home\\CmsMini\\Form\\": "src/forms",
-            "App\\Controller\\": "app/controllers",
-            "App\\Model\\": "app/models",
-            "App\\Widget\\": "app/widgets"
+            "Home\\CmsMini\\Form\\": "src/forms"
         }
     },
     "require-dev": {

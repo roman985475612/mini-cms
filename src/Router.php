@@ -17,85 +17,56 @@ class Router
 
     public static function init(): void
     {
+        self::setRoutes();
+
         if (!self::matchRoute()) {
             throw new Http404Exception('Route not exists!');
         }
+
         self::dispatch();
     }
 
-    public static function get(
-        string $route, 
-        string $controller, 
-        string $action = 'index',
-    ): void
+    public static function url(string $name, array $params = []): string
     {
-        self::add($route, $controller, $action, ['GET']);
+        $method = Request::getMethod();
+
+        $routes = array_filter(self::$routes, function ($item) use ($name, $method) {
+            return $item['name'] == $name;
+        });
+
+        if (count($routes) < 1) {
+            throw new Http404Exception('Route not find');
+        }
+
+        $route = array_pop($routes);
+
+        $url = str_replace('#^', '', $route['pattern']);
+        $url = str_replace('$#', '', $url);
+
+        if ($params) {
+            $url = str_replace('<id>', $params['id'], $url);
+        }
+
+        return $url;
     }
 
-    public static function post(
-        string $route, 
-        string $controller, 
-        string $action = 'index',
-    ): void
+    private static function setRoutes()
     {
-        self::add(
-            $route,
-            $controller,
-            $action,
-            ['POST']
-        );
-    }
-
-    public static function any(
-        string $route, 
-        string $controller, 
-        string $action,
-    ): void
-    {
-        self::add(
-            $route,
-            $controller,
-            $action,
-            ['GET', 'POST']
-        );
-    }
-
-    private static function add(
-        string $pattern, 
-        string $controller, 
-        string $action = 'index',
-        array $method = ['GET', 'POST']
-    ): void
-    {
-        $pattern = str_replace('<', '(?P<', $pattern);
-        $pattern = str_replace('>', '>\d+)', $pattern);
-        $pattern = "#^{$pattern}$#";
-        self::$routes[] = [
-            'pattern'    => $pattern,
-            'controller' => $controller,
-            'action'     => $action,
-            'method'     => $method
-        ];
-    }
-
-    private static function getPath(): string
-    {
-        $path = $_GET['URI'] ?? '';
-        $path = ltrim($path, '/');
-        $path = rtrim($path, '/');
-        
-        return empty($path) ? $path : '/' . $path;
-    }
-
-    private static function getMethod(): string
-    {
-        return $_SERVER['REQUEST_METHOD'];
+        self::$routes = require CONFIG . '/routes.php';
+        self::$routes = array_map(function ($item) {
+            $item['pattern'] = str_replace('<', '(?P<', $item['pattern']);
+            $item['pattern'] = str_replace('>', '>\d+)', $item['pattern']);
+            $item['pattern'] = "#^{$item['pattern']}$#";
+            $item['method'] ??= ['GET'];
+            $item['action'] ??= 'index';
+            return $item;     
+        }, self::$routes);
     }
 
     private static function matchRoute(): bool
     {
-        $method = self::getMethod();
-        $path = self::getPath();
+        $method = Request::getMethod();
+        $path = Request::getPath();
         foreach (self::$routes as $route) {
             if (!in_array($method, $route['method'])) {
                 continue;
@@ -151,7 +122,6 @@ class Router
         App::$route = (object) [
             'controller' => $controllerRef->getShortName(), 
             'action' => self::$action,
-            'url' => self::getPath()
         ];
 
         $actionRef->invokeArgs(new self::$controller(new View), $params);

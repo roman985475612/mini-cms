@@ -6,7 +6,7 @@ use App\Model\User;
 
 class Auth
 {
-    const LOGIN_URL = '/login';
+    const LOGIN_URL = '/signin';
 
     public static function login(User $user)
     {
@@ -43,7 +43,6 @@ class Auth
             && self::user()->role == User::ADMIN;
     }
 
-    // ???
     public static function loginRequired()
     {
         if (!self::isLoggedIn()) {
