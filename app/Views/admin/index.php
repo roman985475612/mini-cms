@@ -1,6 +1,23 @@
 <?php
 use \Home\CmsMini\Router;
 ?>
+    
+<header class="main-header py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="main-header__title">
+                    <svg class="main-header__icon">
+                        <use xlink:href="/assets/admin/icons/sprite.svg#cog-solid"></use>
+                    </svg>
+                    <?= $this->header ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- /.main-header -->
+
 <section class="actions">
     <div class="container">
         <div class="row actions__btns">
@@ -16,7 +33,9 @@ use \Home\CmsMini\Router;
             </div>
             <div class="col-md-3">
                 <div class="d-grid gap-2">
-                    <a class="btn btn-success actions__btn" id="addCategory">
+                    <a class="btn btn-success actions__btn" 
+                       data-title="Create category"
+                       data-url="<?= Router::url('category-create') ?>">
                         <svg class="actions__icon">
                             <use xlink:href="/assets/admin/icons/sprite.svg#plus-circle-solid"></use>
                         </svg>
@@ -122,6 +141,54 @@ use \Home\CmsMini\Router;
     </div>
 </section>
 <!-- /.posts -->
+
+<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="formModalLabel"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body"></div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div> -->
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+    const openBtns = document.querySelector('.actions__btns')
+    const $modal = document.querySelector('#formModal')
+    const $body = $modal.querySelector('.modal-body')
+    const $title = $modal.querySelector('.modal-title')
+    const adminModal = new bootstrap.Modal($modal)
+
+    openBtns.addEventListener('click', async e => {
+        if (!e.target.classList.contains('actions__btn')) {
+            return false
+        }
+
+        let url = e.target.dataset.url
+        let title = e.target.dataset.title
+
+        let response = await fetch(url);
+        
+        if (!response.ok) {
+            alert("Ошибка HTTP: " + response.status);
+        }
+        let $form = await response.text();
+
+        $title.innerHTML = title
+        $body.innerHTML = $form
+
+        adminModal.show();
+    })
+
+})
+</script>
 
 <script src="/assets/admin/js/ckeditor.js"></script>
     <script>

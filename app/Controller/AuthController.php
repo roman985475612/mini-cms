@@ -9,6 +9,7 @@ use Home\CmsMini\Flash;
 use Home\CmsMini\Request;
 use Home\CmsMini\Validator\Validation;
 use Home\CmsMini\Validator\{Alphanumeric, NotEmpty, Email, Equal, Unique};
+use Home\CmsMini\View;
 use App\Model\User;
 
 class AuthController extends Controller
@@ -21,9 +22,11 @@ class AuthController extends Controller
 
     public function signup()
     {
-        $this->title = "Sign Up";
-        $this->header = "Sign Up";
-        $this->render('auth/signup');
+        $view = new View;
+        $view->title = "Sign Up";
+        $view->header = "Sign Up";
+        $view->template = 'auth/signup';
+        $view->render();
     }
 
     public function register()
@@ -54,9 +57,11 @@ class AuthController extends Controller
 
     public function signin()
     {
-        $this->title = "Sign In";
-        $this->header = "Sign In";
-        $this->render('auth/signin');
+        $view = new View;
+        $view->title = "Sign In";
+        $view->header = "Sign In";
+        $view->template = 'auth/signin';
+        $view->render();
     }
 
     public function login()

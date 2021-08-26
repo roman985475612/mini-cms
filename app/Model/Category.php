@@ -12,23 +12,18 @@ class Category extends Model
 
     public function __get($name)
     {
-        switch ($name) {
-            case 'id': return $this->id;
-            case 'title': return $this->title;
-            case 'created_at': return $this->date($this->created_at);
-            case 'updated_at': return $this->date($this->updated_at);
-            case 'articles': return $this->articles();
-        }
+        return match ($name) {
+            'id'         => $this->id,
+            'title'      => $this->title,
+            'created_at' => $this->date($this->created_at),
+            'updated_at' => $this->date($this->updated_at),
+            'articles'   => $this->articles(),
+        };
     }
 
     public function __set($name, $value)
     {
-        switch ($name) {
-            case 'id': return $this->id = $value;
-            case 'title': return $this->title = $value;
-            case 'created_at': return $this->created_at = $value;
-            case 'updated_at': return $this->updated_at = $value;
-        }
+        $this->$name = $value;
     }
 
     public function date($value)

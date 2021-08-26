@@ -9,111 +9,120 @@ use App\Controller\CategoryController;
 use App\Controller\UserController;
 
 return [
-    [
+    'home' => [
         'pattern'    => '/',
         'controller' => HomeController::class,
         'action'     => 'index',
-        'name'       => 'home',
     ],
-    [
+    'about' => [
         'pattern'    => '/about',
         'controller' => HomeController::class,
         'action'     => 'about',
-        'name'       => 'about',
     ],
-    [
+    'services' => [
         'pattern'    => '/services',
         'controller' => HomeController::class,
         'action'     => 'services',
-        'name'       => 'services',
     ],
-    [
+    'contact' => [
         'pattern'    => '/contact',
         'controller' => HomeController::class,
         'action'     => 'contact',
-        'name'       => 'contact',
     ],
-    [
+    'contact-store' => [
         'pattern'    => '/contact',
         'controller' => HomeController::class,
         'action'     => 'contactStore',
-        'name'       => 'contact-store',
         'method'     => ['POST'],
     ],
-    [
+    'blog' => [
         'pattern'    => '/blog',
         'controller' => BlogController::class,
         'action'     => 'index',
-        'name'       => 'blog',
     ],
-    [
+    'blog-show' => [
         'pattern'    => '/blog/<id>',
         'controller' => BlogController::class,
         'action'     => 'show',
-        'name'       => 'blog-show',
     ],
-    [
+    'blog-by-category' => [
         'pattern'    => '/category/<id>',
         'controller' => BlogController::class,
         'action'     => 'category',
-        'name'       => 'blog-by-category',
     ],
 
-    [
+    'signup' => [
         'pattern'    => '/signup',
         'controller' => AuthController::class,
         'action'     => 'signup',
-        'name'       => 'signup',
     ],
-    [
+    'signin' => [
         'pattern'    => '/signin',
         'controller' => AuthController::class,
         'action'     => 'signin',
-        'name'       => 'signin',
     ],
-    [
+    'logout' => [
         'pattern'    => '/logout',
         'controller' => AuthController::class,
         'action'     => 'logout',
-        'name'       => 'logout',
     ],
-    [
+    'register' => [
         'pattern'    => '/register',
         'controller' => AuthController::class,
         'action'     => 'register',
         'method'     => ['POST'],
-        'name'       => 'register',
     ],
-    [
+    'login' => [
         'pattern'    => '/login',
         'controller' => AuthController::class,
         'action'     => 'login',
         'method'     => ['POST'],
-        'name'       => 'login',
     ],
-    [
+    'admin' => [
         'pattern'    => '/admin',
         'controller' => AdminController::class,
-        'name'       => 'admin',
     ],
-    [
+    'articles' => [
         'pattern'    => '/admin/articles',
         'controller' => ArticleController::class,
-        'name'       => 'articles',
     ],
-    [
+    'article-edit' => [
         'pattern'    => '/admin/articles/<id>/edit',
         'controller' => ArticleController::class,
-        'name'       => 'article-edit',
     ],
-    [
+    'categories' => [
         'pattern'    => '/admin/categories',
         'controller' => CategoryController::class,
-        'name'       => 'categories',
     ],
-    [
+    'category-create' => [
+        'pattern'    => '/admin/categories/create',
+        'controller' => CategoryController::class,
+        'action'     => 'create',
+    ],
+    'category-store' => [
+        'pattern'    => '/admin/categories/store',
+        'controller' => CategoryController::class,
+        'action'     => 'store',
+        'method'     => ['POST'],
+    ],
+    'category-edit' => [
+        'pattern'    => '/admin/categories/<id>/edit',
+        'controller' => CategoryController::class,
+        'action'     => 'edit',
+    ],
+    'category-update' => [
+        'pattern'    => '/admin/categories/<id>/update',
+        'controller' => CategoryController::class,
+        'action'     => 'update',
+        'method'     => ['POST'],
+    ],
+    'category-delete' => [
+        'pattern'    => '/admin/categories/<id>/delete',
+        'controller' => CategoryController::class,
+        'action'     => 'delete',
+    ],
+    'users' => [
         'pattern'    => '/admin/users',
         'controller' => UserController::class,
-        'name'       => 'users',
     ],
 ];

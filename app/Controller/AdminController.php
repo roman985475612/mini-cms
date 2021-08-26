@@ -9,11 +9,10 @@ use Home\CmsMini\Auth;
 use Home\CmsMini\Controller;
 use Home\CmsMini\Flash;
 use Home\CmsMini\Request;
+use Home\CmsMini\View;
 
 class AdminController extends Controller
 {
-    protected string $layout = 'admin';
-
     protected function access(): bool
     {
         return Auth::isLoggedIn();
@@ -26,13 +25,18 @@ class AdminController extends Controller
 
     public function index()
     {
-        $counts['article'] = Article::count();
-        $counts['category'] = Category::count();
-        $counts['user'] = User::count();
-        $articles = Article::all();
-        
-        $this->header = 'dashboard';
-
-        return $this->render('admin/index', compact('articles', 'counts'));
+        $view = new View;
+        $view->title = 'dashboard';
+        $view->header = 'dashboard';
+        $view->layout = 'admin';
+        $view->template = 'admin/index';
+        $view->render([
+            'articles' => Article::all(),
+            'counts'   => [
+                'article'  => Article::count(),
+                'category' => Category::count(),
+                'user'     => User::count(),        
+            ],
+        ]);
     }
 }

@@ -4,39 +4,42 @@ namespace App\Controller;
 
 use App\Model\Article;
 use App\Model\Category;
+use App\Widget\Pagination;
 use Home\CmsMini\Controller;
+use Home\CmsMini\View;
 
 class BlogController extends Controller
 {
     public function index()
     {
-        $articles = Article::all();
+        $page = new Pagination(Article::class, 3);
 
-        $this->title = 'read our blog';
-        $this->header = 'read our blog';
-        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
-        
-        return $this->render('blog/index', compact('articles'));
+        $view = new View;
+        $view->title = 'read our blog';
+        $view->header = 'read our blog';
+        $view->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
+        $view->template = 'blog/index';
+        $view->render(compact('page'));
     }
 
     public function show(Article $article)
     {
-        $this->title = $article->category->title;
-        $this->title = $article->title;
-        $this->header = $article->title;
-        $this->description = $article->excerpt;
-
-        return $this->render('blog/show', compact('article'));
+        $view = new View;
+        $view->title = $article->category->title;
+        $view->title = $article->title;
+        $view->header = $article->title;
+        $view->description = $article->excerpt;
+        $view->template = 'blog/show';
+        $view->render(compact('article'));
     }
 
     public function category(Category $category)
     {
-        $articles = $category->articles;
-        
-        $this->title = $category->title;
-        $this->header = $category->title;
-        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
-        
-        return $this->render('blog/category', compact('articles'));
+        $view = new View;
+        $view->title = $category->title;
+        $view->header = $category->title;
+        $view->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
+        $view->template = 'blog/category';
+        $view->render(['articles' => $category->articles]);
     }
 }

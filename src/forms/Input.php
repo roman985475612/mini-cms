@@ -9,22 +9,15 @@ class Input implements Renderable
 
     public function render(): string
     {
+        $this->atts['value'] ??= Request::old($this->atts['name']);
+        
+        if (isset($_SESSION['error'])) {
+            $this->atts['class'] .= (Request::error($this->atts['name']) ? ' is-invalid' : ' is-valid'); 
+        }
+
         $output = '<input';
         foreach ($this->atts as $key => $value) {
-            switch ($key) {
-                case 'class':
-                    if (isset($_SESSION['error'])) {
-                        $output .= ' class="' . $value . (Request::error($this->atts['name']) ? ' is-invalid' : ' is-valid') . '"'; 
-                    } else {
-                        $output .= ' class="' . $value . '"'; 
-                    }
-                    break;
-
-                default:
-                    $output .= ' ' . $key . '="' . $value . '"';
-            }
-
-            $output .= ' value="' . Request::old($this->atts['name']) . '"';
+            $output .= ' ' . $key . '="' . $value . '"';
         }
         $output .= ' />';
 

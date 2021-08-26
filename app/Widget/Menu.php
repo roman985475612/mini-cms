@@ -29,7 +29,7 @@ class Menu
             <?php foreach ($this->menu as $item): ?>
                 <li class="nav-item">
                     <a 
-                        class="nav-link<?= $item['class'] ?>"
+                        class="<?= implode(' ', $item['class']) ?>"
                         <?= $item['aria'] ?>
                         href="<?= $item['url'] ?>"
                     >
@@ -62,7 +62,11 @@ class Menu
             }
 
             $item['url'] = Router::url($item['urlName']);
-            $item['class'] = $this->isCurrent($item['url']) ? ' active' : '';
+            $item['class'] = ['nav-link', 'text-uppercase',];
+            if ($this->isCurrent($item['url'])) {
+                $item['class'][] = 'active';
+            }
+            
             $item['aria'] = $this->isCurrent($item['url']) ? 'aria-current="page"' : '';
 
             unset($item['role']);

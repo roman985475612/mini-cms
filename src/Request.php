@@ -6,21 +6,42 @@ class Request
 {
     public static array $old = [];
 
-    public static function get() 
+    public static function get(?string $param = null) 
     {
+        $get = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
 
+        if (empty($param)) {
+            return $get;
+        }
+
+        if (array_key_exists($param, $get)) {
+            return $get[$param];
+        }
+        
+        return null;
     }
 
-    public static function post(string $key = '') 
+    public static function post(?string $param = null) 
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-        if (empty($key)) {
-            return $post;
-        } else {
-            return $post[$key] ?? '';
+        
+        if (array_key_exists($param, $post)) {
+            return $post[$param];
         }
+        
+        return $post;
     }
+
+    // public static function getQuery(?string $param = null): array | string
+    // {
+    //     $get = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+    //     if (array_key_exists($param, $get)) {
+    //         return $get[$param];
+    //     }
+
+    //     return $get;
+    // }
 
     public static function file() 
     {
@@ -54,11 +75,6 @@ class Request
         $path = rtrim($path, '/');
         
         return '/' . $path;
-    }
-
-    public static function getQuery(): array | string
-    {
-        return $_GET;
     }
 
     public static function redirect(string $url = '')

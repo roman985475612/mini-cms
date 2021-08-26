@@ -7,6 +7,7 @@ use Home\CmsMini\App;
 
 class Router
 {
+    private static array $paths = [];
     private static array $routes = [];
 
     private static string $controller;
@@ -28,31 +29,20 @@ class Router
 
     public static function url(string $name, array $params = []): string
     {
-        $method = Request::getMethod();
-
-        $routes = array_filter(self::$routes, function ($item) use ($name, $method) {
-            return $item['name'] == $name;
-        });
-
-        if (count($routes) < 1) {
+        if (!isset(self::$paths[$name])) {
             throw new Http404Exception('Route not find');
         }
-
-        $route = array_pop($routes);
-
-        $url = str_replace('#^', '', $route['pattern']);
-        $url = str_replace('$#', '', $url);
+        $url = self::$paths[$name]['pattern'];
 
         if ($params) {
             $url = str_replace('<id>', $params['id'], $url);
         }
-
         return $url;
     }
 
     private static function setRoutes()
     {
-        self::$routes = require CONFIG . '/routes.php';
+        self::$paths = require CONFIG . '/routes.php';
         self::$routes = array_map(function ($item) {
             $item['pattern'] = str_replace('<', '(?P<', $item['pattern']);
             $item['pattern'] = str_replace('>', '>\d+)', $item['pattern']);
@@ -60,7 +50,7 @@ class Router
             $item['method'] ??= ['GET'];
             $item['action'] ??= 'index';
             return $item;     
-        }, self::$routes);
+        }, self::$paths);
     }
 
     private static function matchRoute(): bool
@@ -124,6 +114,6 @@ class Router
             'action' => self::$action,
         ];
 
-        $actionRef->invokeArgs(new self::$controller(new View), $params);
+        $actionRef->invokeArgs(new self::$controller(), $params);
     }
 }

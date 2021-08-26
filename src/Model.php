@@ -45,6 +45,7 @@ abstract class Model
                     QueryBuilder::select()
                         ->from(static::getTableName())
                         ->where('id')
+                        ->limit(1)
                         ->sql()
                 );
                 $db->setParam('id', $arguments[0]);
@@ -60,6 +61,19 @@ abstract class Model
                 $db->setParam($arguments[0], $arguments[1]);
                 return $db->execute();
         }
+    }
+
+    public static function limit(int $limit, int $offset)
+    {
+        $db = App::$db->query(
+            QueryBuilder::select()
+                ->from(static::getTableName())
+                // ->order('updated_at')
+                ->limit($limit)
+                ->offset($offset)
+                ->sql()
+        );
+        return $db->execute()->list(static::class);
     }
 
     public static function getOr404(int $id)

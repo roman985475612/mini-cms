@@ -41,20 +41,29 @@ class User extends Model
 
     public function __get(string $name)
     {
-        switch ($name) {
-            case 'id': return $this->id;
-            case 'username': return $this->username;
-            case 'email': return $this->email;
-            case 'token': return $this->token;
-            case 'role': return $this->role;
-        }
+        return match ($name) {
+            'id'    => $this->id,
+            'email' => $this->email,
+            'token' => $this->token,
+            'role'  => $this->role,
+            'username' => $this->username,
+        };
     }
 
     public function __set(string $name, mixed $value)
     {
-        switch ($name) {
-            case 'username': $this->username = $value; break;
-            case 'email': $this->email = $value; break;
+        // switch ($name) {
+        //     case 'username': $this->username = $value; break;
+        //     case 'email': $this->email = $value; break;
+        // }
+
+        // $this->$name = match ($name) {
+        //     'username' => $value,
+        //     'email' => $value,
+        // };
+
+        if (in_array($name, ['username', 'email'])) {
+            $this->$name = $value;
         }
     }
 

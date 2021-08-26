@@ -1,3 +1,5 @@
+<?php $this->renderPart('page-header') ?>
+
 <section class="blog mt-3">
     <div class="container">
         <div class="row">

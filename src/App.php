@@ -14,18 +14,16 @@ class App
 
     public function __construct()
     {
-        session_start();
-        
-        self::$config = json_decode(file_get_contents(CONFIG . '/config.json'));
-
-        self::$db = new Db(
-            self::$config->db->host,
-            self::$config->db->name,
-            self::$config->db->user,
-            self::$config->db->pass
-        );
-
         try {
+            self::$config = json_decode(file_get_contents(CONFIG . '/config.json'));
+
+            self::$db = new Db(
+                self::$config->db->host,
+                self::$config->db->name,
+                self::$config->db->user,
+                self::$config->db->pass
+            );
+            
             Router::init();
         } catch (Http404Exception $e) {
             if (self::$config->debug) {

@@ -10,6 +10,7 @@ function dd(mixed $data, bool $exit = true): void
     font-family:'JetBrains Mono';
     color: #003f5c;
     STYLE;
+
     echo '<pre style="' . $styles . '">'. print_r($data, true) . '</pre>';
     
     if ($exit) { exit; }

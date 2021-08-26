@@ -4,28 +4,31 @@ namespace Home\CmsMini;
 
 class View
 {
-    protected array $meta = [];
-
-    public function __construct(string | null $layout = null)
+    public function __construct(protected array $meta = [])
     {
         $this->layout ??= App::$config->default->layout;
-        $this->title = App::$config->app;
-        $this->brand = App::$config->app;
-    }
-
-    public function getLayout(): string
-    {
-        return LAYOUTS . $this->meta['layout'] . '.php';
-    }
-
-    public function getTemplate(string $template): string
-    {
-        return VIEW . $template . '.php';
+        $this->meta['title']  ??= App::$config->app;
+        $this->meta['brand']  ??= App::$config->app;
     }
 
     public function __set(string $name, mixed $value): void
     {
-        $this->meta[$name] = $value;
+        switch ($name) {
+            case 'layout':
+                $this->meta['layout'] = LAYOUTS . $value . '.php';
+                break;
+
+            case 'template':
+                $this->meta['template'] = VIEW . $value . '.php';
+                break;
+
+            case 'title':
+                $this->meta['title'] = ucwords($value) . ' | ' . $this->title;
+                break;
+
+            default:
+                $this->meta[$name] = $value;
+        }
     }
 
     public function __get(string $name): mixed
@@ -38,11 +41,11 @@ class View
         return isset($this->meta[$name]);
     }
     
-    public function render(string $template, array $data = []): void
+    public function render(array $data = []): void
     {
-        $this->content = $this->renderFile($this->getTemplate($template), $data);
-
-        echo $this->renderFile($this->getLayout(), $this->meta);
+        $this->content = $this->renderFile($this->template, $data);
+        echo $this->renderFile($this->layout, $this->meta);
+        exit;
     }
 
     public function renderPart(string $template, array $data = []): void

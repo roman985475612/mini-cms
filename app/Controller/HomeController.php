@@ -7,40 +7,47 @@ use Home\CmsMini\Flash;
 use Home\CmsMini\Request;
 use Home\CmsMini\Validator\Validation;
 use Home\CmsMini\Validator\{Alphanumeric, NotEmpty, Email, Phone};
+use Home\CmsMini\View;
 use App\Model\Message;
+use Home\CmsMini\Router;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return $this->render('home/index');
+        $view = new View;
+        $view->template = 'home/index';
+        $view->render();
     }
 
     public function about()
     {
-        $this->title = 'about us';
-        $this->header = 'about us';
-        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
-        
-        return $this->render('home/about');
+        $view = new View;
+        $view->title = 'about us';
+        $view->header = 'about us';
+        $view->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
+        $view->template = 'home/about';
+        $view->render();
     }
 
     public function services()
     {
-        $this->title = 'our services';
-        $this->header = 'our services';
-        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
-        
-        return $this->render('home/services');
+        $view = new View;
+        $view->title = 'our services';
+        $view->header = 'our services';
+        $view->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
+        $view->template = 'home/services';
+        $view->render();
     }
 
     public function contact()
     {
-        $this->title = 'contact us';
-        $this->header = 'contact us';
-        $this->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
-
-        return $this->render('home/contact');
+        $view = new View;
+        $view->title = 'contact us';
+        $view->header = 'contact us';
+        $view->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
+        $view->template = 'home/contact';
+        $view->render();
     }
 
     public function contactStore()
@@ -62,6 +69,6 @@ class HomeController extends Controller
         $message->save();
 
         Flash::addSuccess('Message added!');
-        return Request::redirect('/contact');
+        return Request::redirect(Router::url('contact'));
     }
 }
