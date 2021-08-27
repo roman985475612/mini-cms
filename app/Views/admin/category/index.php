@@ -1,35 +1,10 @@
 <?php
 use Home\CmsMini\Router;
-?>
-<header class="main-header main-header--success py-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h1 class="main-header__title">
-                    <svg class="main-header__icon">
-                        <use xlink:href="/assets/admin/icons/sprite.svg#folder-solid"></use>
-                    </svg>
-                    <?= $this->header ?>
-                </h1>
-            </div>
-        </div>
-    </div>
-</header>
-<!-- /.main-header -->
 
-<section class="search">
-    <div class="container">
-        <div class="row">
-            <div class="col-6 m-auto">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Search categories..." aria-label="Search categories..." aria-describedby="button-addon2">
-                    <button class="btn btn-outline-success" type="button" id="button-addon2">Button</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- /.search -->
+$this->renderPart('admin/header', compact('headerClass'));
+
+$this->renderPart('admin/search-bar') 
+?>
 
 <section class="posts">
     <div class="container">
@@ -67,7 +42,7 @@ use Home\CmsMini\Router;
                         </tbody>
                     </table>
 
-                    <?php $page->render('admin-cat-pagination') ?>
+                    <?php $page->render('admin/pagination') ?>
 
                 </div>
             </div>

@@ -1,29 +1,17 @@
 <?php
 use \Home\CmsMini\Router;
+
+$this->renderPart('admin/header');
 ?>
-    
-<header class="main-header py-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h1 class="main-header__title">
-                    <svg class="main-header__icon">
-                        <use xlink:href="/assets/admin/icons/sprite.svg#cog-solid"></use>
-                    </svg>
-                    <?= $this->header ?>
-                </h1>
-            </div>
-        </div>
-    </div>
-</header>
-<!-- /.main-header -->
 
 <section class="actions">
     <div class="container">
         <div class="row actions__btns">
             <div class="col-md-3">
                 <div class="d-grid gap-2">
-                    <a class="btn btn-primary actions__btn" id="addArticle">
+                    <a class="btn btn-primary actions__btn"
+                       data-title="Create article"
+                       data-url="<?= Router::url('article-create') ?>">
                         <svg class="actions__icon">
                             <use xlink:href="/assets/admin/icons/sprite.svg#plus-circle-solid"></use>
                         </svg>
@@ -82,15 +70,15 @@ use \Home\CmsMini\Router;
                             <tr>
                                 <th scope="row"><?= $article->id ?></th>
                                 <td><?= $article->title ?></td>
-                                <td><?= $article->category ?></td>
-                                <td><?= $article->author ?></td>
-                                <td><?= $article->created_at ?></td>
+                                <td><?= $article->getCategory() ?></td>
+                                <td><?= $article->getAuthor() ?></td>
+                                <td><?= $article->getDate() ?></td>
                                 <td>
                                     <a href="<?= Router::url('article-edit', ['id' => $article->id]) ?>" class="btn btn-warning posts__btn">
                                         <svg class="icon">
                                             <use xlink:href="/assets/admin/icons/sprite.svg#angle-double-right-solid"></use>
                                         </svg>            
-                                        update
+                                        show
                                     </a>
                                 </td>
                             </tr>

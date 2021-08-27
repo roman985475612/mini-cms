@@ -6,13 +6,42 @@ use Home\CmsMini\Exception\Http404Exception;
 
 abstract class Model
 {
-    use PermalinkTrait;
+    private array $updateFields = [];
     
-    public int $id;
+    protected array $fields = [];
 
-    public string $created_at;
+    public function __get(string $name)
+    {
+        return $this->fields[$name];
+    }
 
-    public string $updated_at;
+    public function __set(string $name, mixed $value)
+    {
+        if (!(isset($this->$name) && $this->$name == $value)) {
+            $this->addField($name);    
+        }
+        $this->fields[$name] = $value;
+    }
+
+    public function __isset(string $name): bool
+    {
+        return isset($this->fields[$name]);
+    }
+
+    public function getDate()
+    {
+        return date('F j, Y', strtotime($this->updated_at));
+    }
+
+    protected function addField(string $name)
+    {
+        $this->updateFields[] = $name;
+    }
+
+    protected function getUpdateFields()
+    {
+        return array_unique($this->updateFields);
+    }
 
     protected static function getTableName()
     {
@@ -104,12 +133,11 @@ abstract class Model
         }
     }
 
-    public function save(?array $columns = null): bool
+    public function save(): bool
     {
-
         return $this->isNew() 
-            ? $this->create(array_keys(get_object_vars($this))) 
-            : $this->update($columns ?? array_keys(get_object_vars($this)));
+            ? $this->create($this->getUpdateFields()) 
+            : $this->update($this->getUpdateFields());
     }
 
     public function isNew(): bool
@@ -138,6 +166,10 @@ abstract class Model
 
     public function update(array $columns): bool
     {
+        if (empty($columns)) {
+            return false;
+        }
+
         $db = App::$db->query(
             QueryBuilder::update(static::getTableName())
                 ->set($columns)
@@ -152,7 +184,7 @@ abstract class Model
         return (bool) $db->execute()->rowCount();
     }
 
-    public function delete(): int
+    public function delete(): bool
     {
         $db = App::$db->query(
             QueryBuilder::delete()
@@ -163,6 +195,6 @@ abstract class Model
 
         $db->setParam('id', $this->id);
         
-        return $db->execute()->rowCount();
+        return (bool) $db->execute()->rowCount();
     }
 }

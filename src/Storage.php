@@ -12,6 +12,14 @@ class Storage
 
     public static function getFilePath(string $filename): string
     {
-        return '/storage/' . $filename;
+        return STORAGE_URL . '/' . $filename;
+    }
+
+    public static function remove(string $filename): bool
+    {
+        if (file_exists(STORAGE . '/' . $filename)) {
+            return unlink(STORAGE . '/' . $filename);
+        }
+        return false;
     }
 }

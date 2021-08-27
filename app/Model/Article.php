@@ -4,55 +4,44 @@ namespace App\Model;
 
 use Home\CmsMini\Model;
 use Home\CmsMini\Storage;
+use Home\CmsMini\File;
 
 class Article extends Model
 {
-    public string $title;
-
-    protected ?string $excerpt;
-
-    public string $post;
-
-    protected ?string $img;
-    
-    public int $category_id;
-
-    public int $user_id;
-
-    public function getPermalink()
+    public function getCategory()
     {
-        return '/blog/' . $this->id;
+        return Category::get($this->category_id);
     }
 
-    public function __get($name)
+    public function getAuthor()
     {
-        switch ($name) {
-            case 'excerpt'  : return $this->getExcerpt();
-            case 'category' : return Category::get($this->category_id);
-            case 'img'      : return $this->getImage();
-            case 'created_at': return $this->date($this->created_at);
-            case 'updated_at': return $this->date($this->updated_at);
-            case 'author'   : return User::get($this->user_id);
-        }
-    }
-
-    public function __set($name, $value)
-    {
-        switch ($name) {
-            case 'id'       : return $this->id = $value;
-            case 'title'    : return $this->title = $value;
-            case 'post'     : return $this->post = $value;
-            case 'category_id': return $this->category_id = $value;
-            case 'user_id'  : return $this->user_id = $value;
-            case 'created_at': return $this->created_at = $value;
-            case 'updated_at': return $this->updated_at = $value;
-        }
+        return User::get($this->user_id);
     }
 
     public function getImage()
     {
-        [$ok, $filepath] = Storage::get($this->img);
+        [$ok, $filepath] = Storage::get($this->fields['img']);
         return $ok ? $filepath : 'https://source.unsplash.com/random';
+    }
+
+    public function setImage(string $name = 'img'): void
+    {
+        $file = new File($name);
+        
+        if (empty($this->img) && !$file->uploaded()) {
+            throw new \Exception('File not uploaded!');
+        }
+
+        if ($file->uploaded()) {
+            if (!empty($this->img)) {
+                $file->remove($this->img);
+            }
+            
+            $file->setName();
+            $file->moveToStorage();
+            $this->img = $file->getName();  
+            $this->addField($name);  
+        }
     }
 
     public function getExcerpt()
@@ -62,12 +51,9 @@ class Article extends Model
             : substr($this->post, 0, 50);
     }
 
-    public function date($value)
+    public function delete(): bool
     {
-        if (empty($value)) {
-            return $value;
-        }
-
-        return date('F j, Y', strtotime($value));
+        Storage::remove($this->img);
+        return parent::delete();
     }
 }

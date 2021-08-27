@@ -33,7 +33,7 @@ return [
         'pattern'    => '/contact',
         'controller' => HomeController::class,
         'action'     => 'contactStore',
-        'method'     => ['POST'],
+        'method'     => 'POST',
     ],
     'blog' => [
         'pattern'    => '/blog',
@@ -70,13 +70,13 @@ return [
         'pattern'    => '/register',
         'controller' => AuthController::class,
         'action'     => 'register',
-        'method'     => ['POST'],
+        'method'     => 'POST',
     ],
     'login' => [
         'pattern'    => '/login',
         'controller' => AuthController::class,
         'action'     => 'login',
-        'method'     => ['POST'],
+        'method'     => 'POST',
     ],
     'admin' => [
         'pattern'    => '/admin',
@@ -86,9 +86,33 @@ return [
         'pattern'    => '/admin/articles',
         'controller' => ArticleController::class,
     ],
+    'article-create' => [
+        'pattern'    => '/admin/articles/create',
+        'controller' => ArticleController::class,
+        'action'     => 'create',
+    ],
+    'article-store' => [
+        'pattern'    => '/admin/articles/store',
+        'controller' => ArticleController::class,
+        'action'     => 'store',
+        'method'     => 'POST',
+
+    ],
     'article-edit' => [
         'pattern'    => '/admin/articles/<id>/edit',
         'controller' => ArticleController::class,
+        'action'     => 'edit',
+    ],
+    'article-update' => [
+        'pattern'    => '/admin/articles/<id>/update',
+        'controller' => ArticleController::class,
+        'action'     => 'update',
+        'method'     => 'POST',
+    ],
+    'article-delete' => [
+        'pattern'    => '/admin/articles/<id>/delete',
+        'controller' => ArticleController::class,
+        'action'     => 'delete',
     ],
     'categories' => [
         'pattern'    => '/admin/categories',
@@ -103,7 +127,7 @@ return [
         'pattern'    => '/admin/categories/store',
         'controller' => CategoryController::class,
         'action'     => 'store',
-        'method'     => ['POST'],
+        'method'     => 'POST',
     ],
     'category-edit' => [
         'pattern'    => '/admin/categories/<id>/edit',
@@ -114,7 +138,7 @@ return [
         'pattern'    => '/admin/categories/<id>/update',
         'controller' => CategoryController::class,
         'action'     => 'update',
-        'method'     => ['POST'],
+        'method'     => 'POST',
     ],
     'category-delete' => [
         'pattern'    => '/admin/categories/<id>/delete',

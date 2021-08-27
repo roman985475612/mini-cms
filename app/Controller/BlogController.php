@@ -25,7 +25,7 @@ class BlogController extends Controller
     public function show(Article $article)
     {
         $view = new View;
-        $view->title = $article->category->title;
+        $view->title = $article->getCategory()->title;
         $view->title = $article->title;
         $view->header = $article->title;
         $view->description = $article->excerpt;
@@ -40,6 +40,6 @@ class BlogController extends Controller
         $view->header = $category->title;
         $view->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
         $view->template = 'blog/category';
-        $view->render(['articles' => $category->articles]);
+        $view->render(['articles' => $category->getArticles()]);
     }
 }

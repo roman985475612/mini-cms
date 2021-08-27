@@ -7,12 +7,12 @@ use App\Widget\Pagination;
 use Home\CmsMini\Auth;
 use Home\CmsMini\Controller;
 use Home\CmsMini\Flash;
+use Home\CmsMini\FormBuilder as Form;
 use Home\CmsMini\Request;
 use Home\CmsMini\Router;
 use Home\CmsMini\View;
-use Home\CmsMini\Form\{Form, Fieldset, Input, Label, Button};
 use Home\CmsMini\Validator\Validation;
-use Home\CmsMini\Validator\{Alphanumeric, NotEmpty, Email, Phone};
+use Home\CmsMini\Validator\{NotEmpty};
 
 class CategoryController extends Controller
 {
@@ -28,20 +28,27 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $page = new Pagination(Category::class, 3);
-        
         $view = new View;
         $view->title = 'categories';
         $view->header = 'categories';
         $view->layout = 'admin';
         $view->template = 'admin/category/index';
-        $view->render(compact('page'));
+        $view->render([
+            'headerClass' => 'bg-info',
+            'page'      => new Pagination(Category::class, 3),
+            'entity'    => 'Post',
+            'createUrl' => Router::url('category-create'),
+        ]);
     }
 
     public function create()
     {
-        $form = $this->getForm(Router::url('category-store'));
-        echo $form->render();
+        $form = Form::open(['action' => Router::url('category-store')]);
+        $form .= Form::input(['name' => 'title', 'id' => 'formTitle', 'placeholder' => 'Enter title'], 'Title');
+        $form .= Form::submit('Save');
+        $form .= Form::close();
+
+        echo $form;
     }
 
     public function store()
@@ -59,19 +66,30 @@ class CategoryController extends Controller
         $category->save();
 
         Flash::addSuccess('Category created!');
-        return Request::redirect(Router::url('categories'));
+        return Request::redirect();
     }
 
     public function edit(Category $category)
     {
-        $form = $this->getForm(Router::url('category-update', ['id' => $category->id]), $category);
+        $form = Form::open(['action' => Router::url('category-update')]);
+        $form .= Form::input(['name' => 'title', 'value' => $category->title, 'id' => 'formTitle', 'placeholder' => 'Enter title'], 'Title');
+        $form .= Form::submit('Save');
+        $form .= Form::close();
 
         $view = new View;
-        $view->title = $category->title;
-        $view->header = $category->title;
-        $view->layout = 'admin';
-        $view->template = 'admin/category/edit';
-        $view->render(compact('category', 'form'));
+        $view->title    = $category->title;
+        $view->header   = $category->title;
+        $view->layout   = 'admin';
+        $view->template = 'admin/edit';
+        $view->render([
+            'headerClass' => 'bg-secondary',
+            'object'    => $category, 
+            'form'      => $form,
+            'entity'    => 'Post',
+            'backUrl'   => Router::url('categories', ['id' => $category->id]),
+            'saveUrl'   => Router::url('category-update', ['id' => $category->id]),
+            'deleteUrl' => Router::url('category-delete', ['id' => $category->id]),
+        ]);
     }
 
     public function update(Category $category)
@@ -97,43 +115,5 @@ class CategoryController extends Controller
         
         Flash::addSuccess('Category deleted!');
         return Request::redirect(Router::url('categories'));
-    }
-
-    protected function getForm(string $action, ?Category $category = null)
-    {
-        $form = new Form([
-            'id'        => 'categoryUpdate',
-            'action'    => $action, 
-            'method'    => 'POST', 
-            'class'     => 'needs-validation', 
-            'novalidate'=> '', 
-        ]);
-        
-        $fieldset = new Fieldset(['class' => 'mb-3']);
-        $fieldset->add(new Label('Title', true, [
-            'for'       => 'categoryTitle',
-            'class'     => 'form-label'
-        ]));
-        $fieldset->add(new Input([
-            'id'        => 'categoryTitle', 
-            'name'      => 'title', 
-            'type'      => 'text', 
-            'class'     => 'form-control form__control', 
-            'placeholder' => 'Enter title',
-            'data-valid'  => 'notEmpty',
-            'value'     => $category->title ?? ''
-        ]));
-        $form->add($fieldset);
-        
-        $fieldset = new Fieldset(['class' => 'mb-3']);
-        $fieldsetInner = new Fieldset(['class' => 'd-grid gap-2']);
-        $fieldsetInner->add(new Button('Save', [
-            'type'  => 'submit', 
-            'class' => 'btn btn-outline-success form__submit',
-        ]));
-        $fieldset->add($fieldsetInner);
-        $form->add($fieldset);
-        
-        return $form;
     }
 }

@@ -8,6 +8,7 @@ use Home\CmsMini\App;
 class Router
 {
     private static array $paths = [];
+
     private static array $routes = [];
 
     private static string $controller;
@@ -47,7 +48,7 @@ class Router
             $item['pattern'] = str_replace('<', '(?P<', $item['pattern']);
             $item['pattern'] = str_replace('>', '>\d+)', $item['pattern']);
             $item['pattern'] = "#^{$item['pattern']}$#";
-            $item['method'] ??= ['GET'];
+            $item['method'] ??= 'GET';
             $item['action'] ??= 'index';
             return $item;     
         }, self::$paths);
@@ -55,20 +56,19 @@ class Router
 
     private static function matchRoute(): bool
     {
-        $method = Request::getMethod();
-        $path = Request::getPath();
-        foreach (self::$routes as $route) {
-            if (!in_array($method, $route['method'])) {
-                continue;
-            }
+        $routes = array_filter(self::$routes, function ($route) {
+            return Request::getMethod() == strtoupper($route['method']);
+        });
 
-            if (preg_match($route['pattern'], $path, $matches)) {
+        foreach ($routes as $route) {
+            if (preg_match($route['pattern'], Request::getPath(), $matches)) {
                 self::$controller = $route['controller'];
                 self::$action = $route['action'];
 
                 if (isset($matches['id'])) {
                     self::$params['id'] = $matches['id'];
                 }
+
                 return true;
             }       
         }
@@ -92,7 +92,7 @@ class Router
         }
 
         $paramsRef = $actionRef->getParameters();
-        if (count($paramsRef) != count(self::$params)) {
+        if (count(self::$params) < count($paramsRef)) {
             throw new Http404Exception('ID not found!');
         }
 

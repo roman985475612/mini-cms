@@ -32,6 +32,7 @@ class AdminController extends Controller
         $view->template = 'admin/index';
         $view->render([
             'articles' => Article::all(),
+            'headerClass' => 'bg-primary',
             'counts'   => [
                 'article'  => Article::count(),
                 'category' => Category::count(),

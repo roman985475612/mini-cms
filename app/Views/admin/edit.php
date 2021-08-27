@@ -1,30 +1,17 @@
 <?php
-    use Home\CmsMini\Router;
+use Home\CmsMini\Router;
+
+$this->renderPart('admin/header', compact('headerClass'));
 ?>
-<header class="main-header main-header--success py-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h1 class="main-header__title">
-                    <svg class="main-header__icon">
-                        <use xlink:href="/assets/admin/icons/sprite.svg#folder-solid"></use>
-                    </svg>
-                    <?= $this->header ?>
-                </h1>
-            </div>
-        </div>
-    </div>
-</header>
-<!-- /.main-header -->
 
 <section class="actions">
     <div class="container">
         <div class="row actions__btns">
             <div class="col-md-3">
                 <div class="d-grid gap-2">
-                    <a href="<?= Router::url('admin') ?>" class="btn btn-info actions__btn">
+                    <a href="<?= $backUrl ?>" class="btn btn-info actions__btn">
                         <svg class="actions__icon">
-                            <use xlink:href="icons/sprite.svg#arrow-circle-left-solid"></use>
+                            <use xlink:href="/assets/admin/icons/sprite.svg#arrow-circle-left-solid"></use>
                         </svg>
                         back to dashboard
                     </a>
@@ -32,9 +19,9 @@
             </div>
             <div class="col-md-3">
                 <div class="d-grid gap-2">
-                    <a href="<?= Router::url('category-update', ['id' => $category->id]) ?>" class="btn btn-success actions__btn">
+                    <a href="<?= $saveUrl ?>" class="btn btn-success actions__btn">
                         <svg class="actions__icon">
-                            <use xlink:href="icons/sprite.svg#check-circle-solid"></use>
+                            <use xlink:href="/assets/admin/icons/sprite.svg#check-circle-solid"></use>
                         </svg>
                         save changes
                     </a>
@@ -42,11 +29,14 @@
             </div>
             <div class="col-md-3">
                 <div class="d-grid gap-2">
-                    <a href="<?= Router::url('category-delete', ['id' => $category->id]) ?>" class="btn btn-danger actions__btn">
+                    <a onclick="return confirm('Are you sure?')" 
+                       href="<?= $deleteUrl ?>" 
+                       class="btn btn-danger actions__btn"
+                       >
                         <svg class="actions__icon">
-                            <use xlink:href="icons/sprite.svg#trash-alt-solid"></use>
+                            <use xlink:href="/assets/admin/icons/sprite.svg#trash-alt-solid"></use>
                         </svg>
-                        delete category
+                        delete <?= $entity ?>
                     </a>
                 </div>
             </div>
@@ -61,10 +51,10 @@
             <div class="col-9">
                 <div class="card">
                     <div class="card-header">
-                        <h4>edit category</h4>
+                        <h4>edit <?= $entity ?></h4>
                     </div>
                     <div class="card-body">
-                        <?= $form->render() ?>
+                        <?= $form ?>
                     </div>
                 </div>    
             </div>

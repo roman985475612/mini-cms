@@ -32,20 +32,13 @@ class Request
         return $post;
     }
 
-    // public static function getQuery(?string $param = null): array | string
-    // {
-    //     $get = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-    //     if (array_key_exists($param, $get)) {
-    //         return $get[$param];
-    //     }
-
-    //     return $get;
-    // }
-
-    public static function file() 
+    public static function files(?string $param = null) 
     {
+        if (array_key_exists($param, $_FILES)) {
+            return $_FILES[$param];
+        }
 
+        return $_FILES;
     }
 
     public static function old(string $key)
@@ -60,7 +53,7 @@ class Request
 
     public static function getMethod(): string
     {
-        return $_SERVER['REQUEST_METHOD'];
+        return strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
     public static function isPost(): bool 
