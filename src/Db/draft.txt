@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Migration;
+
+use Home\CmsMini\Db\Migration;
+use Home\CmsMini\Db\Column;
+
+class {{filename}} extends Migration
+{
+    public function up()
+    {
+        
+    }
+    
+    public function down()
+    {
+        
+    }
+}

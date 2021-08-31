@@ -1,3 +1,6 @@
+<?php
+use Home\CmsMini\Router;
+?>
 <section id="sectionShowcase">
     <div id="carouselShowcase" class="carousel slide carousel-fade" data-bs-ride="carousel">
         <div class="carousel-indicators">
@@ -86,7 +89,7 @@
             <div class="col-md-6 info__item">
                 <h3 class="info__title">about us</h3>
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum eum maxime labore amet, nisi ab ut molestiae nihil molestias! Accusantium.</p>
-                <a href="about.html" class="btn btn-outline-danger btn-lg info__btn">learn more</a>
+                <a href="<?= Router::url('about') ?>" class="btn btn-outline-danger btn-lg info__btn">learn more</a>
             </div>
             <div class="col-md-6">
                 <img src="/assets/img/laptop.webp" alt="laptop" class="info__img">
@@ -155,39 +158,4 @@
 </section>
 <!-- /.gallery -->
 
-<section class="newsletter">
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <h2 class="newsletter__title">sign up for our newsletter</h2>
-                <p class="newsletter__text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero dignissimos nemo asperiores tempore reiciendis, dolore modi ex similique maiores quidem.</p>
-                <form class="row g-3 newsletter__form form" novalidate>
-                    <div class="col-auto">
-                        <input 
-                        name="newsletter[name]" 
-                        type="text" 
-                        id="newsletterName" 
-                        class="form-control form__control" 
-                        placeholder="Enter name"
-                        data-valid="notEmpty"
-                    >
-                    </div>
-                    <div class="col-auto">
-                        <input 
-                            name="newsletter[email]" 
-                            type="email" 
-                            id="newsletterEmail" 
-                            class="form-control form__control" 
-                            placeholder="Enter email"
-                            data-valid="email"
-                        >
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-primary form__submit">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- /.newsletter -->
+<?php $this->renderPart('home/newsletter') ?>

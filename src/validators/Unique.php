@@ -4,19 +4,16 @@ namespace Home\CmsMini\Validator;
 
 class Unique implements ValidatorInterface
 {
-    protected string $model;
-
-    protected string $field;
-
-    public function __construct(string $model, string $field)
-    {
-        $this->model = $model;
-        $this->field = $field;
-    }
+    public function __construct(
+        protected string $model,
+        protected string $field,
+        protected ?string $exception = null
+    ) {}
 
     public function validate(mixed $datum): bool
     {
-        return empty($this->model::findOne($this->field, $datum));
+        return empty($this->model::findOne($this->field, $datum))
+            || $datum == $this->exception;
     }
 
     public function errorMessage(): string

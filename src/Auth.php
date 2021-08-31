@@ -19,7 +19,6 @@ class Auth
         if (isset($_SESSION['UID'])) {
             unset($_SESSION['UID']);
         }
-        Request::redirect();
     }
 
     public static function user()

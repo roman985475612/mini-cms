@@ -7,12 +7,12 @@ class Storage
     public static function get(string $filename): array
     {
         $filepath = self::getFilePath($filename);
-        return [file_exists(WWW . $filepath), $filepath];
+        return [file_exists(STORAGE . "/$filename"), $filepath];
     }
 
     public static function getFilePath(string $filename): string
     {
-        return STORAGE_URL . '/' . $filename;
+        return STORAGE_URL . "/$filename";
     }
 
     public static function remove(string $filename): bool

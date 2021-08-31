@@ -1,4 +1,4 @@
-<header class="main-header <?= $headerClass ?> py-4">
+<header class="main-header <?= $this->getMeta('headerClass') ?> py-4">
     <div class="container">
         <div class="row">
             <div class="col-md-6">
@@ -6,7 +6,7 @@
                     <svg class="main-header__icon">
                         <use xlink:href="/assets/admin/icons/sprite.svg#folder-solid"></use>
                     </svg>
-                    <?= $this->header ?>
+                    <?= $this->getMeta('header') ?>
                 </h1>
             </div>
         </div>

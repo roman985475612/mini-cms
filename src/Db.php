@@ -45,12 +45,6 @@ class Db
 
     protected function __clone() {}
 
-    // public static function query(string $query)
-    // {
-    //     static::$instance->sth = static::$instance->dbh->prepare($query);
-    //     return static::$instance;
-    // }
-
     public function query(string $query)
     {
         $this->sth = $this->dbh->prepare($query);
@@ -71,6 +65,11 @@ class Db
     {
         $this->result = $this->sth->execute();
         return $this;
+    }
+
+    public function getSql(): string
+    {
+        return $this->sth->queryString;
     }
 
     public function rowCount()

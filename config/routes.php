@@ -2,39 +2,13 @@
 
 use App\Controller\HomeController;
 use App\Controller\BlogController;
-use App\Controller\AuthController;
-use App\Controller\AdminController;
-use App\Controller\ArticleController;
-use App\Controller\CategoryController;
-use App\Controller\UserController;
+use App\Controller\Admin\AuthController;
+use App\Controller\Admin\AdminController;
+use App\Controller\Admin\ArticleController;
+use App\Controller\Admin\CategoryController;
+use App\Controller\Admin\UserController;
 
-return [
-    'home' => [
-        'pattern'    => '/',
-        'controller' => HomeController::class,
-        'action'     => 'index',
-    ],
-    'about' => [
-        'pattern'    => '/about',
-        'controller' => HomeController::class,
-        'action'     => 'about',
-    ],
-    'services' => [
-        'pattern'    => '/services',
-        'controller' => HomeController::class,
-        'action'     => 'services',
-    ],
-    'contact' => [
-        'pattern'    => '/contact',
-        'controller' => HomeController::class,
-        'action'     => 'contact',
-    ],
-    'contact-store' => [
-        'pattern'    => '/contact',
-        'controller' => HomeController::class,
-        'action'     => 'contactStore',
-        'method'     => 'POST',
-    ],
+$main = [
     'blog' => [
         'pattern'    => '/blog',
         'controller' => BlogController::class,
@@ -78,75 +52,161 @@ return [
         'action'     => 'login',
         'method'     => 'POST',
     ],
-    'admin' => [
-        'pattern'    => '/admin',
-        'controller' => AdminController::class,
-    ],
-    'articles' => [
-        'pattern'    => '/admin/articles',
-        'controller' => ArticleController::class,
-    ],
-    'article-create' => [
-        'pattern'    => '/admin/articles/create',
-        'controller' => ArticleController::class,
-        'action'     => 'create',
-    ],
-    'article-store' => [
-        'pattern'    => '/admin/articles/store',
-        'controller' => ArticleController::class,
-        'action'     => 'store',
-        'method'     => 'POST',
-
-    ],
-    'article-edit' => [
-        'pattern'    => '/admin/articles/<id>/edit',
-        'controller' => ArticleController::class,
-        'action'     => 'edit',
-    ],
-    'article-update' => [
-        'pattern'    => '/admin/articles/<id>/update',
-        'controller' => ArticleController::class,
-        'action'     => 'update',
-        'method'     => 'POST',
-    ],
-    'article-delete' => [
-        'pattern'    => '/admin/articles/<id>/delete',
-        'controller' => ArticleController::class,
-        'action'     => 'delete',
-    ],
-    'categories' => [
-        'pattern'    => '/admin/categories',
-        'controller' => CategoryController::class,
-    ],
-    'category-create' => [
-        'pattern'    => '/admin/categories/create',
-        'controller' => CategoryController::class,
-        'action'     => 'create',
-    ],
-    'category-store' => [
-        'pattern'    => '/admin/categories/store',
-        'controller' => CategoryController::class,
-        'action'     => 'store',
-        'method'     => 'POST',
-    ],
-    'category-edit' => [
-        'pattern'    => '/admin/categories/<id>/edit',
-        'controller' => CategoryController::class,
-        'action'     => 'edit',
-    ],
-    'category-update' => [
-        'pattern'    => '/admin/categories/<id>/update',
-        'controller' => CategoryController::class,
-        'action'     => 'update',
-        'method'     => 'POST',
-    ],
-    'category-delete' => [
-        'pattern'    => '/admin/categories/<id>/delete',
-        'controller' => CategoryController::class,
-        'action'     => 'delete',
-    ],
     'users' => [
         'pattern'    => '/admin/users',
         'controller' => UserController::class,
     ],
 ];
+
+$admin = function() {
+    return [
+        'admin' => [
+            'pattern'    => '/admin',
+            'controller' => AdminController::class,
+        ],
+        'profile' => [
+            'pattern'    => '/profile',
+            'controller' => AdminController::class,
+            'action'     => 'profile',
+        ],
+        'profile-update' => [
+            'pattern'    => '/profile/update',
+            'controller' => AdminController::class,
+            'action'     => 'update',
+        ],
+        'profile-delete' => [
+            'pattern'    => '/profile/delete',
+            'controller' => AdminController::class,
+            'action'     => 'delete',
+        ],
+        'settings' => [
+            'pattern'    => '/settings',
+            'controller' => AdminController::class,
+            'action'     => 'settings',
+        ],
+    ];
+};
+
+$home = function() {
+    return [
+        'home' => [
+            'pattern'    => '/',
+            'controller' => HomeController::class,
+            'action'     => 'index',
+        ],
+        'about' => [
+            'pattern'    => '/about',
+            'controller' => HomeController::class,
+            'action'     => 'about',
+        ],
+        'services' => [
+            'pattern'    => '/services',
+            'controller' => HomeController::class,
+            'action'     => 'services',
+        ],
+        'contact' => [
+            'pattern'    => '/contact',
+            'controller' => HomeController::class,
+            'action'     => 'contact',
+        ],
+        'contact-store' => [
+            'pattern'    => '/contact',
+            'controller' => HomeController::class,
+            'action'     => 'contactStore',
+            'method'     => 'POST',
+        ],
+        'subscribe' => [
+            'pattern'    => '/subscribe',
+            'controller' => HomeController::class,
+            'action'     => 'subscribe',
+            'method'     => 'POST',
+        ],
+    ];
+};
+
+$article = function() {
+    $routes = [
+        'articles'       => ['pattern' => '/admin/articles'],
+        'article-create' => ['pattern' => '/admin/articles/create'     , 'action' => 'create'],
+        'article-store'  => ['pattern' => '/admin/articles/store'      , 'action' => 'store' , 'method' => 'POST'],
+        'article-edit'   => ['pattern' => '/admin/articles/<id>/edit'  , 'action' => 'edit'],
+        'article-update' => ['pattern' => '/admin/articles/<id>/update', 'action' => 'update', 'method' => 'POST'],
+        'article-delete' => ['pattern' => '/admin/articles/<id>/delete', 'action' => 'delete'],
+        'article-table'  => ['pattern' => '/admin/articles/table'      , 'action' => 'table'],
+    ];
+
+    $routes = array_map(function ($route) {
+        $route['controller'] = ArticleController::class;
+        return $route;
+    }, $routes);
+
+    return $routes;
+};
+
+$category = function() {
+    return [
+        'categories' => [
+            'pattern'    => '/admin/categories',
+            'controller' => CategoryController::class,
+        ],
+        'category-create' => [
+            'pattern'    => '/admin/categories/create',
+            'controller' => CategoryController::class,
+            'action'     => 'create',
+        ],
+        'category-store' => [
+            'pattern'    => '/admin/categories/store',
+            'controller' => CategoryController::class,
+            'action'     => 'store',
+            'method'     => 'POST',
+        ],
+        'category-edit' => [
+            'pattern'    => '/admin/categories/<id>/edit',
+            'controller' => CategoryController::class,
+            'action'     => 'edit',
+        ],
+        'category-update' => [
+            'pattern'    => '/admin/categories/<id>/update',
+            'controller' => CategoryController::class,
+            'action'     => 'update',
+            'method'     => 'POST',
+        ],
+        'category-delete' => [
+            'pattern'    => '/admin/categories/<id>/delete',
+            'controller' => CategoryController::class,
+            'action'     => 'delete',
+        ],
+        'category-table' => [
+            'pattern'    => '/admin/categories/table',
+            'controller' => CategoryController::class,
+            'action'     => 'table',
+        ],
+        'categoryUploadForm' => [
+            'pattern'    => '/admin/categories/upload-form',
+            'controller' => CategoryController::class,
+            'action'     => 'uploadForm',
+        ],
+        'categoryUpload' => [
+            'pattern'    => '/admin/categories/upload',
+            'controller' => CategoryController::class,
+            'action'     => 'upload',
+            'method'     => 'POST',
+        ],
+    ];
+};
+
+$routes = array_merge(
+    $main,
+    $home(),
+    $article(),
+    $category(),
+    $admin(),
+);
+
+$routes = array_map(function ($route) {
+    $route['method'] ??= 'GET';
+    $route['action'] ??= 'index';
+    return $route;
+}, $routes);
+
+return $routes;

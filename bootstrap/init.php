@@ -3,13 +3,14 @@
 session_start();
         
 define("ROOT"   , dirname(__DIR__));
-define("CONFIG" , ROOT . '/config');
-define("WWW"    , ROOT . '/public');
-define("STORAGE", ROOT . '/public/storage');
-define("STORAGE_URL", '/public/storage');
-define("VIEW"   , ROOT . '/app/Views/');
-define("LAYOUTS", ROOT . '/app/Views/layouts/');
-define("INC"    , ROOT . '/app/Views/layouts/inc/');
+const CONFIG    = ROOT . '/config';
+const WWW       = ROOT . '/public';
+const STORAGE   = ROOT . '/public/storage';
+const STORAGE_URL = '/public/storage';
+const VIEW      = ROOT . '/app/Views';
+const MAIL      = ROOT . '/app/Views/Mail';
+const LAYOUTS   = ROOT . '/app/Views/layouts';
+const INC       = ROOT . '/app/Views/layouts/inc';
 
 require ROOT . '/vendor/autoload.php';
 

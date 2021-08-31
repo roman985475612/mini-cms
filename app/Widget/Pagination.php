@@ -35,10 +35,11 @@ class Pagination
         );
     }
 
-    public function render(string $template)
+    public function render(string $template): void
     {
-        $view = new View;
-        $view->renderPart($template, ['page' => $this]);
+        if ($this->total > $this->perPage) {
+            (new View)->renderPart($template, ['page' => $this]);
+        }
     }
 
     private function setTotal()
@@ -74,7 +75,7 @@ class Pagination
     private function getUrl(int $page)
     {
         $url = Request::get();
-        
+
         if ($page == 1) {
             unset($url['page']);
         } else {

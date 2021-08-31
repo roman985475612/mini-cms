@@ -2,61 +2,69 @@
 
 namespace Home\CmsMini;
 
-class View
+use Home\CmsMini\Core\ViewInterface;
+use Exception;
+
+class View implements ViewInterface
 {
-    public function __construct(protected array $meta = [])
+    protected array $meta = [];
+
+    public function __construct(
+        protected string $layout = '',
+        protected string $template = '',
+    ) {}
+
+    public function setMeta(string $name, string $value): void
     {
-        $this->layout ??= App::$config->default->layout;
-        $this->meta['title']  ??= App::$config->app;
-        $this->meta['brand']  ??= App::$config->app;
-    }
-
-    public function __set(string $name, mixed $value): void
-    {
-        switch ($name) {
-            case 'layout':
-                $this->meta['layout'] = LAYOUTS . $value . '.php';
-                break;
-
-            case 'template':
-                $this->meta['template'] = VIEW . $value . '.php';
-                break;
-
-            case 'title':
-                $this->meta['title'] = ucwords($value) . ' | ' . $this->title;
-                break;
-
-            default:
-                $this->meta[$name] = $value;
+        if ($name == 'title') {
+            $this->meta['title'][] = ucwords($value);
+        } else {
+            $this->meta[$name] = $value;
         }
     }
 
-    public function __get(string $name): mixed
+    public function getMeta(string $name): string
     {
+        if ($name == 'title') {
+            return implode(' | ', array_reverse($this->meta['title']));
+        }
         return $this->meta[$name] ?? '';
     }
 
-    public function __isset(string $name): bool
+    public function setLayout(string $path): void
     {
-        return isset($this->meta[$name]);
+        $this->layout = LAYOUTS . "/$path.php";
     }
-    
-    public function render(array $data = []): void
+
+    public function getTemplate(string $path): string
     {
-        $this->content = $this->renderFile($this->template, $data);
+        return VIEW . "/$path.php";
+    }
+
+    public function getPart(string $path): string
+    {
+        return INC . "/$path.php";
+    }
+
+    public function render(string $templatePath, array $data = []): void
+    {
+        $content = $this->renderFile($this->getTemplate($templatePath), $data);
+
+        $this->setMeta('content', $content);
+
         echo $this->renderFile($this->layout, $this->meta);
         exit;
     }
 
-    public function renderPart(string $template, array $data = []): void
+    public function renderPart(string $templatePath, array $data = []): void
     {
-        echo $this->renderFile(INC . $template . '.php', $data);
+        echo $this->renderFile($this->getPart($templatePath), $data);
     } 
 
     protected function renderFile(string $filename, array $data = []): string
     {
         if (!file_exists($filename)) {
-            throw new \Exception('Template: ' . $filename . ' Not Exists!');
+            throw new Exception('Template: ' . $filename . ' Not Exists!');
         }
 
         extract($data);

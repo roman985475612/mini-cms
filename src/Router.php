@@ -44,13 +44,12 @@ class Router
     private static function setRoutes()
     {
         self::$paths = require CONFIG . '/routes.php';
+
         self::$routes = array_map(function ($item) {
             $item['pattern'] = str_replace('<', '(?P<', $item['pattern']);
             $item['pattern'] = str_replace('>', '>\d+)', $item['pattern']);
             $item['pattern'] = "#^{$item['pattern']}$#";
-            $item['method'] ??= 'GET';
-            $item['action'] ??= 'index';
-            return $item;     
+            return $item;
         }, self::$paths);
     }
 

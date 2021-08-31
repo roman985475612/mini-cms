@@ -1,7 +1,7 @@
 <?php
 use Home\CmsMini\Router;
 
-$this->renderPart('admin/header', compact('headerClass'));
+$this->renderPart('admin/header');
 ?>
 
 <section class="actions">
@@ -19,12 +19,13 @@ $this->renderPart('admin/header', compact('headerClass'));
             </div>
             <div class="col-md-3">
                 <div class="d-grid gap-2">
-                    <a href="<?= $saveUrl ?>" class="btn btn-success actions__btn">
+                    <button id="btnSave"
+                            class="btn btn-success actions__btn">
                         <svg class="actions__icon">
                             <use xlink:href="/assets/admin/icons/sprite.svg#check-circle-solid"></use>
                         </svg>
                         save changes
-                    </a>
+                    </button>
                 </div>
             </div>
             <div class="col-md-3">
@@ -62,3 +63,14 @@ $this->renderPart('admin/header', compact('headerClass'));
     </div>
 </section>
 <!-- /.detail -->
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+    const btnSave = document.querySelector('#btnSave')
+    const form = document.querySelector('#mainForm')
+
+    btnSave.addEventListener('click', () => {
+        form.submit()
+    })
+})
+</script>

@@ -39,6 +39,6 @@ return [
     [
         'title'     => 'admin',
         'urlName'   => 'admin',
-        'role'      => 'isAdmin'
+        'role'      => 'isLoggedIn'
     ],
 ];

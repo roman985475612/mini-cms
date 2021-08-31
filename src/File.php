@@ -42,6 +42,21 @@ class File
         return $this->filename;
     }
 
+    public function getTempName(): string
+    {
+        return $this->file['tmp_name'];
+    }
+
+    public function isJson(): bool
+    {
+        return $this->file['type'] == 'application/json';
+    }
+
+    public function isXml(): bool
+    {
+        return $this->file['type'] == 'text/xml';
+    }
+
     public function getExtension(): string
     {
         return match ($this->file['type']) {

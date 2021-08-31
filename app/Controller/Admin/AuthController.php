@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
+use App\Model\User;
 use Home\CmsMini\App;
 use Home\CmsMini\Auth;
 use Home\CmsMini\Controller;
@@ -9,11 +10,11 @@ use Home\CmsMini\Flash;
 use Home\CmsMini\Request;
 use Home\CmsMini\Validator\Validation;
 use Home\CmsMini\Validator\{Alphanumeric, NotEmpty, Email, Equal, Unique};
-use Home\CmsMini\View;
-use App\Model\User;
 
 class AuthController extends Controller
 {
+    protected string $layout = 'base';
+
     protected function access(): bool
     {
         return (App::$route->action == 'logout' && Auth::isLoggedIn())
@@ -22,11 +23,9 @@ class AuthController extends Controller
 
     public function signup()
     {
-        $view = new View;
-        $view->title = "Sign Up";
-        $view->header = "Sign Up";
-        $view->template = 'auth/signup';
-        $view->render();
+        $this->view->setMeta('title', 'Sign Up');
+        $this->view->setMeta('header', 'Sign Up');
+        $this->view->render('auth/signup');
     }
 
     public function register()
@@ -52,16 +51,14 @@ class AuthController extends Controller
         $user->save();
 
         Flash::addSuccess('Registratioin success!');
-        return Request::redirect('/');
+        Request::redirect();
     }
 
     public function signin()
     {
-        $view = new View;
-        $view->title = "Sign In";
-        $view->header = "Sign In";
-        $view->template = 'auth/signin';
-        $view->render();
+        $this->view->setMeta('title', 'Sign In');
+        $this->view->setMeta('header', 'Sign In');
+        $this->view->render('auth/signin');
     }
 
     public function login()
@@ -93,5 +90,6 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
+        Request::redirect();
     }
 }

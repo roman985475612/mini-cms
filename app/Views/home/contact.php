@@ -1,3 +1,8 @@
+<?php
+use Home\CmsMini\Flash;
+use Home\CmsMini\FormBuilder as Form;
+use Home\CmsMini\Router;
+?>
 <?php $this->renderPart('page-header') ?>
 
 <section class="contact">
@@ -19,88 +24,54 @@
             </div>
             <div class="col-md-8">
                 <div class="card p-4">
-                <?php \Home\CmsMini\Flash::show() ?>
+                <?php Flash::show() ?>
                     <div class="card-body">
                         <h3 class="text-center">Please fill out this form to contact us</h3>
                         <hr>
-                        <?php
-                            use Home\CmsMini\Form\{Form, Fieldset, Input, Textarea, Button};
-                            use Home\CmsMini\Request;
-
-                            $form = new Form([
-                                'id'        => 'contactForm2',
-                                'action'    => '/contact', 
-                                'method'    => 'POST', 
-                                'class'     => 'row g-3 contact__form form', 
-                                'novalidate'=> '', 
-                            ]);
-
-                            $fieldset = new Fieldset(['class' => 'col-6']);
-                            $fieldset->add(new Input([
-                                'id'        => 'contactFirstName', 
-                                'name'      => 'firstname', 
-                                'type'      => 'text', 
-                                'class'     => 'form-control form__control', 
-                                'placeholder' => 'Enter first name',
-                                'data-valid'  => 'notEmpty',
-                            ]));
-                            $form->add($fieldset);
-
-                            $fieldset = new Fieldset(['class' => 'col-6']);
-                            $fieldset->add(new Input([
-                                'id'        => 'contactLastName', 
-                                'name'      => 'lastname', 
-                                'type'      => 'text', 
-                                'class'     => 'form-control form__control', 
-                                'placeholder' => 'Enter last name',
-                                'data-valid'  => 'notEmpty',
-                            ]));
-                            $form->add($fieldset);
-
-                            $fieldset = new Fieldset(['class' => 'col-6']);
-                            $fieldset->add(new Input([
-                                'id'        => 'contactEmail', 
-                                'name'      => 'email', 
-                                'type'      => 'email', 
-                                'class'     => 'form-control form__control', 
-                                'placeholder' => 'Enter email',
-                                'data-valid'  => 'email',
-                            ]));
-                            $form->add($fieldset);
-
-                            $fieldset = new Fieldset(['class' => 'col-6']);
-                            $fieldset->add(new Input([
-                                'id'        => 'contactPhone', 
-                                'name'      => 'phone', 
-                                'type'      => 'tel', 
-                                'class'     => 'form-control form__control', 
-                                'placeholder' => 'Enter phone',
-                                'data-valid'  => 'notEmpty',
-                            ]));
-                            $form->add($fieldset);
-
-                            $fieldset = new Fieldset(['class' => 'col-12']);
-                            $fieldset->add(new Textarea(Request::old('body'), [
-                                'id'        => 'contactBody', 
-                                'name'      => 'body', 
-                                'rows'      => '3', 
-                                'class'     => 'form-control form__control', 
-                                'placeholder' => 'Enter body',
-                                'data-valid'  => 'notEmpty',
-                            ]));
-                            $form->add($fieldset);
-
-                            $fieldset = new Fieldset(['class' => 'col-12']);
-                            $fieldsetInner = new Fieldset(['class' => 'd-grid gap-2']);
-                            $fieldsetInner->add(new Button('Send', [
-                                'type'  => 'submit', 
-                                'class' => 'btn btn-outline-danger form__submit',
-                            ]));
-                            $fieldset->add($fieldsetInner);
-                            $form->add($fieldset);
-
-                            echo $form->render();
-                        ?>
+                        <?= Form::open([
+                            'id'          => 'contactForm2',
+                            'action'      => Router::url('contact'),
+                            'class'       => 'row g-3 contact__form form',
+                            'novalidate'  => '',
+                        ]) ?>
+                        <?= Form::text([
+                            'id'          => 'contactFirstName',
+                            'name'        => 'firstname',
+                            'class'       => 'form-control form__control',
+                            'placeholder' => 'Enter first name',
+                            'data-valid'  => 'notEmpty',
+                        ], '', 'col-6') ?>
+                        <?= Form::text([
+                            'id'          => 'contactLastName',
+                            'name'        => 'lastname',
+                            'class'       => 'form-control form__control',
+                            'placeholder' => 'Enter first name',
+                            'data-valid'  => 'notEmpty',
+                        ], '', 'col-6') ?>
+                        <?= Form::email([
+                            'id'          => 'contactEmail',
+                            'name'        => 'email',
+                            'class'       => 'form-control form__control',
+                            'placeholder' => 'Enter email',
+                            'data-valid'  => 'email',
+                        ], '', 'col-6') ?>
+                        <?= Form::phone([
+                            'id'          => 'contactPhone',
+                            'name'        => 'phone',
+                            'class'       => 'form-control form__control',
+                            'placeholder' => 'Enter phone',
+                            'data-valid'  => 'notEmpty',
+                        ], '', 'col-6') ?>
+                        <?= Form::textarea([
+                            'id'          => 'contactBody',
+                            'name'        => 'body',
+                            'rows'        => '3',
+                            'class'       => 'form-control form__control',
+                            'placeholder' => 'Enter body',
+                            'data-valid'  => 'notEmpty',
+                        ], '', '', 'col-12') ?>
+                        <?= Form::submit('Send', ['class' => 'btn btn-outline-danger form__submit'], 'col-12') ?>
+                        <?= Form::close() ?>
                     </div>
                 </div>
             </div>

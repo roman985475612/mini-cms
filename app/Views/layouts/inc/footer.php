@@ -2,7 +2,7 @@
     <div class="conteiner">
         <div class="row">
             <div class="col">
-                <p>Copyright &copy; 2021 <?= $this->brand ?></p>
+                <p>Copyright &copy; 2021 <?= $this->getMeta('brand') ?></p>
             </div>
         </div>
     </div>

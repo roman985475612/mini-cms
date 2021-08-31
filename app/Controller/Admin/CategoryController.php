@@ -1,21 +1,23 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Model\Category;
 use App\Widget\Pagination;
 use Home\CmsMini\Auth;
 use Home\CmsMini\Controller;
+use Home\CmsMini\File;
 use Home\CmsMini\Flash;
 use Home\CmsMini\FormBuilder as Form;
 use Home\CmsMini\Request;
 use Home\CmsMini\Router;
-use Home\CmsMini\View;
 use Home\CmsMini\Validator\Validation;
 use Home\CmsMini\Validator\{NotEmpty};
 
 class CategoryController extends Controller
 {
+    protected string $layout = 'admin';
+
     protected function access(): bool
     {
         return Auth::isLoggedIn();
@@ -28,16 +30,15 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $view = new View;
-        $view->title = 'categories';
-        $view->header = 'categories';
-        $view->layout = 'admin';
-        $view->template = 'admin/category/index';
-        $view->render([
-            'headerClass' => 'bg-info',
-            'page'      => new Pagination(Category::class, 3),
-            'entity'    => 'Post',
+        $this->view->setMeta('title', 'categories');
+        $this->view->setMeta('header', 'categories');
+        $this->view->setMeta('headerClass', 'bg-info');
+        $this->view->render('admin/list', [
+            'page'      => new Pagination(Category::class, 10),
+            'entity'    => 'Category',
             'createUrl' => Router::url('category-create'),
+            'tableUrl'  => Router::url('category-table'),
+            'uploadUrl' => Router::url('categoryUploadForm'),
         ]);
     }
 
@@ -66,23 +67,22 @@ class CategoryController extends Controller
         $category->save();
 
         Flash::addSuccess('Category created!');
-        return Request::redirect();
+        Request::redirect();
     }
 
     public function edit(Category $category)
     {
-        $form = Form::open(['action' => Router::url('category-update')]);
+        $form = Form::open([
+            'id'     => 'mainForm',
+            'action' => Router::url('category-update')]
+        );
         $form .= Form::input(['name' => 'title', 'value' => $category->title, 'id' => 'formTitle', 'placeholder' => 'Enter title'], 'Title');
-        $form .= Form::submit('Save');
         $form .= Form::close();
 
-        $view = new View;
-        $view->title    = $category->title;
-        $view->header   = $category->title;
-        $view->layout   = 'admin';
-        $view->template = 'admin/edit';
-        $view->render([
-            'headerClass' => 'bg-secondary',
+        $this->view->setMeta('title', $category->title);
+        $this->view->setMeta('header', $category->title);
+        $this->view->setMeta('headerClass', 'bg-secondary');
+        $this->view->render('admin/edit', [
             'object'    => $category, 
             'form'      => $form,
             'entity'    => 'Post',
@@ -115,5 +115,44 @@ class CategoryController extends Controller
         
         Flash::addSuccess('Category deleted!');
         return Request::redirect(Router::url('categories'));
+    }
+
+    public function table()
+    {
+        $this->view->renderPart('admin/category/table', [
+            'page' => new Pagination(Category::class, 10)
+        ]);
+    }
+
+    public function uploadForm()
+    {
+        $form = Form::open(['action' => Router::url('categoryUpload'), 'enctype' => 'multipart/form-data']);
+        $form .= Form::file(['name' => 'file', 'id' => 'uploadFile'], 'Photo');
+        $form .= Form::submit('Upload');
+        $form .= Form::close();
+
+        echo $form;
+    }
+
+    public function upload()
+    {
+        $file = new File('file');
+        
+        $content = file_get_contents($file->getTempName());
+        if ($file->isJson()) {
+            $result = json_decode($content);
+        } elseif ($file->isXml()) {
+            $result = new \SimpleXMLElement($content);
+        }
+
+        foreach ($result as $item) {
+           $category = new Category;
+           $category->title = (string) $item->title;
+           $category->save();
+
+           Flash::addSuccess("Category created!");
+        }
+
+        return Request::redirect();
     }
 }

@@ -126,6 +126,13 @@ abstract class Model
         return static::find($field, $value)->list(static::class);
     }
 
+    public static function create(array $data): bool
+    {
+        $object = new static;
+        $object->fill($data);
+        return $object->insert($object->getUpdateFields());
+    }
+
     public function fill(array $data)
     {
         foreach ($data as $field => $datum) {
@@ -136,16 +143,16 @@ abstract class Model
     public function save(): bool
     {
         return $this->isNew() 
-            ? $this->create($this->getUpdateFields()) 
+            ? $this->insert($this->getUpdateFields())
             : $this->update($this->getUpdateFields());
     }
 
-    public function isNew(): bool
+    protected function isNew(): bool
     {
         return !isset($this->id);
     }
 
-    public function create(array $columns): bool
+    protected function insert(array $columns): bool
     {
         $db = App::$db->query(
             QueryBuilder::insert(static::getTableName())
@@ -164,7 +171,7 @@ abstract class Model
         return (bool) $result->rowCount();
     }
 
-    public function update(array $columns): bool
+    protected function update(array $columns): bool
     {
         if (empty($columns)) {
             return false;

@@ -6,12 +6,17 @@
         ],
         "psr-4": {
             "Home\\CmsMini\\": "src",
-            "Home\\CmsMini\\Validator\\": "src/validators",
-            "Home\\CmsMini\\Exception\\": "src/exceptions",
-            "Home\\CmsMini\\Form\\": "src/forms"
+            "Home\\CmsMini\\Validator\\": "src/Validators",
+            "Home\\CmsMini\\Exception\\": "src/Exceptions",
+            "Home\\CmsMini\\Core\\": "src/Core",
+            "Home\\CmsMini\\Db\\": "src/Db",
+            "Home\\CmsMini\\Service\\": "src/Services"
         }
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"
+    },
+    "require": {
+        "phpmailer/phpmailer": "^6.5"
     }
 }

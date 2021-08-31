@@ -7,7 +7,7 @@ use Home\CmsMini\Storage;
 
 class FormBuilder
 {
-    public static function open(array $atts = [])
+    public static function open(array $atts = []): string
     {
         $atts['action'] ??= $_SERVER['PHP_SELF'];
         $atts['method'] ??= 'POST';
@@ -25,7 +25,7 @@ class FormBuilder
         return '</form>';
     }
 
-    public static function submit(string $text, array $atts = [])
+    public static function submit(string $text, array $atts = [], string $wrap = 'mb-3'): string
     {
         $atts['type']  ??= 'submit';
         $atts['class'] ??= 'btn btn-primary';
@@ -34,11 +34,12 @@ class FormBuilder
         foreach ($atts as $key => $value) {
             $output .= ' ' . $key . '="' . $value . '"';
         }
-        
-        return $output . ' >' . $text . '</button>';
+        $output .= ' >' . $text . '</button>';
+
+        return self::wrap($output, $wrap);
     }
 
-    public static function label(string $label, array $atts = [])
+    public static function label(string $label, array $atts = []): string
     {
         $atts['class'] ??= 'form-label';
 
@@ -51,13 +52,37 @@ class FormBuilder
         return $output . '</label>';
     }
 
-    public static function file(array $atts, string $label = '')
+    public static function text(array $atts, string $label = '', string $wrap = 'mb-3'): string
     {
-        $atts['type'] = 'file';
-        return self::input($atts, $label);
+        $atts['type'] = 'text';
+        return self::input($atts, $label, $wrap);
     }
 
-    public static function input(array $atts, string $label = '', string $wrap = 'mb-3',)
+    public static function file(array $atts, string $label = '', string $wrap = 'mb-3'): string
+    {
+        $atts['type'] = 'file';
+        return self::input($atts, $label, $wrap);
+    }
+
+    public static function phone(array $atts, string $label = '', string $wrap = 'mb-3'): string
+    {
+        $atts['type'] = 'tel';
+        return self::input($atts, $label, $wrap);
+    }
+
+    public static function email(array $atts, string $label = '', string $wrap = 'mb-3'): string
+    {
+        $atts['type'] = 'email';
+        return self::input($atts, $label, $wrap);
+    }
+
+    public static function password(array $atts, string $label = '', string $wrap = 'mb-3'): string
+    {
+        $atts['type'] = 'password';
+        return self::input($atts, $label, $wrap);
+    }
+
+    public static function input(array $atts, string $label = '', string $wrap = 'mb-3'): string
     {
         $output = '';
 
@@ -77,7 +102,7 @@ class FormBuilder
         }
 
         if ($atts['type'] == 'file' && !empty($atts['value'])) {
-            $output .= '<img class="img-thumbnail mb-3" src="' . Storage::getFilePath($atts['value']) . '">';
+            $output .= '<div class="mb-1"><img class="img-thumbnail mb-3" src="' . Storage::getFilePath($atts['value']) . '"></div>';
         }
 
         $output .= '<input';
@@ -91,12 +116,12 @@ class FormBuilder
         return self::wrap($output, $wrap);
     }
 
-    public static function text(
+    public static function textarea(
         array $atts = [], 
         string $label = '', 
         string $text = '', 
         string $wrap = 'mb-3',
-    )
+    ): string
     {
         $output = '';
 
@@ -132,7 +157,7 @@ class FormBuilder
         array $atts = [], 
         string $label = '',
         string $wrap = 'mb-3',
-    )
+    ): string
     {
         $output = '';
 

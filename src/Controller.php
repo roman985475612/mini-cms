@@ -2,14 +2,14 @@
 
 namespace Home\CmsMini;
 
+use Home\CmsMini\Core\ViewInterface;
 use Home\CmsMini\Exception\Http404Exception;
-// use stdClass;
 
 abstract class Controller
 {
-    // protected View $view;
+    protected ViewInterface $view;
 
-    // protected stdClass $meta;
+    protected string $layout;
 
     public function __construct()
     {
@@ -17,31 +17,12 @@ abstract class Controller
             $this->accessDeny();
         }
 
-        // $this->meta = new stdClass;
+        $this->view = new View;
+        $this->view->setLayout($this->layout);
+        $this->view->setMeta('title', App::$config->app);
+        $this->view->setMeta('brand', App::$config->app);
     }
 
-    // public function render(string $template, array $data = [])
-    // {
-    //     $view = new View($this->meta);
-    //     $view->render($template, $data);
-    // }
-
-    // public function renderPart(string $template, array $data = [])
-    // {
-    //     $view = new View($this->meta);
-    //     $view->renderPart($template, $data);
-    // }
-
-    // public function __set(string $name, mixed $value): void
-    // {
-    //     $this->meta->$name = $value;
-    // }
-
-    // public function __get(string $name): mixed
-    // {
-    //     return $this->meta->$name ?? '';
-    // }
-    
     public function renderJson(array $data = [])
     {
         header('Content-type: application/json');

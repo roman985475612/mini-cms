@@ -52,39 +52,9 @@ $this->renderPart('admin/header');
             <div class="col-md-9">
                 <div class="card">
                     <div class="card-header">
-                        <h4>latest posts</h4>
+                        <h4>latest <?= $entity ?></h4>
                     </div>
-                    <table class="table table-hover table-striped">
-                        <thead class="bg-dark text-white">
-                            <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">title</th>
-                            <th scope="col">category</th>
-                            <th scope="col">author</th>
-                            <th scope="col">date</th>
-                            <th scope="col">action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($articles as $article): ?>
-                            <tr>
-                                <th scope="row"><?= $article->id ?></th>
-                                <td><?= $article->title ?></td>
-                                <td><?= $article->getCategory() ?></td>
-                                <td><?= $article->getAuthor() ?></td>
-                                <td><?= $article->getDate() ?></td>
-                                <td>
-                                    <a href="<?= Router::url('article-edit', ['id' => $article->id]) ?>" class="btn btn-warning posts__btn">
-                                        <svg class="icon">
-                                            <use xlink:href="/assets/admin/icons/sprite.svg#angle-double-right-solid"></use>
-                                        </svg>            
-                                        show
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach ?>
-                        </tbody>
-                    </table>
+                    <div id="content" data-content-url="<?= Router::url('article-table') ?>"></div>
                 </div>
             </div>
             <div class="col-md-3 widgets">
@@ -95,7 +65,7 @@ $this->renderPart('admin/header');
                             <svg class="widgets__icon">
                                 <use xlink:href="/assets/admin/icons/sprite.svg#pencil-alt-solid"></use>
                             </svg>
-                            <span class="widgets__info"><?= $counts['article'] ?></span>    
+                            <span class="widgets__info"><?= $counts['article'] ?></span>
                         </div>
                         <a href="<?= Router::url('articles') ?>" class="btn btn-outline-light">view</a>
                     </div>
@@ -107,7 +77,7 @@ $this->renderPart('admin/header');
                             <svg class="widgets__icon">
                                 <use xlink:href="/assets/admin/icons/sprite.svg#folder-solid"></use>
                             </svg>
-                            <span class="widgets__info"><?= $counts['category'] ?></span>    
+                            <span class="widgets__info"><?= $counts['category'] ?></span>
                         </div>
                         <a href="<?= Router::url('categories') ?>" class="btn btn-outline-light">view</a>
                     </div>
@@ -119,7 +89,7 @@ $this->renderPart('admin/header');
                             <svg class="widgets__icon">
                                 <use xlink:href="/assets/admin/icons/sprite.svg#users-solid"></use>
                             </svg>
-                            <span class="widgets__info"><?= $counts['user'] ?></span>    
+                            <span class="widgets__info"><?= $counts['user'] ?></span>
                         </div>
                         <a href="<?= Router::url('users') ?>" class="btn btn-outline-light">view</a>
                     </div>
@@ -148,6 +118,8 @@ $this->renderPart('admin/header');
 
 <script>
 window.addEventListener('DOMContentLoaded', () => {
+    getTable()
+
     const openBtns = document.querySelector('.actions__btns')
     const $modal = document.querySelector('#formModal')
     const $body = $modal.querySelector('.modal-body')
@@ -174,19 +146,30 @@ window.addEventListener('DOMContentLoaded', () => {
 
         adminModal.show();
     })
-
 })
-</script>
 
+async function getTable() {
+    const $content = document.querySelector('#content')
+    const contentUrl = $content.dataset.contentUrl
+
+    let response = await fetch(contentUrl)
+
+    if (!response.ok) {
+        alert("Ошибка HTTP: " + response.status);
+    }
+
+    $content.innerHTML = await response.text();
+}
+</script>
 <script src="/assets/admin/js/ckeditor.js"></script>
-    <script>
+<script>
+    window.addEventListener('load', () => {
         window.addEventListener('load', () => {
-            window.addEventListener('load', () => {
-            ClassicEditor
-                .create(document.querySelector( 'textarea' ))
-                .catch( error => {
-                    console.error( error );
-                })
+        ClassicEditor
+            .create(document.querySelector( 'textarea' ))
+            .catch( error => {
+                console.error( error );
             })
         })
+    })
 </script>

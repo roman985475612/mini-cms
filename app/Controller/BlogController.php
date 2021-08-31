@@ -10,36 +10,30 @@ use Home\CmsMini\View;
 
 class BlogController extends Controller
 {
+    protected string $layout = 'base';
+
     public function index()
     {
-        $page = new Pagination(Article::class, 3);
-
-        $view = new View;
-        $view->title = 'read our blog';
-        $view->header = 'read our blog';
-        $view->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
-        $view->template = 'blog/index';
-        $view->render(compact('page'));
+        $this->view->setMeta('title', 'read our blog');
+        $this->view->setMeta('header', 'read our blog');
+        $this->view->setMeta('description', 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.');
+        $this->view->render('blog/index', ['page' => new Pagination(Article::class, 3)]);
     }
 
     public function show(Article $article)
     {
-        $view = new View;
-        $view->title = $article->getCategory()->title;
-        $view->title = $article->title;
-        $view->header = $article->title;
-        $view->description = $article->excerpt;
-        $view->template = 'blog/show';
-        $view->render(compact('article'));
+        $this->view->setMeta('title', $article->getCategory()->title);
+        $this->view->setMeta('title', $article->title);
+        $this->view->setMeta('header', $article->title);
+        $this->view->setMeta('description', $article->excerpt);
+        $this->view->render('blog/show', compact('article'));
     }
 
     public function category(Category $category)
     {
-        $view = new View;
-        $view->title = $category->title;
-        $view->header = $category->title;
-        $view->description = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.';
-        $view->template = 'blog/category';
-        $view->render(['articles' => $category->getArticles()]);
+        $this->view->setMeta('title', $category->title);
+        $this->view->setMeta('header', $category->title);
+        $this->view->setMeta('description', 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.');
+        $this->view->render('blog/category', ['articles' => $category->getArticles()]);
     }
 }

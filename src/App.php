@@ -29,10 +29,10 @@ class App
             if (self::$config->debug) {
                 dd($e);
             }
-            http_response_code($e->getCode());
-            (new View)->render('/errors/' . $e->getCode());
+            http_response_code(404);
+            (new View)->render('/errors/404');
         
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (self::$config->debug) {
                 dd($e);
             }            

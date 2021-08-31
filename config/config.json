@@ -6,6 +6,16 @@
         "user": "cms_mini",
         "pass": "123456"
     },
+    "mail": {
+        "host": "smtp.mailtrap.io",
+        "port": 2525,
+        "username": "7c6aa0331c9f89",
+        "password": "0dbcdcd98cbf2a",
+        "from": {
+            "email": "admin@example.com",
+            "name": "Admin"
+        }
+    },
     "default": {
         "controller": "Home",
         "action": "index",

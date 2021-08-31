@@ -1,7 +1,7 @@
 <?php
 use Home\CmsMini\Router;
 
-$this->renderPart('admin/header', compact('headerClass'));
+$this->renderPart('admin/header');
 
 $this->renderPart('admin/search-bar') 
 ?>
@@ -11,49 +11,21 @@ $this->renderPart('admin/search-bar')
         <div class="row">
             <div class="col-9 m-auto">
                 <div class="card">
-                    <div class="card-header">
-                        <button
-                           id="openBtn" 
-                           class="btn btn-outline-success"
-                           data-url="<?= $createUrl ?>"
-                           data-title="Create <?= $entity ?>"
-                           >
+                    <div id="openBtn" class="card-header">
+                        <button class="btn btn-outline-success openBtn"
+                                data-url="<?= $createUrl ?>"
+                                data-title="Create <?= $entity ?>"
+                                >
                             Add new <?= $entity ?>
                         </button>
+                        <button class="btn btn-outline-secondary openBtn"
+                                data-url="<?= $uploadUrl ?>"
+                                data-title="Upload <?= $entity ?>"
+                                >
+                            Upload <?= $entity ?>
+                        </button>
                     </div>
-                    
-                    <table class="table table-hover table-striped">
-                        <thead class="bg-dark text-white">
-                            <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">title</th>
-                            <th scope="col">category</th>
-                            <th scope="col">author</th>
-                            <th scope="col">date</th>
-                            <th scope="col">action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($page->objects as $article): ?>
-                            <tr>
-                                <th scope="row"><?= $article->id ?></th>
-                                <td><?= $article->title ?></td>
-                                <td><?= $article->getCategory() ?></td>
-                                <td><?= $article->getAuthor() ?></td>
-                                <td><?= $article->created_at ?></td>
-                                <td>
-                                    <a href="<?= Router::url('article-edit', ['id' => $article->id]) ?>" 
-                                       class="btn btn-outline-primary text-uppercase">
-                                        show
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach ?>
-                        </tbody>
-                    </table>
-
-                    <?php $page->render('admin/pagination') ?>
-
+                    <div id="content" data-content-url="<?= $tableUrl ?>"></div>
                 </div>
             </div>
         </div>
@@ -79,6 +51,8 @@ $this->renderPart('admin/search-bar')
 
 <script>
 window.addEventListener('DOMContentLoaded', () => {
+    getTable()
+
     const openBtn = document.querySelector('#openBtn')
     const $modal = document.querySelector('#formModal')
     const $body = $modal.querySelector('.modal-body')
@@ -86,6 +60,11 @@ window.addEventListener('DOMContentLoaded', () => {
     const adminModal = new bootstrap.Modal($modal)
 
     openBtn.addEventListener('click', async e => {
+        if (!e.target.classList.contains('openBtn')) {
+            return false
+        }
+        e.preventDefault()
+
         let url = e.target.dataset.url
         let title = e.target.dataset.title
 
@@ -101,6 +80,35 @@ window.addEventListener('DOMContentLoaded', () => {
 
         adminModal.show();
     })
-
 })
+
+async function getTable() {
+    const $content = document.querySelector('#content')
+    const contentUrl = $content.dataset.contentUrl
+
+    let response = await fetch(contentUrl)
+
+    if (!response.ok) {
+        alert("Ошибка HTTP: " + response.status);
+    }
+
+    $content.innerHTML = await response.text();
+
+    const $page = document.querySelector('.pagination')
+
+    $content.addEventListener('click', async e => {
+        if (!e.target.classList.contains('page-link')) {
+            return false
+        }
+        e.preventDefault()
+
+        let response = await fetch(e.target.href)
+
+        if (!response.ok) {
+            alert("Ошибка HTTP: " + response.status);
+        }
+
+        $content.innerHTML = await response.text();
+    })
+}
 </script>
