@@ -9,7 +9,7 @@ class m1630429004_create_subscribe_table extends Migration
 {
     public function up()
     {
-        $this->createTable('message', [
+        $this->createTable('subscribe', [
             'id'        => Column::primary(),
             'name'      => Column::string()->notNull(),
             'email'     => Column::string()->notNull(),

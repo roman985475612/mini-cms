@@ -91,6 +91,12 @@ class Column implements Stringable
     
     public function default(mixed $value): self
     {
+        $this->sql[] = "DEFAULT $value";
+        return $this;
+    }
+
+    public function defaultString(string $value): self
+    {
         $this->sql[] = "DEFAULT `$value`";
         return $this;
     }

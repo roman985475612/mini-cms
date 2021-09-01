@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use Home\CmsMini\Model;
+use Home\CmsMini\Storage;
 
 class User extends Model
 {
@@ -12,13 +13,27 @@ class User extends Model
 
     const GUEST = 'guest';
 
-    public static function attempt(string $email, string $password): User
+    public static function getRoles(): array
+    {
+        return [
+            self::ADMIN  => 'Administrator',
+            self::EDITOR => 'Editor',
+            self::GUEST  => 'Guest',
+        ];
+    }
+
+    public static function attempt(string $email, string $password): self
     {
         $user = static::findOne('email', $email);
         if ($user instanceof User && $user->checkPassword($password)) {
             return $user; 
         }
         throw new \Exception('Email and password does not matches!');
+    }
+
+    protected static function defultImage(): string
+    {
+        return '/public/assets/img/avatar.webp';
     }
 
     public function __call($name, $arguments)
@@ -61,5 +76,11 @@ class User extends Model
 
         $this->token = $token;
         $this->save();
+    }
+
+    public function delete(): bool
+    {
+        static::removeImage();
+        return parent::delete();
     }
 }

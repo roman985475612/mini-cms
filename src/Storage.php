@@ -4,10 +4,23 @@ namespace Home\CmsMini;
 
 class Storage
 {
-    public static function get(string $filename): array
+    public function __construct(private string $filename) {}
+
+    public function fileExists(): bool
     {
-        $filepath = self::getFilePath($filename);
-        return [file_exists(STORAGE . "/$filename"), $filepath];
+        return file_exists(STORAGE . "/{$this->filename}");
+    }
+
+    public function getFileUrl(): string
+    {
+        return STORAGE_URL . "/{$this->filename}"; 
+    }
+
+    public static function get(string $filename): string
+    {
+        return !is_null($filename) && file_exists(STORAGE . "/$filename")
+            ? self::getFilePath($filename)
+            : '';
     }
 
     public static function getFilePath(string $filename): string

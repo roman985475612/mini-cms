@@ -38,7 +38,6 @@ class Migration
             'created_at' => Column::time()->default(Column::CURRENT_TIME),
             'updated_at' => Column::time()->default(Column::CURRENT_TIME)->update(Column::CURRENT_TIME),
         ]);
-
         $this->db->query($this->sql[0]);
         $this->db->execute();
 
@@ -87,8 +86,8 @@ class Migration
     
             foreach ($obj->sql as $sql) {
                 $this->db->query($sql);
-                $this->db->execute(); 
-                // echo $this->db->getSql(); 
+                $this->db->execute();
+//                echo $this->db->getSql();
             }
     
             $this->migrationRecord($migrationName);
@@ -122,7 +121,7 @@ class Migration
             $cols[] = "\t" . $name . ' ' . $type;
         }
         
-        $sql = "CREATE TABLE IF NOT EXISTS $tableName (" . PHP_EOL;
+        $sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (" . PHP_EOL;
         $sql .= implode(',' . PHP_EOL, $cols) . PHP_EOL;
         $sql .= ") ENGINE = InnoDB;". PHP_EOL;
 

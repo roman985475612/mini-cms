@@ -9,14 +9,14 @@ class m1630427824_create_user_table extends Migration
 {
     public function up()
     {
-        $this->createTable('post', [
+        $this->createTable('user', [
             'id'        => Column::primary(),
             'username'  => Column::string()->notNull(),
             'email'     => Column::string()->notNull(),
             'password'  => Column::string()->notNull(),
-            'token'     => Column::string()->notNull(),
-            'confirm'   => Column::bool()->notNull()->default(false),
-            'role'      => Column::enum(['admin', 'editor', 'guest'])->notNull()->default('guest'),
+            'token'     => Column::string(),
+            'confirm'   => Column::bool(),
+            'role'      => Column::string()->notNull(),
             'bio'       => Column::text(),
             'image'     => Column::string(),
             'created_at'=> Column::time()->default(Column::CURRENT_TIME),

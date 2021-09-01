@@ -119,7 +119,7 @@ class FormBuilder
     public static function textarea(
         array $atts = [], 
         string $label = '', 
-        string $text = '', 
+        ?string $text = '',
         string $wrap = 'mb-3',
     ): string
     {

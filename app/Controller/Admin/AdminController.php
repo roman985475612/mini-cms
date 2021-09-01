@@ -12,6 +12,7 @@ use Home\CmsMini\FormBuilder as Form;
 use Home\CmsMini\Request;
 use Home\CmsMini\Router;
 use Home\CmsMini\Validator\Alphanumeric;
+use Home\CmsMini\Validator\Always;
 use Home\CmsMini\Validator\Email;
 use Home\CmsMini\Validator\Equal;
 use Home\CmsMini\Validator\NotEmpty;
@@ -49,10 +50,13 @@ class AdminController extends Controller
 
     public function profile()
     {
+        $user = Auth::user();
+
         $form = Form::open([
-            'id'          => 'signUpForm',
+            'id'          => 'mainForm',
             'action'      => Router::url('profile-update'),
             'class'       => 'needs-validation',
+            'enctype'     => 'multipart/form-data',
             'novalidate'  => '',
         ]);
         $form .= Form::text([
@@ -60,7 +64,7 @@ class AdminController extends Controller
             'name'        => 'username',
             'class'       => 'form-control form__control',
             'placeholder' => 'Enter Username',
-            'value'       => Auth::user()->username,
+            'value'       => $user->username,
             'data-valid'  => 'notEmpty',
         ], 'Username');
         $form .= Form::email([
@@ -68,7 +72,7 @@ class AdminController extends Controller
             'name'        => 'email',
             'class'       => 'form-control form__control',
             'placeholder' => 'Enter email',
-            'value'       => Auth::user()->email,
+            'value'       => $user->email,
             'data-valid'  => 'email',
         ], 'Email address');
         $form .= Form::password([
@@ -85,10 +89,20 @@ class AdminController extends Controller
             'placeholder' => 'Enter confirm password',
             'data-valid'  => 'notEmpty',
         ], 'Confirm password');
+        $form .= Form::textarea([
+            'name'        => 'bio',
+            'id'          => 'userBio',
+            'placeholder' => 'Enter bio',
+        ], 'Bio', $user->bio);
+        $form .= Form::file([
+            'name'  => 'image',
+            'id'    => 'userImage',
+            'value' => $user->image,
+        ], 'Image');
         $form .= Form::close();
 
         $this->view->setMeta('title', 'profile');
-        $this->view->setMeta('header', Auth::user()->username);
+        $this->view->setMeta('header', $user->username);
         $this->view->setMeta('headerClass', 'bg-secondary');
         $this->view->render('admin/edit', [
             'form'        => $form,
@@ -107,9 +121,9 @@ class AdminController extends Controller
         $v->rule('username', new Alphanumeric);
         $v->rule('email'   , new Email);
         $v->rule('email'   , new Unique(User::class, 'email', $user->email));
-        // ???
-        $v->rule('password', new NotEmpty);
-        $v->rule('confirm' , new NotEmpty);
+        $v->rule('bio'     , new Always);
+        $v->rule('password', new Always);
+        $v->rule('confirm' , new Always);
         $v->rule('password', new Equal('Password confirm', Request::post('confirm')));
 
         if (!$v->validate()) {
@@ -119,10 +133,17 @@ class AdminController extends Controller
 
         $user->username = $v->cleanedData['username'];
         $user->email    = $v->cleanedData['email'];
+        $user->bio      = $v->cleanedData['bio'];
 
-        $user->setPassword($v->cleanedData['password']);
+        if (!empty($v->cleanedData['password'])) {
+            $user->setPassword($v->cleanedData['password']);
+        }
 
-        $user->save();
+        $user->setImage();
+
+        if ($user->save()) {
+            Flash::addSuccess('Profile updated!');
+        }
 
         Flash::addSuccess('Profile update success!');
         Request::redirect();

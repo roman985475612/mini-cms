@@ -8,55 +8,57 @@ use App\Controller\Admin\PostController;
 use App\Controller\Admin\CategoryController;
 use App\Controller\Admin\UserController;
 
-$main = [
-    'blog' => [
-        'pattern'    => '/blog',
-        'controller' => BlogController::class,
-        'action'     => 'index',
-    ],
-    'blog-show' => [
-        'pattern'    => '/blog/<id>',
-        'controller' => BlogController::class,
-        'action'     => 'show',
-    ],
-    'blog-by-category' => [
-        'pattern'    => '/category/<id>',
-        'controller' => BlogController::class,
-        'action'     => 'category',
-    ],
+$blog = function () {
+    return [
+        'blog' => [
+            'pattern'    => '/blog',
+            'controller' => BlogController::class,
+            'action'     => 'index',
+        ],
+        'blog-show' => [
+            'pattern'    => '/blog/<id>',
+            'controller' => BlogController::class,
+            'action'     => 'show',
+        ],
+        'blog-by-category' => [
+            'pattern'    => '/category/<id>',
+            'controller' => BlogController::class,
+            'action'     => 'category',
+        ],    
+    ];
+};
 
-    'signup' => [
-        'pattern'    => '/signup',
-        'controller' => AuthController::class,
-        'action'     => 'signup',
-    ],
-    'signin' => [
-        'pattern'    => '/signin',
-        'controller' => AuthController::class,
-        'action'     => 'signin',
-    ],
-    'logout' => [
-        'pattern'    => '/logout',
-        'controller' => AuthController::class,
-        'action'     => 'logout',
-    ],
-    'register' => [
-        'pattern'    => '/register',
-        'controller' => AuthController::class,
-        'action'     => 'register',
-        'method'     => 'POST',
-    ],
-    'login' => [
-        'pattern'    => '/login',
-        'controller' => AuthController::class,
-        'action'     => 'login',
-        'method'     => 'POST',
-    ],
-    'users' => [
-        'pattern'    => '/admin/users',
-        'controller' => UserController::class,
-    ],
-];
+$auth = function () {
+    return [
+        'signup' => [
+            'pattern'    => '/signup',
+            'controller' => AuthController::class,
+            'action'     => 'signup',
+        ],
+        'signin' => [
+            'pattern'    => '/signin',
+            'controller' => AuthController::class,
+            'action'     => 'signin',
+        ],
+        'logout' => [
+            'pattern'    => '/logout',
+            'controller' => AuthController::class,
+            'action'     => 'logout',
+        ],
+        'register' => [
+            'pattern'    => '/register',
+            'controller' => AuthController::class,
+            'action'     => 'register',
+            'method'     => 'POST',
+        ],
+        'login' => [
+            'pattern'    => '/login',
+            'controller' => AuthController::class,
+            'action'     => 'login',
+            'method'     => 'POST',
+        ],    
+    ];
+};
 
 $admin = function() {
     return [
@@ -73,6 +75,7 @@ $admin = function() {
             'pattern'    => '/profile/update',
             'controller' => AdminController::class,
             'action'     => 'update',
+            'method'     => 'POST',
         ],
         'profile-delete' => [
             'pattern'    => '/profile/delete',
@@ -195,12 +198,33 @@ $category = function() {
     ];
 };
 
+$user = function () {
+    $routes = [
+        'users'       => ['pattern' => '/admin/users'],
+        'user-create' => ['pattern' => '/admin/users/create'     , 'action' => 'create'],
+        'user-store'  => ['pattern' => '/admin/users/store'      , 'action' => 'store' , 'method' => 'POST'],
+        'user-edit'   => ['pattern' => '/admin/users/<id>/edit'  , 'action' => 'edit'],
+        'user-update' => ['pattern' => '/admin/users/<id>/update', 'action' => 'update', 'method' => 'POST'],
+        'user-delete' => ['pattern' => '/admin/users/<id>/delete', 'action' => 'delete'],
+        'user-table'  => ['pattern' => '/admin/users/table'      , 'action' => 'table'],
+    ];
+
+    $routes = array_map(function ($route) {
+        $route['controller'] = UserController::class;
+        return $route;
+    }, $routes);
+
+    return $routes;    
+};
+
 $routes = array_merge(
-    $main,
     $home(),
+    $blog(),
+    $auth(),
+    $admin(),
     $post(),
     $category(),
-    $admin(),
+    $user(),
 );
 
 $routes = array_map(function ($route) {

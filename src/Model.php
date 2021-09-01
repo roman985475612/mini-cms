@@ -7,13 +7,15 @@ use Home\CmsMini\Db\Query;
 
 abstract class Model
 {
+    use CommonFieldAccessorsTrait;
+
     private array $updateFields = [];
     
     protected array $fields = [];
 
-    public function __get(string $name)
+    public function __get(string $name): ?string
     {
-        return $this->fields[$name];
+        return $this->fields[$name] ?? null;
     }
 
     public function __set(string $name, mixed $value)
@@ -27,11 +29,6 @@ abstract class Model
     public function __isset(string $name): bool
     {
         return isset($this->fields[$name]);
-    }
-
-    public function getDate()
-    {
-        return date('F j, Y', strtotime($this->updated_at));
     }
 
     protected function addField(string $name)

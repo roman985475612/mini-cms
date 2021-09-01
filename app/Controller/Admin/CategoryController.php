@@ -74,9 +74,14 @@ class CategoryController extends Controller
     {
         $form = Form::open([
             'id'     => 'mainForm',
-            'action' => Router::url('category-update')]
-        );
-        $form .= Form::input(['name' => 'title', 'value' => $category->title, 'id' => 'formTitle', 'placeholder' => 'Enter title'], 'Title');
+            'action' => Router::url('category-update', ['id' => $category->id]),
+        ]);
+        $form .= Form::input([
+            'name'      => 'title',
+            'value'     => $category->title,
+            'id'        => 'formTitle',
+            'placeholder' => 'Enter title',
+        ], 'Title');
         $form .= Form::close();
 
         $this->view->setMeta('title', $category->title);

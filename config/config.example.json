@@ -2,18 +2,18 @@
     "app": "Mini.CMS",
     "db": {
         "host": "localhost",
-        "name": "cms_mini",
+        "name": "",
         "user": "root",
         "pass": "root"
     },
     "mail": {
         "host": "smtp.mailtrap.io",
         "port": 2525,
-        "username": "7c6aa0331c9f89",
-        "password": "0dbcdcd98cbf2a",
+        "username": "",
+        "password": "",
         "from": {
-            "email": "admin@example.com",
-            "name": "Admin"
+            "email": "",
+            "name": ""
         }
     },
     "default": {
