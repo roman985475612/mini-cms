@@ -10,12 +10,12 @@ $this->renderPart('admin/header');
             <div class="col-md-3">
                 <div class="d-grid gap-2">
                     <a class="btn btn-primary actions__btn"
-                       data-title="Create article"
-                       data-url="<?= Router::url('article-create') ?>">
+                       data-title="Create post"
+                       data-url="<?= Router::url('post-create') ?>">
                         <svg class="actions__icon">
                             <use xlink:href="/assets/admin/icons/sprite.svg#plus-circle-solid"></use>
                         </svg>
-                        add article
+                        add post
                     </a>
                 </div>
             </div>
@@ -54,7 +54,7 @@ $this->renderPart('admin/header');
                     <div class="card-header">
                         <h4>latest <?= $entity ?></h4>
                     </div>
-                    <div id="content" data-content-url="<?= Router::url('article-table') ?>"></div>
+                    <div id="content" data-content-url="<?= Router::url('post-table') ?>"></div>
                 </div>
             </div>
             <div class="col-md-3 widgets">
@@ -65,9 +65,9 @@ $this->renderPart('admin/header');
                             <svg class="widgets__icon">
                                 <use xlink:href="/assets/admin/icons/sprite.svg#pencil-alt-solid"></use>
                             </svg>
-                            <span class="widgets__info"><?= $counts['article'] ?></span>
+                            <span class="widgets__info"><?= $counts['post'] ?></span>
                         </div>
-                        <a href="<?= Router::url('articles') ?>" class="btn btn-outline-light">view</a>
+                        <a href="<?= Router::url('posts') ?>" class="btn btn-outline-light">view</a>
                     </div>
                 </div>
                 <div class="card widgets__item widgets__item--success">
@@ -145,6 +145,8 @@ window.addEventListener('DOMContentLoaded', () => {
         $body.innerHTML = $form
 
         adminModal.show();
+
+        let form = new Form('.createForm')
     })
 })
 

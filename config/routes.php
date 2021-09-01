@@ -4,7 +4,7 @@ use App\Controller\HomeController;
 use App\Controller\BlogController;
 use App\Controller\Admin\AuthController;
 use App\Controller\Admin\AdminController;
-use App\Controller\Admin\ArticleController;
+use App\Controller\Admin\PostController;
 use App\Controller\Admin\CategoryController;
 use App\Controller\Admin\UserController;
 
@@ -124,19 +124,19 @@ $home = function() {
     ];
 };
 
-$article = function() {
+$post = function() {
     $routes = [
-        'articles'       => ['pattern' => '/admin/articles'],
-        'article-create' => ['pattern' => '/admin/articles/create'     , 'action' => 'create'],
-        'article-store'  => ['pattern' => '/admin/articles/store'      , 'action' => 'store' , 'method' => 'POST'],
-        'article-edit'   => ['pattern' => '/admin/articles/<id>/edit'  , 'action' => 'edit'],
-        'article-update' => ['pattern' => '/admin/articles/<id>/update', 'action' => 'update', 'method' => 'POST'],
-        'article-delete' => ['pattern' => '/admin/articles/<id>/delete', 'action' => 'delete'],
-        'article-table'  => ['pattern' => '/admin/articles/table'      , 'action' => 'table'],
+        'posts'       => ['pattern' => '/admin/posts'],
+        'post-create' => ['pattern' => '/admin/posts/create'     , 'action' => 'create'],
+        'post-store'  => ['pattern' => '/admin/posts/store'      , 'action' => 'store' , 'method' => 'POST'],
+        'post-edit'   => ['pattern' => '/admin/posts/<id>/edit'  , 'action' => 'edit'],
+        'post-update' => ['pattern' => '/admin/posts/<id>/update', 'action' => 'update', 'method' => 'POST'],
+        'post-delete' => ['pattern' => '/admin/posts/<id>/delete', 'action' => 'delete'],
+        'post-table'  => ['pattern' => '/admin/posts/table'      , 'action' => 'table'],
     ];
 
     $routes = array_map(function ($route) {
-        $route['controller'] = ArticleController::class;
+        $route['controller'] = PostController::class;
         return $route;
     }, $routes);
 
@@ -198,7 +198,7 @@ $category = function() {
 $routes = array_merge(
     $main,
     $home(),
-    $article(),
+    $post(),
     $category(),
     $admin(),
 );

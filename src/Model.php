@@ -3,6 +3,7 @@
 namespace Home\CmsMini;
 
 use Home\CmsMini\Exception\Http404Exception;
+use Home\CmsMini\Db\Query;
 
 abstract class Model
 {
@@ -69,17 +70,6 @@ abstract class Model
                 );
                 return $db->execute()->list(static::class);
         
-            case 'get':
-                $db = App::$db->query(
-                    QueryBuilder::select()
-                        ->from(static::getTableName())
-                        ->where('id')
-                        ->limit(1)
-                        ->sql()
-                );
-                $db->setParam('id', $arguments[0]);
-                return $db->execute()->single(static::class);
-
             case 'find':
                 $db = App::$db->query(
                     QueryBuilder::select()
@@ -90,6 +80,16 @@ abstract class Model
                 $db->setParam($arguments[0], $arguments[1]);
                 return $db->execute();
         }
+    }
+
+    public static function get(string $id): static
+    {
+        return (new Query(App::$db))
+            ->select()
+            ->from(static::getTableName())
+            ->where('id', $id)
+            ->limit(1)
+            ->one(static::class);
     }
 
     public static function limit(int $limit, int $offset)

@@ -78,6 +78,6 @@ use Home\CmsMini\Router;
     <?php $this->renderPart('footer') ?>
 
 <script src="/assets/admin/js/bootstrap.bundle.min.js"></script>
-<!-- <script src="/assets/admin/js/main.min.js"></script> -->
+<script src="/assets/admin/js/main.min.js"></script>
 </body>
 </html>

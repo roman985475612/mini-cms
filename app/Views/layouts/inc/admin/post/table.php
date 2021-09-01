@@ -5,6 +5,7 @@ use \Home\CmsMini\Router;
     <thead class="bg-dark text-white">
         <tr>
             <th scope="col">#</th>
+            <th scope="col" style="width: 20%">image</th>
             <th scope="col">title</th>
             <th scope="col">category</th>
             <th scope="col">author</th>
@@ -13,15 +14,21 @@ use \Home\CmsMini\Router;
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($page->objects as $article): ?>
+        <?php foreach ($page->objects as $post): ?>
         <tr>
-            <th scope="row"><?= $article->id ?></th>
-            <td><?= $article->title ?></td>
-            <td><?= $article->getCategory() ?></td>
-            <td><?= $article->getAuthor() ?></td>
-            <td><?= $article->getDate() ?></td>
+            <th scope="row"><?= $post->id ?></th>
             <td>
-                <a href="<?= Router::url('article-edit', ['id' => $article->id]) ?>" class="btn btn-warning posts__btn">
+                <img
+                    class="img-fluid img-thumbnail"
+                    src="<?= $post->getImage() ?>"
+                    alt="<?= $post->title ?>">
+            </td>
+            <td><?= $post->title ?></td>
+            <td><?= $post->getCategory() ?></td>
+            <td><?= $post->getAuthor() ?></td>
+            <td><?= $post->getDate() ?></td>
+            <td>
+                <a href="<?= Router::url('post-edit', ['id' => $post->id]) ?>" class="btn btn-warning posts__btn">
                     <svg class="icon">
                         <use xlink:href="/assets/admin/icons/sprite.svg#angle-double-right-solid"></use>
                     </svg>

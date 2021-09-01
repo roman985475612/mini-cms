@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Model\Article;
+use App\Model\Post;
 use App\Model\Category;
 use App\Model\User;
 use Home\CmsMini\Auth;
@@ -29,7 +29,7 @@ class AdminController extends Controller
     
     protected function accessDeny()
     {
-        return Request::redirect(Auth::LOGIN_URL);
+        Request::redirect(Auth::LOGIN_URL);
     }
 
     public function index()
@@ -38,9 +38,9 @@ class AdminController extends Controller
         $this->view->setMeta('header', 'dashboard');
         $this->view->setMeta('headerClass', 'bg-primary');
         $this->view->render('admin/index', [
-            'entity'      => 'Post',
-            'counts'=> [
-                'article'  => Article::count(),
+            'entity' => 'Post',
+            'counts' => [
+                'post'     => Post::count(),
                 'category' => Category::count(),
                 'user'     => User::count(),
             ],

@@ -3,28 +3,18 @@
 namespace Home\CmsMini\Db;
 
 use Home\CmsMini\Db;
+use Home\CmsMini\Model;
 use stdClass;
 
 class Query
 {
     private stdClass $query;
 
-    private Db $db;
-
     private array $params = [];
 
-    public function __construct()
+    public function __construct(private Db $db)
     {
         $this->query = new stdClass;
-        
-        $config = json_decode(file_get_contents(dirname(dirname(__DIR__)) . '/config/config.json'));
-
-        $this->db = new Db(
-            $config->db->host,
-            $config->db->name,
-            $config->db->user,
-            $config->db->pass
-        );
     }
 
     public function execute()
@@ -41,6 +31,11 @@ class Query
     public function count(): int
     {
         return $this->execute()->rowCount();
+    }
+
+    public function one(string $className): Model
+    {
+        return $this->execute()->single($className);
     }
 
     public function select(array $fields = ['*']): self

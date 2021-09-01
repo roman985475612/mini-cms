@@ -44,7 +44,7 @@ class CategoryController extends Controller
 
     public function create()
     {
-        $form = Form::open(['action' => Router::url('category-store')]);
+        $form = Form::open(['id' => 'createForm', 'action' => Router::url('category-store')]);
         $form .= Form::input(['name' => 'title', 'id' => 'formTitle', 'placeholder' => 'Enter title'], 'Title');
         $form .= Form::submit('Save');
         $form .= Form::close();
@@ -106,7 +106,7 @@ class CategoryController extends Controller
         $category->save(['title']);
 
         Flash::addSuccess('Category updated!');
-        return Request::redirect(Router::url('categories'));
+        Request::redirect(Router::url('categories'));
     }
 
     public function delete(Category $category)
@@ -114,7 +114,7 @@ class CategoryController extends Controller
         $category->delete();
         
         Flash::addSuccess('Category deleted!');
-        return Request::redirect(Router::url('categories'));
+        Request::redirect(Router::url('categories'));
     }
 
     public function table()

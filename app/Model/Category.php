@@ -11,8 +11,8 @@ class Category extends Model
         return $this->title;
     }
 
-    public function getArticles()
+    public function getPosts()
     {
-        return Article::findAll('category_id', $this->id);
+        return Post::findAll('category_id', $this->id);
     }
 }

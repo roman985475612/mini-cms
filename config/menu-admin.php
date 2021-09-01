@@ -7,8 +7,8 @@ return [
         'role'      => 'isAdmin'
     ],
     [
-        'title'     => 'articles',
-        'urlName'   => 'articles',
+        'title'     => 'posts',
+        'urlName'   => 'posts',
         'role'      => 'isAdmin'
     ],
     [

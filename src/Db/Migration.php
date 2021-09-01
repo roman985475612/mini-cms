@@ -99,7 +99,7 @@ class Migration
 
     protected function migrationAlreadyExists(string $migrationName): bool
     {
-        return (bool) (new Query)
+        return (bool) (new Query($this->db))
             ->select()
             ->from('migration')
             ->where('name', $migrationName)
@@ -108,7 +108,7 @@ class Migration
 
     protected function migrationRecord(string $migrationName)
     {
-        (new Query)
+        (new Query($this->db))
             ->insert('migration', [
                 'name' => $migrationName,
             ])

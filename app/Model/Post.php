@@ -6,7 +6,7 @@ use Home\CmsMini\Model;
 use Home\CmsMini\Storage;
 use Home\CmsMini\File;
 
-class Article extends Model
+class Post extends Model
 {
     public function getCategory()
     {
@@ -20,26 +20,26 @@ class Article extends Model
 
     public function getImage()
     {
-        [$ok, $filepath] = Storage::get($this->fields['img']);
+        [$ok, $filepath] = Storage::get($this->fields['image']);
         return $ok ? $filepath : 'https://source.unsplash.com/random';
     }
 
-    public function setImage(string $name = 'img'): void
+    public function setImage(string $name = 'image'): void
     {
         $file = new File($name);
         
-        if (empty($this->img) && !$file->uploaded()) {
+        if (empty($this->image) && !$file->uploaded()) {
             throw new \Exception('File not uploaded!');
         }
 
         if ($file->uploaded()) {
-            if (!empty($this->img)) {
-                $file->remove($this->img);
+            if (!empty($this->image)) {
+                $file->remove($this->image);
             }
             
             $file->setName();
             $file->moveToStorage();
-            $this->img = $file->getName();  
+            $this->image = $file->getName();
             $this->addField($name);  
         }
     }
@@ -48,12 +48,12 @@ class Article extends Model
     {
         return !empty($this->excerpt)
             ? $this->excerpt
-            : substr($this->post, 0, 50);
+            : substr($this->content, 0, 50);
     }
 
     public function delete(): bool
     {
-        Storage::remove($this->img);
+        Storage::remove($this->image);
         return parent::delete();
     }
 }
