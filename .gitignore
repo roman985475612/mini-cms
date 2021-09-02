@@ -1,6 +1,5 @@
 /vendor/
 /node_modules
-/public/assets
 /public/storage
 /nbproject/private/
 /.vscode
