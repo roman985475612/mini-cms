@@ -7,11 +7,11 @@ use stdClass;
 
 class Console
 {
-    protected int $argc;
+    protected $argc;
 
-    protected array $argv;    
+    protected $argv;
     
-    protected stdClass $arguments;
+    protected $arguments;
 
     public function __construct()
     {
@@ -62,9 +62,11 @@ class Console
 
     protected function dispatch()
     {
-        $class = match ($this->arguments->class) {
-            'migrate' => \Home\CmsMini\Db\Migration::class,
-        };
+//        $class = match ($this->arguments->class) {
+//            'migrate' => \Home\CmsMini\Db\Migration::class,
+//        };
+
+        $class = $this->match($this->arguments->class);
 
         if (!class_exists($class)) {
             throw new Exception('No class!');
@@ -76,5 +78,12 @@ class Console
         }
 
         call_user_func_array([$controller, $this->arguments->method], $this->arguments->params);
+    }
+
+    protected function match($argument)
+    {
+        switch ($this->arguments->class) {
+            case 'migrate': return \Home\CmsMini\Db\Migration::class;
+        }
     }
 }

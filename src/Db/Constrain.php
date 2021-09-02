@@ -2,9 +2,7 @@
 
 namespace Home\CmsMini\Db;
 
-use Stringable;
-
-class Constrain implements Stringable
+class Constrain
 {
     const RESTRICT = 'RESTRICT';
 
@@ -14,7 +12,7 @@ class Constrain implements Stringable
 
     const NOACTION = 'NO ACTION';
 
-    protected array $sql;
+    protected $sql;
 
     public function __toString()
     {
@@ -35,13 +33,13 @@ class Constrain implements Stringable
         return $this;
     }
 
-    public function update(mixed $value): self
+    public function update($value): self
     {
         $this->sql[] = "ON UPDATE $value" . PHP_EOL;
         return $this;
     }
 
-    public function delete(mixed $value): self
+    public function delete($value): self
     {
         $this->sql[] = "ON DELETE $value" . PHP_EOL;
         return $this;

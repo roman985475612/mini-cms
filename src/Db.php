@@ -16,7 +16,7 @@ class Db
         string $host, 
         string $name, 
         string $user, 
-        string $pass, 
+        string $pass
     )
     {
         if (is_null(static::$instance)) {
@@ -29,7 +29,7 @@ class Db
         string $host, 
         string $name, 
         string $user, 
-        string $pass, 
+        string $pass
     )
     {
         try {
@@ -51,7 +51,7 @@ class Db
         return $this;
     }
 
-    public function setParam(string $name, mixed $value): void
+    public function setParam(string $name, $value): void
     {
         switch ($value) {
             case is_bool($value): $type = \PDO::PARAM_BOOL; break;

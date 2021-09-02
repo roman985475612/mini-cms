@@ -2,9 +2,7 @@
 
 namespace Home\CmsMini\Db;
 
-use Stringable;
-
-class Column implements Stringable
+class Column
 {
     const CURRENT_TIME = 'CURRENT_TIMESTAMP';
 
@@ -16,7 +14,7 @@ class Column implements Stringable
 
     const NOACTION = 'NO ACTION';
 
-    protected array $sql;
+    protected $sql;
     
     public function __toString()
     {
@@ -89,7 +87,7 @@ class Column implements Stringable
         return $this;
     }
     
-    public function default(mixed $value): self
+    public function default($value): self
     {
         $this->sql[] = "DEFAULT $value";
         return $this;
@@ -101,13 +99,13 @@ class Column implements Stringable
         return $this;
     }
 
-    public function update(mixed $value): self
+    public function update($value): self
     {
         $this->sql[] = "ON UPDATE $value";
         return $this;
     }
 
-    public function delete(mixed $value): self
+    public function delete($value): self
     {
         $this->sql[] = "ON DELETE $value";
         return $this;

@@ -3,5 +3,5 @@
 ### Установка
 1. Запустить composer `composer install`
 2. Замините файл `config/config.example.json` на `config/config.json`
-3. Инициализируйте систему миграций базы данных `php .\Console\mini.php migrate:init`
-4. Запустите миграцию базы данных `php .\Console\mini.php migrate`
+3. Инициализируйте систему миграций базы данных `php Console/mini.php migrate:init`
+4. Запустите миграцию базы данных `php Console/mini.php migrate`

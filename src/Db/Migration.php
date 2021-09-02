@@ -6,17 +6,17 @@ use Home\CmsMini\Db;
 
 class Migration
 {
-    protected string $folder;
+    protected $folder;
 
-    protected array $sql = [];
+    protected $sql = [];
 
-    protected Db $db;
+    protected $db;
 
     public function __construct()
     {
-        $this->folder = dirname(dirname(__DIR__)) . '/Migration';
-        
-        $config = json_decode(file_get_contents(dirname(dirname(__DIR__)) . '/config/config.json'));
+        $this->folder = dirname(__DIR__, 2) . '/Migration';
+
+        $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config/config.json'));
 
         $this->db = new Db(
             $config->db->host,

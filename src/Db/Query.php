@@ -8,12 +8,15 @@ use stdClass;
 
 class Query
 {
-    private stdClass $query;
+    private $query;
 
-    private array $params = [];
+    private $params = [];
 
-    public function __construct(private Db $db)
+    private $db;
+
+    public function __construct(Db $db)
     {
+        $this->db = $db;
         $this->query = new stdClass;
     }
 
@@ -76,22 +79,37 @@ class Query
     private function columns(array $columns): self
     {
         $this->query->columns = $columns;
-        $this->query->binds = array_map(fn($column) => ':' . $column, $columns);
+        $this->query->binds = array_map(function($column) {
+            return ':' . $column;
+        }, $columns);
         return $this;
     }
 
     public function set(array $columns): self
     {
-        $this->query->set = array_map(fn($column) => $column . ' = ' . ':' . $column, $columns);
+        $this->query->set = array_map(function($column) {
+            return $column . ' = ' . ':' . $column;
+        }, $columns);
+
         return $this;
     }
 
-    public function where(string $name, mixed $value, ?string $operator = null): self
+    public function where(string $name, $value, ?string $operator = null): self
     {
-        $this->query->where[] = match (func_num_args()) {
-            2 => "{$name}=:{$name}",
-            3 => "{$name} {$operator} :{$name}",
-        };
+//        $this->query->where[] = match (func_num_args()) {
+//            2 => "{$name}=:{$name}",
+//            3 => "{$name} {$operator} :{$name}",
+//        };
+
+        switch (func_num_args()) {
+            case 2:
+                $this->query->where[] = "{$name}=:{$name}";
+                break;
+
+            case 3:
+                $this->query->where[] = "{$name} {$operator} :{$name}";
+                break;
+        }
 
         $this->params[$name] = $value;
 
