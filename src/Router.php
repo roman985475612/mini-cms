@@ -3,7 +3,6 @@
 namespace Home\CmsMini;
 
 use Home\CmsMini\Exception\Http404Exception;
-use Home\CmsMini\App;
 
 class Router
 {
