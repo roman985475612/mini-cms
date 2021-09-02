@@ -5,3 +5,6 @@
 /nbproject/private/
 /.vscode
 /.idea
+/App/Controller/Patterns.php
+/DesignPatterns/
+/tests/patterns/
