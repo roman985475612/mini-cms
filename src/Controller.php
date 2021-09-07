@@ -17,10 +17,9 @@ abstract class Controller
             $this->accessDeny();
         }
 
-        $this->view = new View;
-        $this->view->setLayout($this->layout);
-        $this->view->setMeta('title', App::$config->app);
-        $this->view->setMeta('brand', App::$config->app);
+        $this->view = new View($this->layout);
+        $this->view->setMeta('title', App::config()->app);
+        $this->view->setMeta('brand', App::config()->app);
     }
 
     public function renderJson(array $data = [])

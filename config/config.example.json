@@ -1,8 +1,7 @@
 {
     "app": "Mini.CMS",
     "db": {
-        "host": "localhost",
-        "name": "",
+        "dsn": "mysql:host=localhost;dbname=cms_mini",
         "user": "root",
         "pass": "root"
     },

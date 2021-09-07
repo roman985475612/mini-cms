@@ -87,6 +87,11 @@ $admin = function() {
             'controller' => AdminController::class,
             'action'     => 'settings',
         ],
+        'dashboard' => [
+            'pattern'    => '/dashboard',
+            'controller' => AdminController::class,
+            'action'     => 'dashboard',
+        ],
     ];
 };
 
@@ -129,13 +134,15 @@ $home = function() {
 
 $post = function() {
     $routes = [
-        'posts'       => ['pattern' => '/admin/posts'],
-        'post-create' => ['pattern' => '/admin/posts/create'     , 'action' => 'create'],
-        'post-store'  => ['pattern' => '/admin/posts/store'      , 'action' => 'store' , 'method' => 'POST'],
-        'post-edit'   => ['pattern' => '/admin/posts/<id>/edit'  , 'action' => 'edit'],
-        'post-update' => ['pattern' => '/admin/posts/<id>/update', 'action' => 'update', 'method' => 'POST'],
-        'post-delete' => ['pattern' => '/admin/posts/<id>/delete', 'action' => 'delete'],
-        'post-table'  => ['pattern' => '/admin/posts/table'      , 'action' => 'table'],
+        'posts'          => ['pattern' => '/admin/posts'],
+        'post-create'    => ['pattern' => '/admin/posts/create'     , 'action' => 'create'],
+        'post-store'     => ['pattern' => '/admin/posts/store'      , 'action' => 'store' , 'method' => 'POST'],
+        'post-edit'      => ['pattern' => '/admin/posts/<id>/edit'  , 'action' => 'edit'],
+        'post-update'    => ['pattern' => '/admin/posts/<id>/update', 'action' => 'update', 'method' => 'POST'],
+        'post-delete'    => ['pattern' => '/admin/posts/<id>/delete', 'action' => 'delete'],
+        'post-table'     => ['pattern' => '/admin/posts/table'      , 'action' => 'table'],
+        'postUploadForm' => ['pattern' => '/admin/posts/upload-form', 'action' => 'uploadForm'],
+        'postUpload'     => ['pattern' => '/admin/posts/upload'     , 'action' => 'upload', 'method' => 'POST'],
     ];
 
     $routes = array_map(function ($route) {
@@ -207,6 +214,7 @@ $user = function () {
         'user-update' => ['pattern' => '/admin/users/<id>/update', 'action' => 'update', 'method' => 'POST'],
         'user-delete' => ['pattern' => '/admin/users/<id>/delete', 'action' => 'delete'],
         'user-table'  => ['pattern' => '/admin/users/table'      , 'action' => 'table'],
+        'user-upload-form' => ['pattern' => '/admin/users/upload-form', 'action' => 'uploadForm'],
     ];
 
     $routes = array_map(function ($route) {

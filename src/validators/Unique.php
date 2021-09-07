@@ -7,13 +7,13 @@ class Unique implements ValidatorInterface
     public function __construct(
         protected string $model,
         protected string $field,
-        protected ?string $exception = null
+        protected string $exception = ''
     ) {}
 
     public function validate(mixed $datum): bool
     {
-        return empty($this->model::findOne($this->field, $datum))
-            || $datum == $this->exception;
+        return $this->model::find($this->field, strtolower($datum))->one()->isEmpty()
+            || strtolower($datum) == strtolower($this->exception);
     }
 
     public function errorMessage(): string

@@ -5,14 +5,15 @@ namespace App\Controller\Admin;
 use App\Model\Post;
 use App\Model\Category;
 use App\Widget\Pagination;
+use Home\CmsMini\App;
 use Home\CmsMini\Auth;
 use Home\CmsMini\Controller;
+use Home\CmsMini\File;
 use Home\CmsMini\Flash;
 use Home\CmsMini\FormBuilder as Form;
-use Home\CmsMini\Request;
 use Home\CmsMini\Router;
 use Home\CmsMini\Validator\Validation;
-use Home\CmsMini\Validator\{Alphanumeric, Always, NotEmpty, Email, Equal, Unique};
+use Home\CmsMini\Validator\{Always, NotEmpty, Unique};
 
 class PostController extends Controller
 {
@@ -25,7 +26,7 @@ class PostController extends Controller
     
     protected function accessDeny()
     {
-        Request::redirect(Auth::LOGIN_URL);
+        App::request()->redirect(Auth::LOGIN_URL);
     }
 
     public function index()
@@ -34,10 +35,11 @@ class PostController extends Controller
         $this->view->setMeta('header', 'Posts');
         $this->view->setMeta('headerClass', 'bg-info');
         $this->view->render('admin/list', [
-            'page'      => new Pagination(Post::class, 3),
+            'page'      => new Pagination(Post::query(), 3),
             'entity'    => 'Post',
             'createUrl' => Router::url('post-create'),
             'tableUrl'  => Router::url('post-table'),
+            'uploadUrl' => Router::url('postUploadForm'),
         ]);
     }
 
@@ -64,28 +66,31 @@ class PostController extends Controller
 
     public function store()
     {
-        $v = new Validation(Request::post());
+        $v = new Validation(App::request()->post());
         $v->rule('title', new NotEmpty);
         $v->rule('title', new Unique(Post::class, 'title'));
         $v->rule('category_id', new NotEmpty);
         $v->rule('content', new Always);
         
         if (!$v->validate()) {
+            App::request()->setOld($v->sourceData);
+            App::request()->setErrors($v->errors);
+            App::request()->redirect();
             Flash::addError('Post not added!');
-            Request::redirect();
         };
 
         $post = new Post;
+        $post->recordModeEnable();
         $post->title       = $v->cleanedData['title'];
         $post->content     = $v->cleanedData['content'];
         $post->category_id = $v->cleanedData['category_id'];
-        $post->user_id     = Auth::user()->id;
+        $post->setAuthor();
         $post->setImage();
         $post->save();
 
-        unset($_SESSION['old']);
         Flash::addSuccess('Post added!');
-        Request::redirect();
+
+        App::request()->redirect();
     }
 
     public function edit(Post $post)
@@ -125,7 +130,7 @@ class PostController extends Controller
 
     public function update(Post $post)
     {
-        $v = new Validation(Request::post());
+        $v = new Validation(App::request()->post());
         $v->rule('title', new NotEmpty);
         $v->rule('title', new Unique(Post::class, 'title', $post->title));
         $v->rule('category_id', new NotEmpty);
@@ -133,9 +138,12 @@ class PostController extends Controller
         
         if (!$v->validate()) {
             Flash::addError('Post not updated!');
-            Request::redirect();
+            App::request()->setOld($v->sourceData);
+            App::request()->setErrors($v->errors);
+            App::request()->redirect();
         };
 
+        $post->recordModeEnable();
         $post->title       = $v->cleanedData['title'];
         $post->content     = $v->cleanedData['content'];
         $post->category_id = $v->cleanedData['category_id'];
@@ -145,7 +153,7 @@ class PostController extends Controller
             Flash::addSuccess('Post updated!');
         }
 
-        Request::redirect();
+        App::request()->redirect();
     }
 
     public function delete(Post $post)
@@ -153,13 +161,69 @@ class PostController extends Controller
         $post->delete();
         
         Flash::addSuccess('Post deleted!');
-        Request::redirect(Router::url('posts'));
+        App::request()->redirect(Router::url('posts'));
     }
 
     public function table()
     {
         $this->view->renderPart('admin/post/table', [
-            'page' => new Pagination(Post::class, 5)
+            'page' => new Pagination(Post::query(), 5)
         ]);
+    }
+
+    public function uploadForm()
+    {
+        $form = Form::open(['action' => Router::url('postUpload'), 'enctype' => 'multipart/form-data']);
+        $form .= Form::file(['name' => 'dataFile', 'id' => 'uploadFile'], 'JSON');
+        $form .= Form::file(['name' => 'images[]', 'id' => 'uploadImages', 'multiple' => ''], 'Images');
+        $form .= Form::submit('Upload');
+        $form .= Form::close();
+
+        echo $form;
+    }
+
+    public function upload()
+    {
+        $imageNames = [];
+        $files = File::factory('images');
+        foreach ($files as $file) {
+            $file->setNewName();
+            $file->moveToStorage();
+            $imageNames[$file->name] = $file->getNewName();
+        }
+
+        $dataFile = new File(App::request()->files('dataFile'));
+        $content = file_get_contents($dataFile->getTempName());
+        if ($dataFile->isJson()) {
+            $result = json_decode($content, true);
+        } elseif ($dataFile->isXml()) {
+            $result = new \SimpleXMLElement($content);
+        }
+
+        foreach ($result as $item) {
+            $v = new Validation($item);
+            $v->rule('title', new NotEmpty);
+            $v->rule('title', new Unique(Post::class, 'title'));
+            $v->rule('category', new NotEmpty);
+            $v->rule('content', new Always);
+
+            if (!$v->validate()) {
+                Flash::addError("Post \"{$item['title']}\" not uploaded!");
+                continue;
+            };
+
+            $post = new Post;
+            $post->recordModeEnable();
+            $post->title = $item['title'];
+            $post->content = $item['content'];
+            $post->image = $imageNames[$item['image']];
+            $post->setCategory(Category::find('title', $item['category'])->one());
+            $post->setAuthor();
+            $post->save();
+
+            Flash::addSuccess("Post \"{$post->title}\" created!");
+        }
+
+        App::request()->redirect();
     }
 }

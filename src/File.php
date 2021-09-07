@@ -4,17 +4,48 @@ namespace Home\CmsMini;
 
 class File
 {
-    private array $file;
-
     private string $filename;
 
-    private string $prefix;
-
-    public function __construct(string $key)
+    public static function factory(string $name): array
     {
-        $this->file = Request::files($key);
-        $this->filename = $this->file['name'];   
-        $this->prefix = date('Y') . '/' . date('m');
+        $multipleFiles = App::request()->files($name);
+
+        $fields = [
+            'name',
+            'type',
+            'tmp_name',
+            'error',
+            'size',
+        ];
+
+        $result = [];
+
+        foreach ($fields as $field) {
+            foreach ($multipleFiles[$field] as $key => $value) {
+                $result[$key][$field] = $value;
+            }
+        }
+
+        $files = [];
+        foreach ($result as $item) {
+            $files[] = new self($item);
+        }
+
+        return $files;
+    }
+
+    public function __construct(private array $file)
+    {
+    }
+
+    public function __get(string $name): ?string
+    {
+        return $this->file[$name];
+    }
+
+    public function __set(string $name, mixed $value)
+    {
+        $this->file[$name] = $value;
     }
 
     public function uploaded(): bool
@@ -22,44 +53,36 @@ class File
         return $this->file['error'] === 0;
     }
 
-    public function remove(string $filename): bool
+    public function setNewName()
     {
-        if (file_exists(STORAGE . '/' . $filename)) {
-            return unlink(STORAGE . '/' . $filename);
-        }
-        return false;
-    }
-
-    public function setName()
-    {
-        $this->filename = $this->prefix . '/' 
-                        . md5(time() . $this->file['name']) . '.' 
+        $this->filename = $this->getPrefix() . '/'
+                        . md5(time() . $this->name) . '.'
                         . $this->getExtension();
     }
 
-    public function getName(): string
+    public function getNewName(): string
     {
         return $this->filename;
     }
 
     public function getTempName(): string
     {
-        return $this->file['tmp_name'];
+        return $this->tmp_name;
     }
 
     public function isJson(): bool
     {
-        return $this->file['type'] == 'application/json';
+        return $this->type == 'application/json';
     }
 
     public function isXml(): bool
     {
-        return $this->file['type'] == 'text/xml';
+        return $this->type == 'text/xml';
     }
 
     public function getExtension(): string
     {
-        return match ($this->file['type']) {
+        return match ($this->type) {
             'image/jpeg' => 'jpg',
             'image/gif'  => 'gif',
             'image/png'  => 'png',
@@ -67,16 +90,21 @@ class File
         };
     }
 
+    public function getPrefix(): string
+    {
+        return date('Y') . '/' . date('m');
+    }
+
     public function moveToStorage(): bool
     {
-        $dir = STORAGE . '/' . $this->prefix;
+        $dir = STORAGE . '/' . $this->getPrefix();
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
         }
 
         return move_uploaded_file(
-            $this->file['tmp_name'],
-            STORAGE . '/' . $this->getName()    
+            $this->tmp_name,
+            STORAGE . '/' . $this->getNewName()
         );
     }
 }

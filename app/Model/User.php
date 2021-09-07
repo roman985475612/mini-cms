@@ -3,7 +3,6 @@
 namespace App\Model;
 
 use Home\CmsMini\Model;
-use Home\CmsMini\Storage;
 
 class User extends Model
 {
@@ -12,6 +11,13 @@ class User extends Model
     const EDITOR = 'editor';
 
     const GUEST = 'guest';
+
+    protected array $fillable = [
+        'username',
+        'email',
+        'role',
+        'password'
+    ];
 
     public static function getRoles(): array
     {
@@ -24,10 +30,12 @@ class User extends Model
 
     public static function attempt(string $email, string $password): self
     {
-        $user = static::findOne('email', $email);
-        if ($user instanceof User && $user->checkPassword($password)) {
+        $user = static::find('email', $email)->one();
+        
+        if (!$user->isEmpty() && $user->checkPassword($password)) {
             return $user; 
         }
+
         throw new \Exception('Email and password does not matches!');
     }
 
@@ -36,21 +44,19 @@ class User extends Model
         return '/public/assets/img/avatar.webp';
     }
 
-    public function __call($name, $arguments)
+    public function setAdmin()
     {
-        switch ($name) {
-            case 'setAdmin':
-                $this->role = static::ADMIN;
-                break;
+        $this->role = static::ADMIN;
+    }
 
-            case 'setEditor':
-                $this->role = static::EDITOR;
-                break;
+    public function setEditor()
+    {
+        $this->role = static::EDITOR;
+    }
 
-            case 'setGuest':
-                $this->role = static::GUEST;
-                break;
-        }
+    public function setGuest()
+    {
+        $this->role = static::GUEST;
     }
 
     public function __toString(): string
@@ -72,15 +78,17 @@ class User extends Model
     {
         do {
             $token = uniqid();
-        } while (static::findOne('token', $token));   
+            $user = static::find('token', $token)->one();
+        } while (!$user->isEmpty());
 
+        $this->recordModeEnable();
         $this->token = $token;
         $this->save();
     }
 
     public function delete(): bool
     {
-        static::removeImage();
+        $this->removeImage();
         return parent::delete();
     }
 }

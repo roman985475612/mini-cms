@@ -1,6 +1,13 @@
 <?php
 
-function dd(mixed $data, bool $exit = true): void
+function d(mixed $data, bool $die = false): void
+{
+    print_r($data);
+
+    if ($die) { die; }
+}
+
+function dd(mixed $data, bool $die = false): void
 {
     $styles = <<<STYLE
     display: block;
@@ -13,7 +20,7 @@ function dd(mixed $data, bool $exit = true): void
 
     echo '<pre style="' . $styles . '">'. print_r($data, true) . '</pre>';
     
-    if ($exit) { exit; }
+    if ($die) { die; }
 }
 
 function upperCamelCase(string $name): string

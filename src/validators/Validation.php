@@ -19,9 +19,6 @@ class Validation
     public function __construct(array $sourceData)
     {
         $this->sourceData = $sourceData;
-
-        $_SESSION['error'] = [];
-        $_SESSION['old'] = $this->sourceData;
     }
 
     public function rule(string $key, ValidatorInterface $validator)
@@ -44,15 +41,9 @@ class Validation
                 } else {
                     $this->hasErrors = true;
                     $this->errors[$key] = $validator->errorMessage();
-                    $_SESSION['error'][$key] = $validator->errorMessage();
                     $validateSuccess = false;
                 }    
             }
-        }
-
-        if ($validateSuccess) {            
-            unset($_SESSION['old']); 
-            unset($_SESSION['error']); 
         }
  
         return $validateSuccess;

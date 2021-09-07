@@ -2,6 +2,7 @@
 
 namespace Home\CmsMini;
 
+use Exception;
 use Home\CmsMini\Exception\Http404Exception;
 use Home\CmsMini\Db\Query;
 
@@ -9,10 +10,14 @@ abstract class Model
 {
     use CommonFieldAccessorsTrait;
 
-    private array $updateFields = [];
-    
     protected array $fields = [];
 
+    protected bool $recordMode = false;
+
+    protected array $changedFields = [];
+
+    protected array $fillable = [];
+    
     public function __get(string $name): ?string
     {
         return $this->fields[$name] ?? null;
@@ -20,8 +25,9 @@ abstract class Model
 
     public function __set(string $name, mixed $value)
     {
-        if (!(isset($this->$name) && $this->$name == $value)) {
-            $this->addField($name);    
+        if ($this->recordModeIsEnable()
+            && $this->$name != $value) {
+            $this->changedFields[$name] = $value;
         }
         $this->fields[$name] = $value;
     }
@@ -31,117 +37,117 @@ abstract class Model
         return isset($this->fields[$name]);
     }
 
-    protected function addField(string $name)
+    public function recordModeIsEnable(): bool
     {
-        $this->updateFields[] = $name;
+        return $this->recordMode;
     }
 
-    protected function getUpdateFields()
+    public function recordModeEnable(): void
     {
-        return array_unique($this->updateFields);
+        $this->recordMode = true;
     }
 
-    protected static function getTableName()
+    public function recordModeDisable(): void
+    {
+        $this->recordMode = false;
+    }
+
+    public function isEmpty(): bool
+    {
+        return false;
+    }
+
+    protected static function tableName(): string
     {
         $ref = new \ReflectionClass(static::class);
         return strtolower($ref->getShortName());
     }
 
-    public static function __callStatic($name, $arguments)
+    public static function count(): int
     {
-        switch ($name) {
-            case 'count':
-                $db = App::$db->query(
-                    QueryBuilder::select(['count(*) AS count'])
-                        ->from(static::getTableName())
-                        ->sql()
-                );
-                return $db->execute()->fetch()['count'];
-        
-            case 'all':
-                $db = App::$db->query(
-                    QueryBuilder::select()
-                        ->from(static::getTableName())
-                        ->order('updated_at')
-                        ->sql()
-                );
-                return $db->execute()->list(static::class);
-        
-            case 'find':
-                $db = App::$db->query(
-                    QueryBuilder::select()
-                        ->from(static::getTableName())
-                        ->where($arguments[0])
-                        ->sql()
-                );
-                $db->setParam($arguments[0], $arguments[1]);
-                return $db->execute();
-        }
+        return Query::select(['COUNT(*)'])
+            ->from(static::tableName())
+            ->column();
+    }
+
+    public static function query(): Query
+    {
+        return Query::select()
+            ->for(static::class)
+            ->from(static::tableName());
+    }
+
+    public static function all(): array
+    {
+        return static::query()
+            ->orderBy('updated_at')
+            ->all();
+    }
+
+    public static function find(string $field, string $value): Query
+    {
+        return static::query()->where($field, $value);
     }
 
     public static function get(string $id): static
     {
-        return (new Query(App::$db))
-            ->select()
-            ->from(static::getTableName())
-            ->where('id', $id)
-            ->limit(1)
-            ->one(static::class);
-    }
-
-    public static function limit(int $limit, int $offset)
-    {
-        $db = App::$db->query(
-            QueryBuilder::select()
-                ->from(static::getTableName())
-                // ->order('updated_at')
-                ->limit($limit)
-                ->offset($offset)
-                ->sql()
-        );
-        return $db->execute()->list(static::class);
+        return static::find('id', $id)->one();
     }
 
     public static function getOr404(int $id)
     {
         $model = static::get($id);
 
-        if (! $model instanceof Model) {
+        if ($model->isEmpty()) {
             throw new Http404Exception('Page not found');
         }
 
         return $model;
     }
 
-    public static function findOne(string $field, string $value)
+    public static function create(array $data): self
     {
-        return static::find($field, $value)->single(static::class);
-    }
+        $obj = new static;
 
-    public static function findAll(string $field, string $value)
-    {
-        return static::find($field, $value)->list(static::class);
-    }
-
-    public static function create(array $data): bool
-    {
-        $object = new static;
-        $object->fill($data);
-        return $object->insert($object->getUpdateFields());
-    }
-
-    public function fill(array $data)
-    {
-        foreach ($data as $field => $datum) {
-            $this->$field = $datum;
+        if (empty($obj->fillable)) {
+            throw new Exception('The property "fillable" in ' . static::class . ' is empty!');
         }
+
+        $allowed = array_filter(
+            $data,
+            fn($k) => in_array($k, $obj->fillable),
+            ARRAY_FILTER_USE_KEY
+        );
+
+        if (empty($allowed)) {
+            throw new Exception('The property "allowed" in ' . static::class . ' is empty!');
+        }
+
+        foreach ($allowed as $field => $datum) {
+            $obj->$field = $datum;
+        }
+
+        $query = Query::insert(static::tableName(), $allowed)
+            ->execute();
+
+        $obj->id = $query->lastId();
+
+        return $obj;
     }
 
     public function save(): bool
     {
-        return $this->isNew() 
-            ? $this->insert($this->getUpdateFields())
-            : $this->update($this->getUpdateFields());
+        if (!$this->recordModeIsEnable()) {
+            throw new Exception('Recording mode not enabled');
+        }
+
+        $result = $this->isNew()
+            ? $this->insert()
+            : $this->update();
+
+        $this->recordModeDisable();
+
+        return $result;
     }
 
     protected function isNew(): bool
@@ -149,56 +155,30 @@ abstract class Model
         return !isset($this->id);
     }
 
-    protected function insert(array $columns): bool
+    protected function insert(): bool
     {
-        $db = App::$db->query(
-            QueryBuilder::insert(static::getTableName())
-                ->columns($columns)
-                ->sql()
-        );
+        $query = Query::insert(static::tableName(), $this->changedFields)
+            ->execute();
 
-        foreach ($columns as $name) {
-            $db->setParam($name, $this->$name);
-        }
+        $this->id = $query->lastId();
 
-        $result = $db->execute();
-        
-        $this->id = $db->lastId();
-
-        return (bool) $result->rowCount();
+        return $query->result();
     }
 
-    protected function update(array $columns): bool
+    protected function update(): bool
     {
-        if (empty($columns)) {
-            return false;
-        }
-
-        $db = App::$db->query(
-            QueryBuilder::update(static::getTableName())
-                ->set($columns)
-                ->where('id')
-                ->sql()
-        );
-        
-        foreach ($columns as $name) {
-            $db->setParam($name, $this->$name);
-        }
-        $db->setParam('id', $this->id);
-        return (bool) $db->execute()->rowCount();
+        return Query::update(static::tableName(), $this->changedFields)
+            ->where('id', $this->id)
+            ->execute()
+            ->result();
     }
 
     public function delete(): bool
-    {
-        $db = App::$db->query(
-            QueryBuilder::delete()
-                ->from(static::getTableName())
-                ->where('id')
-                ->sql()
-        );
-
-        $db->setParam('id', $this->id);
-        
-        return (bool) $db->execute()->rowCount();
+    { 
+        return Query::delete()
+            ->from(static::tableName())
+            ->where('id', $this->id)
+            ->execute()
+            ->result();
     }
 }

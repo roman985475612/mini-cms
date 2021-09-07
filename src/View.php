@@ -11,7 +11,6 @@ class View implements ViewInterface
 
     public function __construct(
         protected string $layout = '',
-        protected string $template = '',
     ) {}
 
     public function setMeta(string $name, string $value): void
@@ -31,9 +30,9 @@ class View implements ViewInterface
         return $this->meta[$name] ?? '';
     }
 
-    public function setLayout(string $path): void
+    public function getLayout(): string
     {
-        $this->layout = LAYOUTS . "/$path.php";
+        return LAYOUTS . "/{$this->layout}.php";
     }
 
     public function getTemplate(string $path): string
@@ -52,8 +51,7 @@ class View implements ViewInterface
 
         $this->setMeta('content', $content);
 
-        echo $this->renderFile($this->layout, $this->meta);
-        exit;
+        echo $this->renderFile($this->getLayout(), $this->meta);
     }
 
     public function renderPart(string $templatePath, array $data = []): void

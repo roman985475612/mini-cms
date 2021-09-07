@@ -8,13 +8,17 @@ class Flash
     
     const ERROR = 'danger';
 
-    protected static function add(string $status, string $msg)
+    protected static function add(string $status, string $text)
     {
         if (!isset($_SESSION['flash'])) {
             $_SESSION['flash'] = [];
         }
 
-        $_SESSION['flash'][$status] = $msg;
+        $msg = new \stdClass;
+        $msg->status = $status;
+        $msg->text = $text;
+
+        $_SESSION['flash'][] = $msg;
     }
 
     public static function addSuccess(string $msg)
@@ -42,9 +46,9 @@ class Flash
     {
         ?>
         <div class="container">
-            <?php foreach ($messages as $status => $msg): ?>
-                <div class="alert alert-<?= $status ?> alert-dismissible fade show my-3" role="alert">
-                    <strong><?= ucfirst($status) ?>!</strong> <?= $msg ?>
+            <?php foreach ($messages as $msg): ?>
+                <div class="alert alert-<?= $msg->status ?> alert-dismissible fade show my-3" role="alert">
+                    <strong><?= ucfirst($msg->status) ?>!</strong> <?= $msg->text ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>                
             <?php endforeach ?>

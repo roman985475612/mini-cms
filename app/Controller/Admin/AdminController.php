@@ -5,11 +5,12 @@ namespace App\Controller\Admin;
 use App\Model\Post;
 use App\Model\Category;
 use App\Model\User;
+use App\Widget\Pagination;
+use Home\CmsMini\App;
 use Home\CmsMini\Auth;
 use Home\CmsMini\Controller;
 use Home\CmsMini\Flash;
 use Home\CmsMini\FormBuilder as Form;
-use Home\CmsMini\Request;
 use Home\CmsMini\Router;
 use Home\CmsMini\Validator\Alphanumeric;
 use Home\CmsMini\Validator\Always;
@@ -30,7 +31,7 @@ class AdminController extends Controller
     
     protected function accessDeny()
     {
-        Request::redirect(Auth::LOGIN_URL);
+        App::request()->redirect(Auth::LOGIN_URL);
     }
 
     public function index()
@@ -67,6 +68,14 @@ class AdminController extends Controller
             'value'       => $user->username,
             'data-valid'  => 'notEmpty',
         ], 'Username');
+        $form .= Form::text([
+            'id'          => 'mainForm',
+            'name'        => 'role',
+            'class'       => 'form-control form__control',
+            'value'       => ucfirst($user->role),
+            'disabled'    => '',
+            'readonly'    => '',
+        ], 'Role');
         $form .= Form::email([
             'id'          => 'userEmail',
             'name'        => 'email',
@@ -117,23 +126,26 @@ class AdminController extends Controller
     {
         $user = Auth::user();
 
-        $v = new Validation(Request::post());
+        $v = new Validation(App::request()->post());
         $v->rule('username', new Alphanumeric);
         $v->rule('email'   , new Email);
         $v->rule('email'   , new Unique(User::class, 'email', $user->email));
         $v->rule('bio'     , new Always);
         $v->rule('password', new Always);
         $v->rule('confirm' , new Always);
-        $v->rule('password', new Equal('Password confirm', Request::post('confirm')));
+        $v->rule('password', new Equal('Password confirm', App::request()->post('confirm')));
 
         if (!$v->validate()) {
             Flash::addError('Profile update failed!');
-            Request::redirect();
+            App::request()->setOld($v->sourceData, ['password', 'confirm']);
+            App::request()->setErrors($v->errors);
+            App::request()->redirect();
         };
 
+        $user->recordModeEnable();
         $user->username = $v->cleanedData['username'];
-        $user->email    = $v->cleanedData['email'];
-        $user->bio      = $v->cleanedData['bio'];
+        $user->email = $v->cleanedData['email'];
+        $user->bio = $v->cleanedData['bio'];
 
         if (!empty($v->cleanedData['password'])) {
             $user->setPassword($v->cleanedData['password']);
@@ -142,11 +154,10 @@ class AdminController extends Controller
         $user->setImage();
 
         if ($user->save()) {
-            Flash::addSuccess('Profile updated!');
+            Flash::addSuccess('Profile update success!');
         }
 
-        Flash::addSuccess('Profile update success!');
-        Request::redirect();
+        App::request()->redirect();
     }
 
     public function delete()
@@ -155,7 +166,8 @@ class AdminController extends Controller
         Auth::logout();
 
         Flash::addSuccess('Profile deleted!');
-        Request::redirect(Router::url('home'));
+        
+        App::request()->redirect(Router::url('home'));
     }
 
     public function settings()
@@ -163,5 +175,12 @@ class AdminController extends Controller
         $this->view->setMeta('title', 'settings');
         $this->view->setMeta('header', 'settings');
         $this->view->render('admin/settings');
+    }
+
+    public function dashboard()
+    {
+        $this->view->renderPart('admin/post/table', [
+            'page' => new Pagination(Post::find('user_id', Auth::user()->id), 5)
+        ]);
     }
 }

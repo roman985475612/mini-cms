@@ -2,11 +2,14 @@
 
 namespace Home\CmsMini\Core;
 
+use Home\CmsMini\Db\Connection;
 use Exception;
 use stdClass;
 
 class Console
 {
+    public static $config;
+
     protected $argc;
 
     protected $argv;
@@ -16,6 +19,14 @@ class Console
     public function __construct()
     {
         try {
+            self::$config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config/config.json'));
+            
+            Connection::init(
+                self::$config->db->dsn,
+                self::$config->db->user,
+                self::$config->db->pass
+            );
+
             $this->argc = $_SERVER['argc'];
             $this->argv = $_SERVER['argv'];
 
@@ -82,8 +93,9 @@ class Console
 
     protected function match($argument)
     {
-        switch ($this->arguments->class) {
-            case 'migrate': return \Home\CmsMini\Db\Migration::class;
+        switch ($argument) {
+            case 'migrate': 
+                return \Home\CmsMini\Db\Migration::class;
         }
     }
 }

@@ -2,28 +2,20 @@
 
 namespace Home\CmsMini\Db;
 
-use Home\CmsMini\Db;
+use Exception;
 
 class Migration
 {
+    protected $dbh;
+
     protected $folder;
 
     protected $sql = [];
 
-    protected $db;
-
     public function __construct()
     {
+        $this->dbh = Connection::get();
         $this->folder = dirname(__DIR__, 2) . '/Migration';
-
-        $config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config/config.json'));
-
-        $this->db = new Db(
-            $config->db->host,
-            $config->db->name,
-            $config->db->user,
-            $config->db->pass
-        );
     }
 
     public function init()
@@ -38,8 +30,25 @@ class Migration
             'created_at' => Column::time()->default(Column::CURRENT_TIME),
             'updated_at' => Column::time()->default(Column::CURRENT_TIME)->update(Column::CURRENT_TIME),
         ]);
-        $this->db->query($this->sql[0]);
-        $this->db->execute();
+
+        $result = $this->dbh
+                    ->prepare($this->sql[0])
+                    ->execute();
+
+        if (!$result) {
+            throw new Exception('Error create migtation table');
+        }
+
+        echo 'Create table "migration"' . PHP_EOL;
+
+        $migrationName = 'Initial migration';
+
+        if ($this->migrationAlreadyExists($migrationName)) {
+            echo "Migration \"{$migrationName}\" already exists!\n";
+            exit;
+        }
+        
+        $this->migrationRecord($migrationName);
 
         echo "Database migration init...";
     }
@@ -85,33 +94,78 @@ class Migration
             $obj->up();
     
             foreach ($obj->sql as $sql) {
-                $this->db->query($sql);
-                $this->db->execute();
-//                echo $this->db->getSql();
+                $result = $this->dbh
+                            ->prepare($sql)
+                            ->execute();
             }
     
             $this->migrationRecord($migrationName);
     
-            echo "Migration <{$migrationName}> done!" . PHP_EOL;
+            echo "Migration \"{$migrationName}\" done!" . PHP_EOL;
         }
+    }
+
+    public function down()
+    {
+        // 1. получить последнюю миграцию
+        $migrationName = $this->getLastMigration();
+
+        // найти файл
+        $filepath = glob("{$this->folder}/{$migrationName}*.php")[0];
+
+        $pattern = "#{$migrationName}\w+#";
+
+        preg_match($pattern, $filepath, $matches);
+
+        $className = $matches[0];
+        
+        // 2. выполнить down
+        require $filepath;
+        
+        $class = "\\App\\Migration\\{$className}";
+
+        $obj = new $class;
+        $obj->down();
+
+        $result = $this->dbh->prepare($obj->sql[0])->execute();
+
+        // 3. удалить запись из таблицы миграций
+        $this->migrationDelete($migrationName);
+    
+        echo "Migration \"{$migrationName}\" down!" . PHP_EOL;
+    }
+
+    protected function getLastMigration(): string
+    {
+        return Query::select(['name'])
+            ->from('migration')
+            ->orderBy('id', false)
+            ->limit(1)
+            ->column();
     }
 
     protected function migrationAlreadyExists(string $migrationName): bool
     {
-        return (bool) (new Query($this->db))
-            ->select()
+        return (bool) Query::select(['count(*)'])
             ->from('migration')
             ->where('name', $migrationName)
-            ->count();
+            ->column();
     }
 
-    protected function migrationRecord(string $migrationName)
+    protected function migrationRecord(string $migrationName): bool
     {
-        (new Query($this->db))
-            ->insert('migration', [
-                'name' => $migrationName,
-            ])
-            ->execute();
+        return Query::insert('migration', ['name' => $migrationName])
+            ->execute()
+            ->result();
+    } 
+
+    protected function migrationDelete(string $migrationName): bool
+    {
+        return Query::delete()
+            ->from('migration')
+            ->where('name', $migrationName)
+            ->execute()
+            ->result();
     } 
 
     protected function createTable(string $tableName, array $columns): void
@@ -130,6 +184,7 @@ class Migration
 
     protected function dropTable(string $tableName): void
     {
+        $this->sql[] = "DROP TABLE IF EXISTS `{$tableName}`;";
     }
 
     protected function addConstrain(string $tableName, string $idx, Constrain $constrain): void

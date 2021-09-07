@@ -2,173 +2,196 @@
 
 namespace Home\CmsMini\Db;
 
-use Home\CmsMini\Db;
 use Home\CmsMini\Model;
+use Home\CmsMini\NullModel;
+use PDO;
 use stdClass;
 
 class Query
 {
-    private $query;
+    private $sth;
+
+    private $sql;
+
+    private $className;
 
     private $params = [];
 
-    private $db;
+    private $result;
 
-    public function __construct(Db $db)
+    public static function select(array $fields = ['*']): self
     {
-        $this->db = $db;
-        $this->query = new stdClass;
+        $query = new Query;
+        $query->sql = new stdClass;
+        $query->sql->base = 'SELECT ' . implode(',', $fields);
+        return $query;
     }
 
-    public function execute()
+    public static function insert(string $tableName, array $data): self
     {
-        $this->db->query($this->sql());
+        $keys = array_keys($data);
+        
+        $fields = implode(', ', $keys);
+        
+        $binds = array_map(function($key) {
+            return ':' . $key;
+        }, $keys);
 
-        foreach ($this->params as $name => $value) {
-            $this->db->setParam($name, $value);
-        }
+        $binds = implode(', ', $binds);
 
-        return $this->db->execute();
+        $query = new Query;
+        $query->sql = new stdClass;
+        $query->params = $data;
+        $query->sql->base = "INSERT INTO {$tableName} ({$fields}) VALUES ({$binds})";
+
+        return $query;
     }
 
-    public function count(): int
+    public static function update(string $tableName, array $data): self
     {
-        return $this->execute()->rowCount();
-    }
+        $keys = array_keys($data);
 
-    public function one(string $className): Model
-    {
-        return $this->execute()->single($className);
-    }
+        $set = array_map(function($key) {
+            return "{$key}=:{$key}";
+        }, $keys);
 
-    public function select(array $fields = ['*']): self
-    {
-        $this->query->base = 'SELECT ' . implode(',', $fields) . PHP_EOL;
-        return $this;
-    }
+        $set = implode(', ', $set);
 
-    public function insert(string $tableName, array $data): self
-    {
-        $this->query->base = "INSERT INTO {$tableName}"  . PHP_EOL;
-        $this->columns(array_keys($data));
-        $this->params = $data;
-
-        return $this;
-    }
-
-    public static function update(string $tableName): self
-    {
-        $queryBuilder = new QueryBuilder();
-        $queryBuilder->query->base = 'UPDATE ' . $tableName . " \n";
-        return $queryBuilder;
+        $query = new Query;
+        $query->params = $data;
+        $query->sql = new stdClass;
+        $query->sql->base = "UPDATE {$tableName} SET {$set}";
+        return $query;
     }
 
     public static function delete(): self
     {
-        $queryBuilder = new QueryBuilder();
-        $queryBuilder->query->base = 'DELETE ';
-        return $queryBuilder;
+        $query = new Query;
+        $query->sql = new stdClass;
+        $query->sql->base = "DELETE" ;
+        return $query;
+    }
+
+    public function for(string $className): self
+    {
+        $this->className = $className;
+        return $this;
+    }
+
+    public function execute(): self
+    {
+        $dbh = Connection::get();
+        $this->sth = $dbh->prepare($this->text());
+        $this->result = $this->sth->execute($this->params);
+        return $this;
+    }
+    
+    public function lastId(): int
+    {
+        return Connection::get()->lastInsertId();
+    }
+
+    public function result(): bool
+    {
+        return $this->result;
+    }
+
+    public function one(): Model
+    {
+        $this->limit(1);
+        $this->execute();
+        $obj = $this->sth->fetchObject($this->className);
+
+        return $obj ?: new NullModel;
+    }
+
+    public function all(): array
+    {
+        $this->execute();
+        return $this->sth->fetchAll(PDO::FETCH_CLASS, $this->className);
+    }
+
+    public function column(): mixed
+    {
+        $this->execute();
+        return $this->sth->fetchColumn();
+    }
+
+    public function count(): int
+    {
+        return count($this->all());
     }
 
     public function from(string $tableName): self
     {
-        $this->query->base .= "FROM " . $tableName . "\n";
+        $this->sql->from = "FROM {$tableName}";
         return $this;
     }
 
-    private function columns(array $columns): self
+    public function where($var1, $var2 = null, $var3 = null): self
     {
-        $this->query->columns = $columns;
-        $this->query->binds = array_map(function($column) {
-            return ':' . $column;
-        }, $columns);
-        return $this;
-    }
-
-    public function set(array $columns): self
-    {
-        $this->query->set = array_map(function($column) {
-            return $column . ' = ' . ':' . $column;
-        }, $columns);
-
-        return $this;
-    }
-
-    public function where(string $name, $value, ?string $operator = null): self
-    {
-//        $this->query->where[] = match (func_num_args()) {
-//            2 => "{$name}=:{$name}",
-//            3 => "{$name} {$operator} :{$name}",
-//        };
-
         switch (func_num_args()) {
+            case 1:
+                $this->sql->where = $var1;
+                $this->params = $var1;
+                break;
+
             case 2:
-                $this->query->where[] = "{$name}=:{$name}";
+                $this->sql->where = "WHERE {$var1}=:{$var1}";
+                $this->params[$var1] = $var2;
                 break;
 
             case 3:
-                $this->query->where[] = "{$name} {$operator} :{$name}";
+                $this->sql->where = "WHERE {$var1} {$var3} :{$var1}";
+                $this->params[$var1] = $var2;
                 break;
         }
-
-        $this->params[$name] = $value;
 
         return $this;
     }
 
     public function limit(int $limit): self
     {
-        $this->query->limit = ' LIMIT ' . $limit;
+        $this->sql->limit = "LIMIT {$limit}";
         return $this;
     }
 
     public function offset(int $offset = 0): self
     {
-        $this->query->offset = ' OFFSET ' . $offset;
+        $this->sql->offset = "OFFSET {$offset}";
         return $this;
     }
 
-    public function order(string $field, bool $desc = true): self
+    public function orderBy(string $field, bool $asc = true): self
     {
-        $this->query->order = ' ORDER BY ' . $field . ($desc ? ' DESC' : ' ASC');
+        $this->sql->orderBy = "ORDER BY {$field} ". ($asc ? 'ASC' : 'DESC');
         return $this;
     }
 
-    public function sql(): string
+    public function text(): string
     {
-        $sql = '';
-        $sql .= $this->query->base;
+        $text = $this->sql->base . PHP_EOL;
 
-        if (!empty($this->query->set)) {
-            $sql .= 'SET ' . implode(', ', $this->query->set)  . "\n"; 
+        if (!empty($this->sql->from)) {
+            $text .= $this->sql->from . PHP_EOL;
         }
 
-        if (!empty($this->query->where)) {
-            $sql .= 'WHERE ' . implode(' AND ', $this->query->where)  . "\n"; 
+        if (!empty($this->sql->where)) {
+            $text .= $this->sql->where . PHP_EOL;
         }
 
-        if (!empty($this->query->order)) {
-            $sql .= $this->query->order . "\n";
+        if (!empty($this->sql->orderBy)) {
+            $text .= $this->sql->orderBy . PHP_EOL;
         }
 
-        if (!empty($this->query->limit)) {
-            $sql .= $this->query->limit . "\n";
+        if (!empty($this->sql->limit)) {
+            $text .= $this->sql->limit . PHP_EOL;
 
-            if (!empty($this->query->offset)) {
-                $sql .= $this->query->offset . "\n";
+            if (!empty($this->sql->offset)) {
+                $text .= $this->sql->offset . PHP_EOL;
             }    
         }
 
-        if (!empty($this->query->columns)) {
-            $sql .= '(' . implode(', ', $this->query->columns) . ')' . "\n";
-        }
-
-        if (!empty($this->query->binds)) {
-            $sql .= 'VALUES (' . implode(', ', $this->query->binds)  . ')';
-        }
-
-        $sql .= ';';
-
-        return $sql;
+        return $text . ';' . PHP_EOL;
     }
 }

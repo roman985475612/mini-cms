@@ -8,7 +8,7 @@ interface ViewInterface
 
     public function getMeta(string $name): string;
 
-    public function setLayout(string $path): void;
+    public function getLayout(): string;
 
     public function render(string $templatePath, array $data = []): void;
 }

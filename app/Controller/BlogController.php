@@ -16,7 +16,7 @@ class BlogController extends Controller
         $this->view->setMeta('title', 'read our blog');
         $this->view->setMeta('header', 'read our blog');
         $this->view->setMeta('description', 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.');
-        $this->view->render('blog/index', ['page' => new Pagination(Post::class, 3)]);
+        $this->view->render('blog/index', ['page' => new Pagination(Post::query(), 3)]);
     }
 
     public function show(Post $post)
@@ -33,6 +33,11 @@ class BlogController extends Controller
         $this->view->setMeta('title', $category->title);
         $this->view->setMeta('header', $category->title);
         $this->view->setMeta('description', 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perspiciatis, nam.');
-        $this->view->render('blog/category', ['posts' => $category->getPosts()]);
+        $this->view->render('blog/index', [
+            'page' => new Pagination(
+                Post::find('category_id', $category->id), 
+                perPage: 3,
+            )
+        ]);
     }
 }

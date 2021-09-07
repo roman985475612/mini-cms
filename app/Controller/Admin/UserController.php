@@ -2,15 +2,13 @@
 
 namespace App\Controller\Admin;
 
-use App\Model\Post;
-use App\Model\Category;
 use App\Model\User;
 use App\Widget\Pagination;
+use Home\CmsMini\App;
 use Home\CmsMini\Auth;
 use Home\CmsMini\Controller;
 use Home\CmsMini\Flash;
 use Home\CmsMini\FormBuilder as Form;
-use Home\CmsMini\Request;
 use Home\CmsMini\Router;
 use Home\CmsMini\Validator\Validation;
 use Home\CmsMini\Validator\{Alphanumeric, Always, NotEmpty, Email, Equal, Unique};
@@ -21,12 +19,12 @@ class UserController extends Controller
 
     protected function access(): bool
     {
-        return Auth::isLoggedIn();
+        return Auth::isAdmin();
     }
     
     protected function accessDeny()
     {
-        Request::redirect(Auth::LOGIN_URL);
+        App::request()->redirect(Auth::LOGIN_URL);
     }
 
     protected function getRoles(): array
@@ -44,10 +42,11 @@ class UserController extends Controller
         $this->view->setMeta('header', 'Users');
         $this->view->setMeta('headerClass', 'bg-info');
         $this->view->render('admin/list', [
-            'page'      => new Pagination(User::class, 5),
+            'page'      => new Pagination(User::query(), 5),
             'entity'    => 'User',
             'createUrl' => Router::url('user-create'),
             'tableUrl'  => Router::url('user-table'),
+            'uploadUrl' => Router::url('user-upload-form'),
         ]);
     }
 
@@ -99,7 +98,7 @@ class UserController extends Controller
 
     public function store()
     {
-        $v = new Validation(Request::post());
+        $v = new Validation(App::request()->post());
         $v->rule('username', new Alphanumeric);
         $v->rule('email', new Email);
         $v->rule('email', new Unique(User::class, 'email'));
@@ -107,14 +106,18 @@ class UserController extends Controller
         $v->rule('bio', new Always);
         $v->rule('password', new NotEmpty);
         $v->rule('confirm', new NotEmpty);
-        $v->rule('password', new Equal('Password confirm', Request::post('confirm')));
+        $v->rule('password', new Equal('Password confirm', App::request()->post('confirm')));
 
         if (!$v->validate()) {
             Flash::addError('User creation failed!');
-            Request::redirect();
+            App::request()->setOld($v->sourceData, ['password', 'confirm']);
+            App::request()->setOld($v->sourceData);
+            App::request()->setErrors($v->errors);
+            App::request()->redirect();
         };
 
         $user = new User;
+        $user->recordModeEnable();
         $user->username = $v->cleanedData['username'];
         $user->email    = $v->cleanedData['email'];
         $user->role     = $v->cleanedData['role'];
@@ -124,7 +127,8 @@ class UserController extends Controller
         $user->save();
 
         Flash::addSuccess('User creation success!');
-        Request::redirect();
+
+        App::request()->redirect();
     }
 
     public function edit(User $user)
@@ -200,7 +204,7 @@ class UserController extends Controller
 
     public function update(User $user)
     {
-        $v = new Validation(Request::post());
+        $v = new Validation(App::request()->post());
         $v->rule('username', new Alphanumeric);
         $v->rule('email', new Email);
         $v->rule('email', new Unique(User::class, 'email', $user->email));
@@ -208,17 +212,20 @@ class UserController extends Controller
         $v->rule('bio', new Always);
         $v->rule('password', new Always);
         $v->rule('confirm', new Always);
-        $v->rule('password', new Equal('Password confirm', Request::post('confirm')));
+        $v->rule('password', new Equal('Password confirm', App::request()->post('confirm')));
         
         if (!$v->validate()) {
             Flash::addError('User not updated!');
-            Request::redirect();
+            App::request()->setOld($v->sourceData, ['password', 'confirm']);
+            App::request()->setErrors($v->errors);
+            App::request()->redirect();
         };
 
+        $user->recordModeEnable();
         $user->username = $v->cleanedData['username'];
-        $user->email    = $v->cleanedData['email'];
-        $user->role     = $v->cleanedData['role'];
-        $user->bio      = $v->cleanedData['bio'];
+        $user->email = $v->cleanedData['email'];
+        $user->bio = $v->cleanedData['bio'];
+        $user->role = $v->cleanedData['role'];
 
         if (!empty($v->cleanedData['password'])) {
             $user->setPassword($v->cleanedData['password']);
@@ -230,7 +237,7 @@ class UserController extends Controller
             Flash::addSuccess('User updated!');
         }
 
-        Request::redirect();
+        App::request()->redirect();
     }
 
     public function delete(User $user)
@@ -238,13 +245,19 @@ class UserController extends Controller
         $user->delete();
         
         Flash::addSuccess('User deleted!');
-        Request::redirect(Router::url('users'));
+        
+        App::request()->redirect(Router::url('users'));
     }
 
     public function table()
     {
         $this->view->renderPart('admin/user/table', [
-            'page' => new Pagination(User::class, 5)
+            'page' => new Pagination(User::query(), 5)
         ]);
+    }
+
+    public function uploadForm()
+    {
+        $this->view->renderPart('404');
     }
 }

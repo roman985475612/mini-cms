@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\Model\Subscribe;
 use App\Model\Message;
+use Home\CmsMini\App;
 use Home\CmsMini\Controller;
 use Home\CmsMini\Flash;
-use Home\CmsMini\Request;
 use Home\CmsMini\Validator\Validation;
 use Home\CmsMini\Validator\{Alphanumeric, NotEmpty, Email, Phone};
 use Home\CmsMini\Router;
@@ -46,7 +46,7 @@ class HomeController extends Controller
 
     public function contactStore()
     {
-        $v = new Validation(Request::post('contact'));
+        $v = new Validation(App::request()->post('contact'));
         $v->rule('firstname', new Alphanumeric);
         $v->rule('lastname', new Alphanumeric);
         $v->rule('email', new Email);
@@ -55,32 +55,33 @@ class HomeController extends Controller
 
         if (!$v->validate()) {
             Flash::addError('Message error!');
-            Request::redirect();
+            App::request()->setErrors($v->errors);
+            App::request()->redirect();
         };
 
-        $message = new Message;
-        $message->fill($v->cleanedData);
-        $message->save();
+        Message::create($v->cleanedData);
 
         Flash::addSuccess('Message added!');
-        Request::redirect(Router::url('contact'));
+        
+        App::request()->redirect(Router::url('contact'));
     }
 
     public function subscribe()
     {
-        $v = new Validation(Request::post('newsletter'));
+        $v = new Validation(App::request()->post('newsletter'));
         $v->rule('name', new Alphanumeric);
         $v->rule('email', new Email);
 
         if (!$v->validate()) {
             Flash::addError('Subscribe error!');
-            Request::redirect();
+            App::request()->setErrors($v->errors);
+            App::request()->redirect();
         };
 
-        if (Subscribe::create($v->cleanedData)) {
-            Flash::addSuccess('You have successfully subscribed !');
-        }
+        Subscribe::create($v->cleanedData);
+        
+        Flash::addSuccess('You have successfully subscribed !');
 
-        Request::redirect();
+        App::request()->redirect();
     }
 }

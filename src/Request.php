@@ -4,9 +4,12 @@ namespace Home\CmsMini;
 
 class Request
 {
-    public static array $old = [];
+    public function __construct()
+    {
+        session_start();
+    }
 
-    public static function get(?string $param = null) 
+    public function get(?string $param = null) 
     {
         $get = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
 
@@ -21,7 +24,7 @@ class Request
         return null;
     }
 
-    public static function post(?string $param = null) 
+    public function post(?string $param = null) 
     {
         $post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         
@@ -32,7 +35,7 @@ class Request
         return $post;
     }
 
-    public static function files(?string $param = null) 
+    public function files(?string $param = null) 
     {
         if (array_key_exists($param, $_FILES)) {
             return $_FILES[$param];
@@ -41,27 +44,52 @@ class Request
         return $_FILES;
     }
 
-    public static function old(string $key)
+    public function setOld(array $data, array $exclude = []): void
     {
-        return $_SESSION['old'][$key] ?? '';
+        $_SESSION['old'] = array_filter(
+            $data,
+            fn($key) => !in_array($key, $exclude),
+            ARRAY_FILTER_USE_KEY
+        );
     }
 
-    public static function error(string $key)
+    public function setErrors(array $data): void
     {
-        return $_SESSION['error'][$key] ?? false;
+        $_SESSION['errors'] = $data;
     }
 
-    public static function getMethod(): string
+    public function old(string $key): mixed
+    {
+        return $_SESSION['old'][$key] ?? null;
+    }
+
+    public function error(string $key): mixed
+    {
+        return $_SESSION['errors'][$key] ?? false;
+    }
+
+    public function isErrors(): bool
+    {
+        return isset($_SESSION['errors']) && !empty($_SESSION['errors']);
+    }
+
+    public function clean(): void
+    {
+        unset($_SESSION['errors']);
+        unset($_SESSION['old']);
+    }
+
+    public function getMethod(): string
     {
         return strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
-    public static function isPost(): bool 
+    public function isPost(): bool 
     {
         return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
 
-    public static function getPath(): string
+    public function getPath(): string
     {
         $path = $_GET['URI'] ?? '';
         $path = ltrim($path, '/');
@@ -70,7 +98,7 @@ class Request
         return '/' . $path;
     }
 
-    public static function redirect(string $url = '')
+    public function redirect(string $url = '')
     {
         if ($url) {
             $redirect = $url;

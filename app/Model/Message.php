@@ -6,13 +6,11 @@ use Home\CmsMini\Model;
 
 class Message extends Model
 {
-    public string $firstname;
-
-    public string $lastname;
-
-    public string $email;
-
-    public string $phone;
-
-    public string $body;
+    protected array $fillable = [
+        'firstname',
+        'lastname',
+        'email',
+        'phone',
+        'body',
+    ];
 }

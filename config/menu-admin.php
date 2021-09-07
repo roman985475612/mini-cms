@@ -4,7 +4,7 @@ return [
     [
         'title'     => 'dashboard',
         'urlName'   => 'admin',
-        'role'      => 'isAdmin'
+        'role'      => 'isLoggedIn'
     ],
     [
         'title'     => 'posts',

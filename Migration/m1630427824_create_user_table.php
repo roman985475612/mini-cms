@@ -16,7 +16,7 @@ class m1630427824_create_user_table extends Migration
             'password'  => Column::string()->notNull(),
             'token'     => Column::string(),
             'confirm'   => Column::bool(),
-            'role'      => Column::string()->notNull(),
+            'role'      => Column::enum(['admin', 'editor', 'guest'])->notNull(),
             'bio'       => Column::text(),
             'image'     => Column::string(),
             'created_at'=> Column::time()->default(Column::CURRENT_TIME),

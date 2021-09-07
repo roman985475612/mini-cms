@@ -3,10 +3,10 @@ use Home\CmsMini\Router;
 
 $this->renderPart('admin/header');
 
-$this->renderPart('admin/search-bar') 
+//$this->renderPart('admin/search-bar')
 ?>
 
-<section class="posts">
+<section class="posts mt-3">
     <div class="container">
         <div class="row">
             <div class="col-9 m-auto">

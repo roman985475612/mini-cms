@@ -20,6 +20,6 @@ class m1630429004_create_subscribe_table extends Migration
     
     public function down()
     {
-        
+        $this->dropTable('subscribe');
     }
 }

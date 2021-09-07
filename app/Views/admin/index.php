@@ -1,5 +1,6 @@
 <?php
-use \Home\CmsMini\Router;
+use Home\CmsMini\Auth;
+use Home\CmsMini\Router;
 
 $this->renderPart('admin/header');
 ?>
@@ -31,6 +32,7 @@ $this->renderPart('admin/header');
                     </a>
                 </div>
             </div>
+            <?php if (Auth::isAdmin()): ?>
             <div class="col-md-3">
                 <div class="d-grid gap-2">
                     <a class="btn btn-warning actions__btn" id="addUser">
@@ -41,12 +43,13 @@ $this->renderPart('admin/header');
                     </a>
                 </div>
             </div>
+            <?php endif ?>
         </div>
     </div>
 </section>
 <!-- /.actions -->
 
-<section class="posts">
+<section class="posts my-3">
     <div class="container">
         <div class="row">
             <div class="col-md-9">
@@ -54,9 +57,10 @@ $this->renderPart('admin/header');
                     <div class="card-header">
                         <h4>latest <?= $entity ?></h4>
                     </div>
-                    <div id="content" data-content-url="<?= Router::url('post-table') ?>"></div>
+                    <div id="content" data-content-url="<?= Router::url('dashboard') ?>"></div>
                 </div>
             </div>
+            <?php if (Auth::isAdmin()): ?>
             <div class="col-md-3 widgets">
                 <div class="card widgets__item widgets__item--primary">
                     <div class="card-body">
@@ -95,6 +99,7 @@ $this->renderPart('admin/header');
                     </div>
                 </div>
             </div>
+            <?php endif ?>
         </div>
     </div>
 </section>

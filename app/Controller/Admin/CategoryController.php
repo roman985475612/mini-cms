@@ -4,15 +4,15 @@ namespace App\Controller\Admin;
 
 use App\Model\Category;
 use App\Widget\Pagination;
+use Home\CmsMini\App;
 use Home\CmsMini\Auth;
 use Home\CmsMini\Controller;
 use Home\CmsMini\File;
 use Home\CmsMini\Flash;
 use Home\CmsMini\FormBuilder as Form;
-use Home\CmsMini\Request;
 use Home\CmsMini\Router;
 use Home\CmsMini\Validator\Validation;
-use Home\CmsMini\Validator\{NotEmpty};
+use Home\CmsMini\Validator\{NotEmpty, Unique};
 
 class CategoryController extends Controller
 {
@@ -25,7 +25,7 @@ class CategoryController extends Controller
     
     protected function accessDeny()
     {
-        return Request::redirect(Auth::LOGIN_URL);
+        return App::request()->redirect(Auth::LOGIN_URL);
     }
 
     public function index()
@@ -34,7 +34,7 @@ class CategoryController extends Controller
         $this->view->setMeta('header', 'categories');
         $this->view->setMeta('headerClass', 'bg-info');
         $this->view->render('admin/list', [
-            'page'      => new Pagination(Category::class, 10),
+            'page'      => new Pagination(Category::query(), 10),
             'entity'    => 'Category',
             'createUrl' => Router::url('category-create'),
             'tableUrl'  => Router::url('category-table'),
@@ -54,20 +54,24 @@ class CategoryController extends Controller
 
     public function store()
     {
-        $v = new Validation(Request::post());
+        $v = new Validation(App::request()->post());
         $v->rule('title', new NotEmpty);
+        $v->rule('title', new Unique(Category::class, 'title'));
 
         if (!$v->validate()) {
             Flash::addError('Category creation error!');
-            Request::redirect();
+            App::request()->setOld($v->sourceData);
+            App::request()->setErrors($v->errors);
+            App::request()->redirect();
         };
 
         $category = new Category;
-        $category->title = $v->cleanedData['title'];
+        $category->recordModeEnable();
+        $category->title = strtolower($v->cleanedData['title']);
         $category->save();
 
         Flash::addSuccess('Category created!');
-        Request::redirect();
+        App::request()->redirect();
     }
 
     public function edit(Category $category)
@@ -76,12 +80,14 @@ class CategoryController extends Controller
             'id'     => 'mainForm',
             'action' => Router::url('category-update', ['id' => $category->id]),
         ]);
-        $form .= Form::input([
+        
+        $form .= Form::text([
             'name'      => 'title',
             'value'     => $category->title,
             'id'        => 'formTitle',
             'placeholder' => 'Enter title',
         ], 'Title');
+        
         $form .= Form::close();
 
         $this->view->setMeta('title', $category->title);
@@ -99,19 +105,24 @@ class CategoryController extends Controller
 
     public function update(Category $category)
     {
-        $v = new Validation(Request::post());
+        $v = new Validation(App::request()->post());
         $v->rule('title', new NotEmpty);
+        $v->rule('title', new Unique(Category::class, 'title', $category->title));
 
         if (!$v->validate()) {
             Flash::addError('Category update error!');
-            Request::redirect();
+            App::request()->setOld($v->sourceData);
+            App::request()->setErrors($v->errors);
+            App::request()->redirect();
         };
 
+        $category->recordModeEnable();
         $category->title = $v->cleanedData['title'];
-        $category->save(['title']);
+        $category->save();
 
         Flash::addSuccess('Category updated!');
-        Request::redirect(Router::url('categories'));
+
+        App::request()->redirect(Router::url('categories'));
     }
 
     public function delete(Category $category)
@@ -119,13 +130,14 @@ class CategoryController extends Controller
         $category->delete();
         
         Flash::addSuccess('Category deleted!');
-        Request::redirect(Router::url('categories'));
+        
+        App::request()->redirect(Router::url('categories'));
     }
 
     public function table()
     {
         $this->view->renderPart('admin/category/table', [
-            'page' => new Pagination(Category::class, 10)
+            'page' => new Pagination(Category::query(), 10)
         ]);
     }
 
@@ -141,23 +153,30 @@ class CategoryController extends Controller
 
     public function upload()
     {
-        $file = new File('file');
+        $file = new File(App::request()->files('file'));
         
         $content = file_get_contents($file->getTempName());
         if ($file->isJson()) {
-            $result = json_decode($content);
+            $result = json_decode($content, true);
         } elseif ($file->isXml()) {
             $result = new \SimpleXMLElement($content);
         }
 
         foreach ($result as $item) {
-           $category = new Category;
-           $category->title = (string) $item->title;
-           $category->save();
+            $v = new Validation($item);
+            $v->rule('title', new NotEmpty);
+            $v->rule('title', new Unique(Category::class, 'title'));
 
-           Flash::addSuccess("Category created!");
+            if (!$v->validate()) {
+                Flash::addError("Category \"{$item['title']}\" not uploaded!");
+                continue;
+            };
+
+            Category::create(['title' => $item['title']]);
+
+            Flash::addSuccess("Category \"{$item['title']}\" created!");
         }
 
-        return Request::redirect();
+        return App::request()->redirect();
     }
 }

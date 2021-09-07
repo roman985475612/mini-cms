@@ -3,7 +3,7 @@
 namespace App\Widget;
 
 use \Home\CmsMini\Auth;
-use \Home\CmsMini\Request;
+use \Home\CmsMini\App;
 use \Home\CmsMini\Router;
 
 class Menu
@@ -43,7 +43,7 @@ class Menu
 
     protected function setCurrentUrl()
     {
-        $this->currentUrl = Request::getPath();
+        $this->currentUrl = App::request()->getPath();
         $this->currentUrl = empty($this->currentUrl) ? '/' : $this->currentUrl;
     }
 

@@ -23,8 +23,6 @@ class Router
         if (!self::matchRoute()) {
             throw new Http404Exception('Route not exists!');
         }
-
-        self::dispatch();
     }
 
     public static function url(string $name, array $params = []): string
@@ -55,11 +53,11 @@ class Router
     private static function matchRoute(): bool
     {
         $routes = array_filter(self::$routes, function ($route) {
-            return Request::getMethod() == strtoupper($route['method']);
+            return App::request()->getMethod() == strtoupper($route['method']);
         });
 
         foreach ($routes as $route) {
-            if (preg_match($route['pattern'], Request::getPath(), $matches)) {
+            if (preg_match($route['pattern'], App::request()->getPath(), $matches)) {
                 self::$controller = $route['controller'];
                 self::$action = $route['action'];
 
@@ -73,7 +71,7 @@ class Router
         return false;
     }
 
-    private static function dispatch(): void
+    public static function dispatch(): void
     {
         if (!class_exists(self::$controller)) {
             throw new Http404Exception('Controller not exists!');

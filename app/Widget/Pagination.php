@@ -2,13 +2,14 @@
 
 namespace App\Widget;
 
-use Home\CmsMini\Request;
+use Home\CmsMini\App;
+use Home\CmsMini\Db\Query;
 use Home\CmsMini\View;
 use stdClass;
 
 class Pagination
 {
-    private int $total;
+    private int $totalCount;
 
     private int $countPages;
 
@@ -17,44 +18,44 @@ class Pagination
     private int $start;
 
     public function __construct(
-        private string $className,
-        private int $perPage,
+        private Query $query,
+        private int $perPage = 9,
     )
     {
-        $this->setTotal();
+        $this->setTotalCount();
         $this->setCountPages();
         $this->setCurrentPage();
         $this->setStart();
     }
 
+    private function setTotalCount(): void
+    {
+        $this->totalCount = $this->query->count();
+    }
+
     private function fetchAll()
     {
-        return $this->className::limit(
-            $this->perPage,
-            $this->start 
-        );
+        return $this->query            
+            ->limit($this->perPage)
+            ->offset($this->start)
+            ->all();
     }
 
     public function render(string $template): void
     {
-        if ($this->total > $this->perPage) {
+        if ($this->totalCount > $this->perPage) {
             (new View)->renderPart($template, ['page' => $this]);
         }
     }
 
-    private function setTotal()
-    {
-        $this->total = $this->className::count();
-    }
-
     private function setCountPages()
     {
-        $this->countPages = ceil($this->total / $this->perPage) ?: 1;
+        $this->countPages = ceil($this->totalCount / $this->perPage) ?: 1;
     }
 
     private function setCurrentPage()
     {
-        $page = Request::get('page');
+        $page = App::request()->get('page');
 
         if (empty($page) || $page < 1) {
             $page = 1;
@@ -74,7 +75,7 @@ class Pagination
 
     private function getUrl(int $page)
     {
-        $url = Request::get();
+        $url = App::request()->get();
 
         if ($page == 1) {
             unset($url['page']);
@@ -89,7 +90,7 @@ class Pagination
             $query[] = $key . '=' . $value;
         }
         
-        $queryString = '/' . Request::get('URI');
+        $queryString = '/' . App::request()->get('URI');
         $queryString .= count($query) ? '?' : '';
         $queryString .= implode('&', $query);
 

@@ -22,6 +22,7 @@ class FormBuilder
 
     public static function close(): string
     {
+        App::request()->clean();
         return '</form>';
     }
 
@@ -93,12 +94,10 @@ class FormBuilder
         $atts['type'] ??= 'text';
         $atts['class'] ??= 'form-control';
 
-        if (!empty(Request::old($atts['name']))) {
-            $atts['value'] = Request::old($atts['name']);
-        }
-        
-        if (isset($_SESSION['error'])) {
-            $atts['class'] .= (Request::error($atts['name']) ? ' is-invalid' : ' is-valid'); 
+        $atts['value'] ??= App::request()->old($atts['name']);
+
+        if (App::request()->isErrors()) {
+            $atts['class'] .= (App::request()->error($atts['name']) ? ' is-invalid' : ' is-valid'); 
         }
 
         if ($atts['type'] == 'file' && !empty($atts['value'])) {
@@ -129,16 +128,16 @@ class FormBuilder
             $output .= self::label($label, ['for' => $atts['id']]);
         }
         
-        if (!empty(Request::old($atts['name']))) {
-            $text = Request::old($atts['name']);
+        if (!empty(App::request()->old($atts['name']))) {
+            $text = App::request()->old($atts['name']);
         }
 
         $atts['class'] ??= 'form-control';
 
         $output .= '<textarea';
 
-        if (isset($_SESSION['error'])) {
-            $atts['class'] .= (Request::error($atts['name']) ? ' is-invalid' : ' is-valid'); 
+        if (App::request()->isErrors()) {
+            $atts['class'] .= (App::request()->error($atts['name']) ? ' is-invalid' : ' is-valid'); 
         }
         
         foreach ($atts as $key => $value) {
@@ -196,10 +195,10 @@ class FormBuilder
 
     protected static function feedback(string &$output, string $name)
     {
-        if ( ! empty( Request::error($name) ) )
+        if ( ! empty( App::request()->error($name) ) )
         {
             $output .= '<div class="invalid-feedback">';
-            $output .= Request::error($name);
+            $output .= App::request()->error($name);
             $output .= '</div>';
         }
     }

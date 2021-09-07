@@ -17,7 +17,7 @@ class m1630428094_create_post_table extends Migration
             'content'       => Column::text(),
             'category_id'   => Column::foreignKey(),
             'user_id'       => Column::foreignKey(),
-            'image'         => Column::string(255)->notNull(),
+            'image'         => Column::string(),
             'created_at'    => Column::time()->default(Column::CURRENT_TIME),
             'updated_at'    => Column::time()->default(Column::CURRENT_TIME)->update(Column::CURRENT_TIME),
         ]);

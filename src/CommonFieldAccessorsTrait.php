@@ -2,6 +2,8 @@
 
 namespace Home\CmsMini;
 
+use Exception;
+
 trait CommonFieldAccessorsTrait
 {
     public function getDate()
@@ -31,21 +33,20 @@ trait CommonFieldAccessorsTrait
 
     public function setImage(string $name = 'image', bool $require = false): void
     {
-        $file = new File($name);
+        $file = new File(App::request()->files($name));
 
         if ($require && empty($this->image) && !$file->uploaded()) {
-            throw new \Exception('File not uploaded!');
+            throw new Exception('File not uploaded!');
         }
 
         if ($file->uploaded()) {
             if (!empty($this->image)) {
-                $file->remove($this->image);
+                Storage::remove($this->image);
             }
             
-            $file->setName();
+            $file->setNewName();
             $file->moveToStorage();
-            $this->image = $file->getName();
-            $this->addField($name);  
+            $this->image = $file->getNewName();
         }
     }
 

@@ -21,9 +21,9 @@ class Auth
         }
     }
 
-    public static function user()
+    public static function user(): ?User
     {
-        return self::isLoggedIn() ? User::findOne('token', $_SESSION['UID']) : null;
+        return self::isLoggedIn() ? User::find('token', $_SESSION['UID'])->one() : null;
     }
 
     public static function isLoggedIn()

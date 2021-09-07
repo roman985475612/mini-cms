@@ -4,15 +4,17 @@ namespace App\Model;
 
 use Home\CmsMini\Model;
 
-class Category extends Model
+class Category extends Model implements \Stringable
 {
+    protected array $fillable = ['title'];
+
     public function __toString()
     {
         return $this->title;
     }
 
-    public function getPosts()
+    public function getPosts(): array
     {
-        return Post::findAll('category_id', $this->id);
+        return Post::find('category_id', $this->id)->all();
     }
 }
