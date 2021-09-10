@@ -26,7 +26,7 @@ class Migration
 
         $this->createTable('migration', [
             'id' => Column::primary(),
-            'name' => Column::string(255)->notNull(),
+            'name' => Column::string()->notNull(),
             'created_at' => Column::time()->default(Column::CURRENT_TIME),
             'updated_at' => Column::time()->default(Column::CURRENT_TIME)->update(Column::CURRENT_TIME),
         ]);
@@ -36,7 +36,7 @@ class Migration
                     ->execute();
 
         if (!$result) {
-            throw new Exception('Error create migtation table');
+            throw new Exception('Error create migration table');
         }
 
         echo 'Create table "migration"' . PHP_EOL;
@@ -44,7 +44,7 @@ class Migration
         $migrationName = 'Initial migration';
 
         if ($this->migrationAlreadyExists($migrationName)) {
-            echo "Migration \"{$migrationName}\" already exists!\n";
+            echo "Migration \"$migrationName\" already exists!\n";
             exit;
         }
         
@@ -60,7 +60,7 @@ class Migration
         $filepath = $this->folder . '/' . $filename . '.php';
 
         if (file_put_contents($filepath, $this->getMigrationDraft($filename))) {
-            echo "Create {$filename}"; 
+            echo "Create $filename";
         }
     }
 
@@ -76,19 +76,19 @@ class Migration
             $migrationName = explode('_', $className)[0];
             
             if ($this->migrationAlreadyExists($migrationName)) {
-                echo "Migration <{$migrationName}> already exists!\n";
+                echo "Migration <$migrationName> already exists!\n";
                 continue;
             }
         
-            $filepath = "{$this->folder}/{$className}.php";
+            $filepath = "$this->folder/$className.php";
             if (!file_exists($filepath)) {
-                echo "Migration <{$migrationName}> not found!\n";
+                echo "Migration <$migrationName> not found!\n";
                 continue;
             }
 
             require $filepath;
         
-            $class = "\\App\\Migration\\{$className}";
+            $class = "\\App\\Migration\\$className";
 
             $obj = new $class;
             $obj->up();
@@ -101,38 +101,33 @@ class Migration
     
             $this->migrationRecord($migrationName);
     
-            echo "Migration \"{$migrationName}\" done!" . PHP_EOL;
+            echo "Migration \"$migrationName\" done!" . PHP_EOL;
         }
     }
 
     public function down()
     {
-        // 1. получить последнюю миграцию
         $migrationName = $this->getLastMigration();
 
-        // найти файл
-        $filepath = glob("{$this->folder}/{$migrationName}*.php")[0];
+        $filepath = glob("$this->folder/$migrationName*.php")[0];
 
-        $pattern = "#{$migrationName}\w+#";
+        $pattern = "#$migrationName\w+#";
 
         preg_match($pattern, $filepath, $matches);
 
         $className = $matches[0];
         
-        // 2. выполнить down
         require $filepath;
         
-        $class = "\\App\\Migration\\{$className}";
+        $class = "\\App\\Migration\\$className";
 
         $obj = new $class;
         $obj->down();
 
-        $result = $this->dbh->prepare($obj->sql[0])->execute();
-
-        // 3. удалить запись из таблицы миграций
+        $this->dbh->prepare($obj->sql[0])->execute();
         $this->migrationDelete($migrationName);
     
-        echo "Migration \"{$migrationName}\" down!" . PHP_EOL;
+        echo "Migration \"$migrationName\" down!" . PHP_EOL;
     }
 
     protected function getLastMigration(): string
@@ -175,7 +170,7 @@ class Migration
             $cols[] = "\t" . $name . ' ' . $type;
         }
         
-        $sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (" . PHP_EOL;
+        $sql = "CREATE TABLE IF NOT EXISTS `$tableName` (" . PHP_EOL;
         $sql .= implode(',' . PHP_EOL, $cols) . PHP_EOL;
         $sql .= ") ENGINE = InnoDB;". PHP_EOL;
 
@@ -184,13 +179,13 @@ class Migration
 
     protected function dropTable(string $tableName): void
     {
-        $this->sql[] = "DROP TABLE IF EXISTS `{$tableName}`;";
+        $this->sql[] = "DROP TABLE IF EXISTS `$tableName`;";
     }
 
     protected function addConstrain(string $tableName, string $idx, Constrain $constrain): void
     {
-        $sql = "ALTER TABLE {$tableName}" . PHP_EOL;
-        $sql .= "ADD CONSTRAINT {$idx}" . PHP_EOL;
+        $sql = "ALTER TABLE $tableName" . PHP_EOL;
+        $sql .= "ADD CONSTRAINT $idx" . PHP_EOL;
         $sql .= $constrain . ";" . PHP_EOL;
 
         $this->sql[] = $sql;
@@ -199,7 +194,6 @@ class Migration
     protected function getMigrationDraft(string $filename): string
     {
         $content = file_get_contents(__DIR__ . '/draft.txt');
-        $content = str_replace('{{filename}}', $filename, $content);
-        return $content;
+        return str_replace('{{filename}}', $filename, $content);
     }
 }

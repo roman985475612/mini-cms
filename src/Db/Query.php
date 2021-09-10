@@ -111,7 +111,7 @@ class Query
         return $this->sth->fetchAll(PDO::FETCH_CLASS, $this->className);
     }
 
-    public function column(): mixed
+    public function column()
     {
         $this->execute();
         return $this->sth->fetchColumn();
