@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
-        
+
+if (!defined('ROOT')) {
+    define('ROOT', dirname(__DIR__));
+}
+
 const CONFIG    = ROOT . '/config';
 const WWW       = ROOT . '/public';
 const STORAGE   = ROOT . '/public/storage';
