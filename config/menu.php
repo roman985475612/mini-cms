@@ -32,13 +32,13 @@ return [
         'role'      => 'isGuest'
     ],
     [
-        'title'     => 'logout',
-        'urlName'   => 'logout',
+        'title'     => 'admin',
+        'urlName'   => 'admin',
         'role'      => 'isLoggedIn'
     ],
     [
-        'title'     => 'admin',
-        'urlName'   => 'admin',
+        'title'     => 'logout',
+        'urlName'   => 'logout',
         'role'      => 'isLoggedIn'
     ],
 ];
