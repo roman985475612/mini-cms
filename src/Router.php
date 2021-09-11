@@ -105,10 +105,11 @@ class Router
             }
         }
         
-        App::$route = (object) [
+        $route = (object) [
             'controller' => $controllerRef->getShortName(), 
             'action' => self::$action,
         ];
+        App::setRoute($route);
 
         $actionRef->invokeArgs(new self::$controller(), $params);
     }

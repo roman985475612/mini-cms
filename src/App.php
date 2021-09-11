@@ -5,14 +5,15 @@ namespace Home\CmsMini;
 use Home\CmsMini\Db\Connection;
 use Home\CmsMini\Exception\Http404Exception;
 use Home\CmsMini\Request;
+use stdClass;
 
 class App
 {
-    private static $config;
+    private static stdClass $config;
 
-    private static $request;
+    private static Request $request;
 
-    public static $route;
+    private static stdClass $route;
 
     public function __construct()
     {
@@ -63,5 +64,15 @@ class App
     public static function request()
     {
         return self::$request;
+    }
+
+    public static function getRoute(): stdClass
+    {
+        return self::$route;
+    }
+
+    public static function setRoute(stdClass $route): void
+    {
+        self::$route = $route;
     }
 }

@@ -18,8 +18,8 @@ class AuthController extends Controller
 
     protected function access(): bool
     {
-        return (App::$route->action == 'logout' && Auth::isLoggedIn())
-            || (App::$route->action != 'logout' && !Auth::isLoggedIn());
+        return (App::getRoute()->action == 'logout' && Auth::isLoggedIn())
+            || (App::getRoute()->action != 'logout' && !Auth::isLoggedIn());
     }
 
     public function signup()
