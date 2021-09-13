@@ -54,9 +54,15 @@ class View implements ViewInterface
         echo $this->renderFile($this->getLayout(), $this->meta);
     }
 
-    public function renderPart(string $templatePath, array $data = []): void
+    public function renderPart(string $templatePath, array $data = [], $ob = false)
     {
-        echo $this->renderFile($this->getPart($templatePath), $data);
+        $result = $this->renderFile($this->getPart($templatePath), $data);
+
+        if ($ob) {
+            return $result;
+        }
+
+        echo $result;
     } 
 
     protected function renderFile(string $filename, array $data = []): string

@@ -2,6 +2,7 @@
     "name": "home/cms-mini",
     "autoload": {
         "files": [
+            "config/console-routes.php",
             "src/utilities.php"
         ],
         "psr-4": {

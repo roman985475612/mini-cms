@@ -8,13 +8,15 @@ use stdClass;
 
 class Console
 {
-    public static $config;
+    private static $config;
 
-    protected $argc;
+    private $argc;
 
-    protected $argv;
+    private $argv;
     
-    protected $arguments;
+    private $arguments;
+
+    private static $routes = [];
 
     public function __construct()
     {
@@ -26,7 +28,7 @@ class Console
                 self::$config->db->user,
                 self::$config->db->pass
             );
-
+        
             $this->argc = $_SERVER['argc'];
             $this->argv = $_SERVER['argv'];
 
@@ -37,7 +39,17 @@ class Console
         }
     }
 
-    protected function setArguments()
+    public static function addRoute(string $arg, string $className)
+    {
+        self::$routes[$arg] = $className;
+    }
+
+    public static function getConfig()
+    {
+        return self::$config;
+    }
+
+    private function setArguments()
     {
         $this->arguments = new stdClass;
         
@@ -71,31 +83,19 @@ class Console
         }
     }
 
-    protected function dispatch()
+    private function dispatch()
     {
-//        $class = match ($this->arguments->class) {
-//            'migrate' => \Home\CmsMini\Db\Migration::class,
-//        };
-
-        $class = $this->match($this->arguments->class);
+        $class = self::$routes[$this->arguments->class];
 
         if (!class_exists($class)) {
             throw new Exception('No class!');
         }
-
+        d($class, true);
         $controller = new $class;
         if (!method_exists($class, $this->arguments->method)) {
             throw new Exception('No method');
         }
 
         call_user_func_array([$controller, $this->arguments->method], $this->arguments->params);
-    }
-
-    protected function match($argument)
-    {
-        switch ($argument) {
-            case 'migrate': 
-                return \Home\CmsMini\Db\Migration::class;
-        }
     }
 }

@@ -2,59 +2,58 @@
 
 namespace App\Widget;
 
-use \Home\CmsMini\Auth;
-use \Home\CmsMini\App;
-use \Home\CmsMini\Router;
+use Home\CmsMini\Auth;
+use Home\CmsMini\App;
+use Home\CmsMini\Router;
+use Home\CmsMini\View;
+use Home\CmsMini\Exception\CacheNotFoundException;
+use Exception;
 
 class Menu
 {
-    protected array $menu = [];
+    private string $filepath;
 
-    protected string $currentUrl;
+    private array $menu = [];
+
+    private string $currentUrlName;
 
     public function __construct(
-        private string $containerClass,
         string $filename,
+        private string $template,
     )
     {
-        $this->setCurrentUrl();
-        $this->setMenu($filename);
-        $this->render();
+        $this->currentUrlName = App::getRoute()->urlName;
+
+        $key = "{$filename}_{$this->currentUrlName}";
+
+        try {
+            $menu = App::cache()->get($key);
+        } catch (CacheNotFoundException $e) {
+            $this->setFilepath($filename);
+            $this->prepareMenu();
+
+            $menu = (new View)->renderPart($this->template, ['menu' => $this->menu], true);
+
+            App::cache()->put($key, $menu);
+        }
+
+        echo $menu;
     }
 
-    protected function render()
+    public function setFilepath(string $filename)
     {
-        ?>
-        <ul class="<?= $this->containerClass ?>">
-            <?php foreach ($this->menu as $item): ?>
-                <li class="nav-item">
-                    <a 
-                        class="<?= implode(' ', $item['class']) ?>"
-                        <?= $item['aria'] ?>
-                        href="<?= $item['url'] ?>"
-                    >
-                        <?= $item['title'] ?>
-                    </a>
-                </li>
-            <?php endforeach ?>
-        </ul>
-        <?php
+        $filepath = CONFIG . "/$filename.php";
+
+        if (!file_exists($filepath)) {
+            throw new Exception("File not exists: $filepath");
+        }
+
+        $this->filepath = $filepath;
     }
 
-    protected function setCurrentUrl()
+    private function prepareMenu()
     {
-        $this->currentUrl = App::request()->getPath();
-        $this->currentUrl = empty($this->currentUrl) ? '/' : $this->currentUrl;
-    }
-
-    protected function isCurrent(string $url): bool
-    {
-        return $this->currentUrl == $url;
-    }
-
-    protected function setMenu(string $filename)
-    {
-        $menu = include CONFIG . '/' . $filename . '.php';
+        $menu = include $this->filepath;
 
         foreach ($menu as $item) {
             if (isset($item['role']) && !Auth::{$item['role']}()) {
@@ -63,14 +62,16 @@ class Menu
 
             $item['url'] = Router::url($item['urlName']);
             $item['class'] = ['nav-link', 'text-uppercase',];
-            if ($this->isCurrent($item['url'])) {
+            $item['aria'] = '';
+
+            if ($this->currentUrlName == $item['urlName']) {
                 $item['class'][] = 'active';
+                $item['aria'] = 'aria-current="page"';
             }
-            
-            $item['aria'] = $this->isCurrent($item['url']) ? 'aria-current="page"' : '';
 
             unset($item['role']);
 
+            $item['class'] = implode(' ', $item['class']);
             $this->menu[] = $item;
         }
     }

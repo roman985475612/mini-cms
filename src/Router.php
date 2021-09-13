@@ -14,6 +14,8 @@ class Router
 
     private static string $action;
 
+    private static string $urlName;
+
     private static array $params = [];
 
     public static function init(): void
@@ -56,10 +58,11 @@ class Router
             return App::request()->getMethod() == strtoupper($route['method']);
         });
 
-        foreach ($routes as $route) {
+        foreach ($routes as $urlName => $route) {
             if (preg_match($route['pattern'], App::request()->getPath(), $matches)) {
                 self::$controller = $route['controller'];
                 self::$action = $route['action'];
+                self::$urlName = $urlName;
 
                 if (isset($matches['id'])) {
                     self::$params['id'] = $matches['id'];
@@ -107,7 +110,8 @@ class Router
         
         $route = (object) [
             'controller' => $controllerRef->getShortName(), 
-            'action' => self::$action,
+            'action'     => self::$action,
+            'urlName'    => self::$urlName,
         ];
         App::setRoute($route);
 

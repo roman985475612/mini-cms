@@ -2,7 +2,10 @@
 
 namespace Home\CmsMini\Exception;
 
-class Http404Exception extends \Exception 
+use Exception;
+use Throwable;
+
+class Http404Exception extends Exception 
 {
     public function __construct($message = '', $code = 0, Throwable $previous = null)
     {

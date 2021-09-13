@@ -2,6 +2,7 @@
 
 namespace Home\CmsMini;
 
+use Home\CmsMini\Core\Cache;
 use Home\CmsMini\Db\Connection;
 use Home\CmsMini\Exception\Http404Exception;
 use Home\CmsMini\Request;
@@ -15,10 +16,14 @@ class App
 
     private static stdClass $route;
 
+    private static Cache $cache;
+
     public function __construct()
     {
         try {
             self::$request = new Request;
+
+            self::$cache = new Cache;
 
             self::$config = json_decode(file_get_contents(CONFIG . '/config.json'));
                 
@@ -56,12 +61,17 @@ class App
         }
     }
 
-    public static function config()
+    public static function cache(): Cache
+    {
+        return self::$cache;
+    }
+
+    public static function config(): stdClass
     {
         return self::$config;
     }
 
-    public static function request()
+    public static function request(): Request
     {
         return self::$request;
     }

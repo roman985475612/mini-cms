@@ -1,4 +1,5 @@
 <?php
+use App\Widget\Menu;
 use Home\CmsMini\Auth;
 use Home\CmsMini\Flash;
 use Home\CmsMini\Router;
@@ -19,11 +20,10 @@ use Home\CmsMini\Router;
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <?php new \App\Widget\Menu(
-                containerClass: 'navbar-nav me-auto mb-2 mb-lg-0',
-                filename      : 'menu-admin'
+            <?php new Menu(
+                filename: 'menu-admin',
+                template: 'admin/menu',
             ) ?>
-
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle main-menu__link"

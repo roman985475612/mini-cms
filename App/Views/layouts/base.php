@@ -1,6 +1,7 @@
 <?php
-use Home\CmsMini\Router;
+use App\Widget\Menu;
 use Home\CmsMini\Flash;
+use Home\CmsMini\Router;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,9 +22,9 @@ use Home\CmsMini\Flash;
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarMain">
-                <?php new \App\Widget\Menu(
-                    containerClass: 'navbar-nav ms-auto mb-2 mb-lg-0',
-                    filename      : 'menu'
+                <?php new Menu(
+                    filename: 'menu',
+                    template: 'home/menu',
                 ) ?>
             </div>
         </div>
