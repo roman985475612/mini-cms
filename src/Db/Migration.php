@@ -92,11 +92,9 @@ class Migration
 
             $obj = new $class;
             $obj->up();
-    
+
             foreach ($obj->sql as $sql) {
-                $result = $this->dbh
-                            ->prepare($sql)
-                            ->execute();
+                $this->dbh->prepare($sql)->execute();
             }
     
             $this->migrationRecord($migrationName);

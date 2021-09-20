@@ -21,18 +21,13 @@ class UserController extends Controller
     {
         return Auth::isAdmin();
     }
-    
-    protected function accessDeny()
-    {
-        App::request()->redirect(Auth::LOGIN_URL);
-    }
 
     protected function getRoles(): array
     {
         return [
-            ['key' => User::ADMIN , 'value' => 'Administrator'],
-            ['key' => User::EDITOR, 'value' => 'Editor'],
-            ['key' => User::GUEST , 'value' => 'Guest'],
+            ['key' => User::ROLE_ADMIN , 'value' => 'Administrator'],
+            ['key' => User::ROLE_EDITOR, 'value' => 'Editor'],
+            ['key' => User::ROLE_GUEST , 'value' => 'Guest'],
         ];
     }
 

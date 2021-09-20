@@ -16,7 +16,6 @@ use Home\CmsMini\Validator\Alphanumeric;
 use Home\CmsMini\Validator\Always;
 use Home\CmsMini\Validator\Email;
 use Home\CmsMini\Validator\Equal;
-use Home\CmsMini\Validator\NotEmpty;
 use Home\CmsMini\Validator\Unique;
 use Home\CmsMini\Validator\Validation;
 
@@ -27,11 +26,6 @@ class AdminController extends Controller
     protected function access(): bool
     {
         return Auth::isLoggedIn();
-    }
-    
-    protected function accessDeny()
-    {
-        App::request()->redirect(Auth::LOGIN_URL);
     }
 
     public function index()
@@ -167,6 +161,7 @@ class AdminController extends Controller
 
         Flash::addSuccess('Profile deleted!');
         
+        App::cache()->clear('menu');
         App::request()->redirect(Router::url('home'));
     }
 

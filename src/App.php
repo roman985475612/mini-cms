@@ -3,9 +3,11 @@
 namespace Home\CmsMini;
 
 use Home\CmsMini\Core\Cache;
+use Home\CmsMini\Core\Session;
 use Home\CmsMini\Db\Connection;
 use Home\CmsMini\Exception\Http404Exception;
 use Home\CmsMini\Request;
+use Home\CmsMini\Service\Mailer;
 use stdClass;
 
 class App
@@ -14,18 +16,26 @@ class App
 
     private static Request $request;
 
+    private static Session $session;
+
     private static stdClass $route;
+
+    private static Mailer $mailer;
 
     private static Cache $cache;
 
     public function __construct()
     {
         try {
+            self::$config = json_decode(file_get_contents(CONFIG . '/config.json'));
+
             self::$request = new Request;
+
+            self::$session = new Session;
 
             self::$cache = new Cache;
 
-            self::$config = json_decode(file_get_contents(CONFIG . '/config.json'));
+            self::$mailer = new Mailer;
                 
             Router::init();
             
@@ -74,6 +84,16 @@ class App
     public static function request(): Request
     {
         return self::$request;
+    }
+
+    public static function session(): Session
+    {
+        return self::$session;
+    }
+
+    public static function mailer(): Mailer
+    {
+        return self::$mailer;
     }
 
     public static function getRoute(): stdClass

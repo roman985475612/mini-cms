@@ -24,7 +24,7 @@ class Menu
     {
         $this->currentUrlName = App::getRoute()->urlName;
 
-        $key = "{$filename}_{$this->currentUrlName}";
+        $key = "menu@{$filename}_{$this->currentUrlName}";
 
         try {
             $menu = App::cache()->get($key);

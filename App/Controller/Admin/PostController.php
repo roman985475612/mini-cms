@@ -21,12 +21,7 @@ class PostController extends Controller
 
     protected function access(): bool
     {
-        return Auth::isLoggedIn();
-    }
-    
-    protected function accessDeny()
-    {
-        App::request()->redirect(Auth::LOGIN_URL);
+        return Auth::isAdmin();
     }
 
     public function index()

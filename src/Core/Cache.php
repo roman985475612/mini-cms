@@ -10,9 +10,9 @@ class Cache
 
     const EXPIRES = 'expires';
 
-    private array $content = [];
+    private $content = [];
 
-    private string $filepath;
+    private $filepath;
 
     public function __construct(int $seconds = 3600)
     {
@@ -28,7 +28,7 @@ class Cache
         $content = unserialize(file_get_contents($this->filepath));
 
         if (time() > $content[self::EXPIRES]) {
-            $this->delete();
+            unlink($this->filepath);
             throw new CacheNotFoundException('Content expires');
         }
 
@@ -47,16 +47,29 @@ class Cache
         );
     }
 
-    public function delete(): void
+    public function clear(string $key): void
     {
-        $this->checkFileExists();
-
-        unlink($this->filepath);
+        $dirname = CACHE . '/' . $key;
+        removeDirectory($dirname);
+        echo "Clear folder $dirname";
     }
 
+    // menu@main
     private function setFilepath(string $key)
     {
-        $filepath = CACHE . '/' . md5($key) . '.cache';
+        $dirname = CACHE;
+        if (strpos($key, '@') !== false) {
+            $parts = explode('@', $key);
+            $filename = array_pop($parts);
+            $dirname .= '/' . implode('/', $parts);
+
+            createDirectoryIfNotExists($dirname);
+
+        } else {
+            $filename = $key;
+        }
+
+        $filepath = $dirname . '/' . md5($filename) . '.cache';
 
         $this->filepath = $filepath;
     }

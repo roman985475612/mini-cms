@@ -3,7 +3,6 @@
 namespace Home\CmsMini;
 
 use Home\CmsMini\Core\ViewInterface;
-use Home\CmsMini\Exception\Http404Exception;
 
 abstract class Controller
 {
@@ -13,7 +12,9 @@ abstract class Controller
 
     public function __construct()
     {
-        if (!$this->access()) {
+        if (!$this->access() 
+         || !$this->checkPermissions()
+        ) {
             $this->accessDeny();
         }
 
@@ -33,9 +34,27 @@ abstract class Controller
     {
         return true;
     }
-    
-    protected function accessDeny()
+
+    protected function permissions(): array
     {
-        return throw new Http404Exception('Access deny');
+        return [];
+    }
+    
+    protected function accessDeny(): void
+    {
+        Auth::redirectToLoginUrl();
+    }
+
+    private function checkPermissions(): bool
+    {
+        $permission = true;
+
+        $permissions = $this->permissions();
+
+        if (isset($permissions[App::getRoute()->action])) {
+            $permission = $permissions[App::getRoute()->action]();
+        }
+
+        return $permission;
     }
 }

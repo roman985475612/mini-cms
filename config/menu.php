@@ -32,7 +32,7 @@ return [
         'role'      => 'isGuest'
     ],
     [
-        'title'     => 'admin',
+        'title'     => 'account',
         'urlName'   => 'admin',
         'role'      => 'isLoggedIn'
     ],

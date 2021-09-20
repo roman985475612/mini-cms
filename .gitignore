@@ -7,6 +7,7 @@
 /config/config.json
 /App/Controller/Patterns.php
 /DesignPatterns/
+.phpunit.result.cache
 /tests/patterns/
 /tests/DesignPatterns/
 /tmp/

@@ -4,11 +4,6 @@ namespace Home\CmsMini;
 
 class Request
 {
-    public function __construct()
-    {
-        session_start();
-    }
-
     public function get(?string $param = null) 
     {
         $get = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
@@ -44,18 +39,30 @@ class Request
         return $_FILES;
     }
 
+    public function server(?string $param): string
+    {
+        if (empty($param)) {
+            return $_SERVER;
+        }
+
+        return $_SERVER[$param];
+    }
+
     public function setOld(array $data, array $exclude = []): void
     {
-        $_SESSION['old'] = array_filter(
-            $data,
-            fn($key) => !in_array($key, $exclude),
-            ARRAY_FILTER_USE_KEY
+        App::session()->set(
+            'old', 
+            array_filter(
+                $data,
+                fn($key) => !in_array($key, $exclude),
+                ARRAY_FILTER_USE_KEY
+            )
         );
     }
 
     public function setErrors(array $data): void
     {
-        $_SESSION['errors'] = $data;
+        App::session()->set('errors', $data);
     }
 
     public function old(string $key): mixed
@@ -86,7 +93,7 @@ class Request
 
     public function isPost(): bool 
     {
-        return $_SERVER['REQUEST_METHOD'] === 'POST';
+        return $this->server('REQUEST_METHOD') === 'POST';
     }
 
     public function getPath(): string

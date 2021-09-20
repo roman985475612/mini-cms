@@ -90,7 +90,7 @@ class Console
         if (!class_exists($class)) {
             throw new Exception('No class!');
         }
-        d($class, true);
+
         $controller = new $class;
         if (!method_exists($class, $this->arguments->method)) {
             throw new Exception('No method');

@@ -14,8 +14,8 @@ use Home\CmsMini\Router;
                     </div>
                     <div class="card-body">
                         <?= Form::open([
-                            'id'          => 'signInForm',
-                            'action'      => Router::url('login'),
+                            'id'          => 'forgot',
+                            'action'      => Router::url('recovery'),
                             'class'       => 'needs-validation',
                             'novalidate'  => '',
                         ]) ?>
@@ -26,15 +26,7 @@ use Home\CmsMini\Router;
                             'placeholder' => 'Enter email',
                             'data-valid'  => 'email',
                         ], 'Email address') ?>
-                        <?= Form::password([
-                            'id'          => 'userPassword',
-                            'name'        => 'password',
-                            'class'       => 'form-control form__control',
-                            'placeholder' => 'Enter password',
-                            'data-valid'  => 'notEmpty',
-                        ], 'Password') ?>
-                        <?= Form::submit('Sing In', ['class' => 'btn btn-outline-primary form__submit'], '') ?>
-                        <a href="<?= Router::url('forgot') ?>" class="btn btn-link">Forgot passwor</a>
+                        <?= Form::submit('Forgot password', ['class' => 'btn btn-outline-primary form__submit']) ?>
                         <?= Form::close() ?>
                     </div>
                 </div>    

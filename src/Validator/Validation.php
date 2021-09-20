@@ -8,13 +8,13 @@ class Validation
 {
     public array $sourceData = [];
 
-    protected array $constraint = [];
-
     public array $cleanedData = [];
 
     public array $errors = [];
 
     public bool $hasErrors = false;
+
+    private array $constraint = [];
 
     public function __construct(array $sourceData)
     {
@@ -26,14 +26,14 @@ class Validation
         if (!isset($this->constraint[$key])) {
             $this->constraint[$key] = [];
         }
+        
         $this->constraint[$key][] = $validator;
+        
         return $this;
     }
 
     public function validate(): bool
     {
-        $validateSuccess = true;
-
         foreach ($this->constraint as $key => $validators) {
             foreach ($validators as $validator) {
                 if ($validator->validate($this->sourceData[$key])) {
@@ -41,11 +41,25 @@ class Validation
                 } else {
                     $this->hasErrors = true;
                     $this->errors[$key] = $validator->errorMessage();
-                    $validateSuccess = false;
                 }    
             }
         }
  
-        return $validateSuccess;
+        return $this->isValid();
+    }
+
+    public function isValid(): bool
+    {
+        return !$this->hasErrors;
+    }
+
+    public function getCleanedDate(string $key): mixed
+    {
+        return $this->cleanedData[$key];
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 }

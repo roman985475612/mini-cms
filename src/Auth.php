@@ -3,49 +3,68 @@
 namespace Home\CmsMini;
 
 use App\Model\User;
+use Home\CmsMini\Exception\UserNotFoundException;
 
 class Auth
 {
-    const LOGIN_URL = '/signin';
+    const UID_KEY = 'UID';
+
+    public static function redirectToLoginUrl(): void
+    {
+        App::request()->redirect(Auth::loginUrl());
+    }
 
     public static function login(User $user)
     {
         $user->setToken();
-        $_SESSION['UID'] = $user->token;
+        App::session()->set(self::UID_KEY, $user->token);
     }
 
     public static function logout()
     {
-        if (isset($_SESSION['UID'])) {
-            unset($_SESSION['UID']);
-        }
+        App::session()->remove(self::UID_KEY);
     }
 
-    public static function user(): ?User
+    public static function user(): User
     {
-        return self::isLoggedIn() ? User::find('token', $_SESSION['UID'])->one() : null;
+        if (!self::isLoggedIn()) {
+            throw new UserNotFoundException;
+        }
+
+        $user = User::findOne('token', App::session()->get(self::UID_KEY));
+        if ($user->isEmpty()) {
+            throw new UserNotFoundException;
+        }
+
+        return $user;
     }
 
-    public static function isLoggedIn()
-    {   
-        return isset($_SESSION['UID']) && !empty($_SESSION['UID']);
+    public static function isLoggedIn(): bool
+    {
+        return App::session()->has(self::UID_KEY) 
+            && !App::session()->isEmpty(self::UID_KEY);
     }
 
-    public static function isGuest()
-    {   
+    public static function isGuest(): bool
+    {
         return !self::isLoggedIn();
     }
 
-    public static function isAdmin()
-    {   
+    public static function isAdmin(): bool
+    {
         return self::isLoggedIn() 
-            && self::user()->role == User::ADMIN;
+            && self::user()->isAdmin();
     }
 
     public static function loginRequired()
     {
         if (!self::isLoggedIn()) {
-            Request::redirect(Auth::LOGIN_URL);
+            self::redirectToLoginUrl();
         }
+    }
+    
+    private static function loginUrl()
+    {
+        return Router::url('signin');
     }
 }

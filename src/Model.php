@@ -89,6 +89,11 @@ abstract class Model
         return static::query()->where($field, $value);
     }
 
+    public static function findOne(string $field, string $value): self
+    {
+        return static::query()->where($field, $value)->one();
+    }
+
     public static function get(string $id): static
     {
         return static::find('id', $id)->one();
@@ -105,7 +110,7 @@ abstract class Model
         return $model;
     }
 
-    public static function create(array $data): self
+    public static function create(array $data): static
     {
         $obj = new static;
 
@@ -135,19 +140,14 @@ abstract class Model
         return $obj;
     }
 
-    public function save(): bool
+    public function save()
     {
         if (!$this->recordModeIsEnable()) {
             throw new Exception('Recording mode not enabled');
         }
 
-        $result = $this->isNew()
-            ? $this->insert()
-            : $this->update();
-
+        $this->isNew() ? $this->insert() : $this->update();
         $this->recordModeDisable();
-
-        return $result;
     }
 
     protected function isNew(): bool
@@ -155,27 +155,27 @@ abstract class Model
         return !isset($this->id);
     }
 
-    protected function insert(): bool
+    protected function insert()
     {
         $query = Query::insert(static::tableName(), $this->changedFields)
             ->execute();
 
         $this->id = $query->lastId();
 
-        return $query->result();
+        $query->result();
     }
 
-    protected function update(): bool
+    protected function update()
     {
-        return Query::update(static::tableName(), $this->changedFields)
+        Query::update(static::tableName(), $this->changedFields)
             ->where('id', $this->id)
             ->execute()
             ->result();
     }
 
-    public function delete(): bool
+    public function delete()
     { 
-        return Query::delete()
+        Query::delete()
             ->from(static::tableName())
             ->where('id', $this->id)
             ->execute()

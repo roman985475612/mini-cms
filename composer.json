@@ -19,5 +19,8 @@
     },
     "require": {
         "phpmailer/phpmailer": "^6.5"
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }

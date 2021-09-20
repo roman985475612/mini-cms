@@ -20,12 +20,7 @@ class CategoryController extends Controller
 
     protected function access(): bool
     {
-        return Auth::isLoggedIn();
-    }
-    
-    protected function accessDeny()
-    {
-        return App::request()->redirect(Auth::LOGIN_URL);
+        return Auth::isAdmin();
     }
 
     public function index()

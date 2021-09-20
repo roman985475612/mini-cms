@@ -190,6 +190,10 @@ class FormBuilder
 
     protected static function wrap(string $output, string $class = 'mb-3'): string
     {
+        if (empty($class)) {
+            return $output;
+        }
+        
         return '<div class="' . $class . '">' . $output . '</div>';
     }
 

@@ -27,16 +27,27 @@ class Router
         }
     }
 
-    public static function url(string $name, array $params = []): string
-    {
+    public static function url(
+        string $name, 
+        ?array $params = null, 
+        ?array $getParams = null, 
+        $domain = false
+    ): string {
         if (!isset(self::$paths[$name])) {
             throw new Http404Exception('Route not find');
         }
-        $url = self::$paths[$name]['pattern'];
 
-        if ($params) {
+        $url = $domain ? App::request()->server('HTTP_ORIGIN') : '';
+        $url .= self::$paths[$name]['pattern'];
+
+        if (!empty($params)) {
             $url = str_replace('<id>', $params['id'], $url);
         }
+
+        if (!empty($getParams)) {
+            $url .= '?' . implode('&', array_true_map($getParams, fn($v, $k) => "$k=$v"));
+        }
+
         return $url;
     }
 

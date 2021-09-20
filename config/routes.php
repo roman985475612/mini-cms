@@ -31,28 +31,44 @@ $blog = function () {
 $auth = function () {
     return [
         'signup' => [
-            'pattern'    => '/signup',
+            'pattern'    => '/auth/signup',
             'controller' => AuthController::class,
             'action'     => 'signup',
         ],
         'signin' => [
-            'pattern'    => '/signin',
+            'pattern'    => '/auth/signin',
             'controller' => AuthController::class,
             'action'     => 'signin',
         ],
         'logout' => [
-            'pattern'    => '/logout',
+            'pattern'    => '/auth/logout',
             'controller' => AuthController::class,
             'action'     => 'logout',
         ],
         'register' => [
-            'pattern'    => '/register',
+            'pattern'    => '/auth/register',
             'controller' => AuthController::class,
             'action'     => 'register',
             'method'     => 'POST',
         ],
+        'confirm' => [
+            'pattern'    => '/auth/confirm',
+            'controller' => AuthController::class,
+            'action'     => 'confirm',
+        ],
+        'forgot' => [
+            'pattern'    => '/auth/forgot',
+            'controller' => AuthController::class,
+            'action'     => 'forgot',
+        ],
+        'recovery' => [
+            'pattern'    => '/auth/recovery',
+            'controller' => AuthController::class,
+            'action'     => 'recovery',
+            'method'     => 'POST',
+        ],
         'login' => [
-            'pattern'    => '/login',
+            'pattern'    => '/auth/login',
             'controller' => AuthController::class,
             'action'     => 'login',
             'method'     => 'POST',
