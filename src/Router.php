@@ -10,6 +10,8 @@ class Router
 
     private static array $routes = [];
 
+    private static $permission;
+
     private static string $controller;
 
     private static string $action;
@@ -24,6 +26,10 @@ class Router
 
         if (!self::matchRoute()) {
             throw new Http404Exception('Route not exists!');
+        }
+
+        if (!self::accessAllowed()) {
+            throw new Http404Exception('Access denied');
         }
     }
 
@@ -49,40 +55,6 @@ class Router
         }
 
         return $url;
-    }
-
-    private static function setRoutes()
-    {
-        self::$paths = require CONFIG . '/routes.php';
-
-        self::$routes = array_map(function ($item) {
-            $item['pattern'] = str_replace('<', '(?P<', $item['pattern']);
-            $item['pattern'] = str_replace('>', '>\d+)', $item['pattern']);
-            $item['pattern'] = "#^{$item['pattern']}$#";
-            return $item;
-        }, self::$paths);
-    }
-
-    private static function matchRoute(): bool
-    {
-        $routes = array_filter(self::$routes, function ($route) {
-            return App::request()->getMethod() == strtoupper($route['method']);
-        });
-
-        foreach ($routes as $urlName => $route) {
-            if (preg_match($route['pattern'], App::request()->getPath(), $matches)) {
-                self::$controller = $route['controller'];
-                self::$action = $route['action'];
-                self::$urlName = $urlName;
-
-                if (isset($matches['id'])) {
-                    self::$params['id'] = $matches['id'];
-                }
-
-                return true;
-            }       
-        }
-        return false;
     }
 
     public static function dispatch(): void
@@ -127,5 +99,45 @@ class Router
         App::setRoute($route);
 
         $actionRef->invokeArgs(new self::$controller(), $params);
+    }
+
+    private static function setRoutes()
+    {
+        self::$paths = require CONFIG . '/routes.php';
+
+        self::$routes = array_map(function ($item) {
+            $item['pattern'] = str_replace('<', '(?P<', $item['pattern']);
+            $item['pattern'] = str_replace('>', '>\d+)', $item['pattern']);
+            $item['pattern'] = "#^{$item['pattern']}$#";
+            return $item;
+        }, self::$paths);
+    }
+
+    private static function matchRoute(): bool
+    {
+        $routes = array_filter(self::$routes, function ($route) {
+            return App::request()->getMethod() == strtoupper($route['method']);
+        });
+
+        foreach ($routes as $urlName => $route) {
+            if (preg_match($route['pattern'], App::request()->getPath(), $matches)) {
+                self::$permission = $route['permission'];
+                self::$controller = $route['controller'];
+                self::$action = $route['action'];
+                self::$urlName = $urlName;
+
+                if (isset($matches['id'])) {
+                    self::$params['id'] = $matches['id'];
+                }
+
+                return true;
+            }       
+        }
+        return false;
+    }
+
+    private static function accessAllowed(): bool
+    {
+        return call_user_func(self::$permission);
     }
 }

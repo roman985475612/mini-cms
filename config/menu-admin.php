@@ -1,24 +1,26 @@
 <?php
 
+use Home\CmsMini\Auth;
+
 return [
     [
         'title'     => 'dashboard',
         'urlName'   => 'admin',
-        'role'      => 'isLoggedIn'
+        'role'      => [Auth::class, 'isLoggedIn']
     ],
     [
         'title'     => 'posts',
         'urlName'   => 'posts',
-        'role'      => 'isAdmin'
+        'role'      => [Auth::class, 'isAdmin'],
     ],
     [
         'title'     => 'categories',
         'urlName'   => 'categories',
-        'role'      => 'isAdmin'
+        'role'      => [Auth::class, 'isAdmin'],
     ],
     [
         'title'     => 'users',
         'urlName'   => 'users',
-        'role'      => 'isAdmin'
+        'role'      => [Auth::class, 'isAdmin'],
     ],
 ];

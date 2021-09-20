@@ -1,5 +1,6 @@
 <?php
 
+use Home\CmsMini\Auth;
 use App\Controller\HomeController;
 use App\Controller\BlogController;
 use App\Controller\Admin\AuthController;
@@ -77,38 +78,40 @@ $auth = function () {
 };
 
 $admin = function() {
-    return [
+    $routes = [
         'admin' => [
             'pattern'    => '/admin',
-            'controller' => AdminController::class,
         ],
         'profile' => [
             'pattern'    => '/profile',
-            'controller' => AdminController::class,
             'action'     => 'profile',
         ],
         'profile-update' => [
             'pattern'    => '/profile/update',
-            'controller' => AdminController::class,
             'action'     => 'update',
             'method'     => 'POST',
         ],
         'profile-delete' => [
             'pattern'    => '/profile/delete',
-            'controller' => AdminController::class,
             'action'     => 'delete',
         ],
         'settings' => [
             'pattern'    => '/settings',
-            'controller' => AdminController::class,
             'action'     => 'settings',
         ],
         'dashboard' => [
             'pattern'    => '/dashboard',
-            'controller' => AdminController::class,
             'action'     => 'dashboard',
         ],
     ];
+
+    $routes = array_map(function ($route) {
+        $route['controller'] = AdminController::class;
+        $route['permission'] = [Auth::class, 'isLoggedIn'];
+        return $route;
+    }, $routes);
+
+    return $routes;
 };
 
 $home = function() {
@@ -254,6 +257,7 @@ $routes = array_merge(
 $routes = array_map(function ($route) {
     $route['method'] ??= 'GET';
     $route['action'] ??= 'index';
+    $route['permission'] ??= fn() => true;
     return $route;
 }, $routes);
 

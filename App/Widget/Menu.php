@@ -2,7 +2,6 @@
 
 namespace App\Widget;
 
-use Home\CmsMini\Auth;
 use Home\CmsMini\App;
 use Home\CmsMini\Router;
 use Home\CmsMini\View;
@@ -56,7 +55,7 @@ class Menu
         $menu = include $this->filepath;
 
         foreach ($menu as $item) {
-            if (isset($item['role']) && !Auth::{$item['role']}()) {
+            if (isset($item['role']) && ! call_user_func($item['role'])) {
                 continue;
             }
 

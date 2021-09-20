@@ -1,5 +1,7 @@
 <?php
 
+use Home\CmsMini\Auth;
+
 return [
     [
         'title'     => 'home',
@@ -24,21 +26,21 @@ return [
     [
         'title'     => 'signup',
         'urlName'   => 'signup',
-        'role'      => 'isGuest'
+        'role'      => [Auth::class, 'isGuest'],
     ],
     [
         'title'     => 'signin',
         'urlName'   => 'signin',
-        'role'      => 'isGuest'
+        'role'      => [Auth::class, 'isGuest'],
     ],
     [
         'title'     => 'account',
         'urlName'   => 'admin',
-        'role'      => 'isLoggedIn'
+        'role'      => [Auth::class, 'isLoggedIn'],
     ],
     [
         'title'     => 'logout',
         'urlName'   => 'logout',
-        'role'      => 'isLoggedIn'
+        'role'      => [Auth::class, 'isLoggedIn'],
     ],
 ];
