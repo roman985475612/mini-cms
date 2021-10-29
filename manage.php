@@ -4,4 +4,4 @@ define("ROOT", __DIR__);
 
 require ROOT . '/bootstrap/init.php';
 
-new \Home\CmsMini\Core\Console;
+\Home\CmsMini\Core\Console::create();

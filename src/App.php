@@ -23,18 +23,18 @@ class App
     private static Mailer $mailer;
 
     private static Cache $cache;
-
-    public function __construct()
+    
+    public static function init()
     {
         try {
             self::$config = json_decode(file_get_contents(CONFIG . '/config.json'));
 
             self::$request = new Request;
-
+    
             self::$session = new Session;
-
+    
             self::$cache = new Cache;
-
+    
             self::$mailer = new Mailer;
                 
             Router::init();
@@ -44,8 +44,9 @@ class App
                 self::$config->db->user,
                 self::$config->db->pass
             );
-
+    
             Router::dispatch();
+                // new self;
         } catch (Http404Exception $e) {
             if (self::$config->debug) {
                 dd($e, true);

@@ -4,4 +4,4 @@ define("ROOT", dirname(__DIR__));
 
 require ROOT . '/bootstrap/init.php';
 
-new \Home\CmsMini\App;
+\Home\CmsMini\App::init();

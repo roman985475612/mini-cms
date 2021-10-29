@@ -18,25 +18,30 @@ class Console
 
     private static $routes = [];
 
-    public function __construct()
+    public static function create()
     {
         try {
-            self::$config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config/config.json'));
-            
-            Connection::init(
-                self::$config->db->dsn,
-                self::$config->db->user,
-                self::$config->db->pass
-            );
-        
-            $this->argc = $_SERVER['argc'];
-            $this->argv = $_SERVER['argv'];
-
-            $this->setArguments();
-            $this->dispatch();
+            new self;
         } catch (\Throwable $e) {
             echo $e->getMessage();
         }
+    }
+
+    public function __construct()
+    {
+        self::$config = json_decode(file_get_contents(dirname(__DIR__, 2) . '/config/config.json'));
+        
+        Connection::init(
+            self::$config->db->dsn,
+            self::$config->db->user,
+            self::$config->db->pass
+        );
+    
+        $this->argc = $_SERVER['argc'];
+        $this->argv = $_SERVER['argv'];
+
+        $this->setArguments();
+        $this->dispatch();
     }
 
     public static function addRoute(string $arg, string $className)
